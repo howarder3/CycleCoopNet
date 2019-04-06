@@ -11,12 +11,15 @@ from model import Coop_pix2pix
 
 # parameters setting
 tf.app.flags.DEFINE_integer('epoch',200,'how many epochs to train')
+tf.app.flags.DEFINE_integer('batch_size',1,'how many pic in one group(batch), iteration = picture_amount/batch_size')
+tf.app.flags.DEFINE_integer('picture_amount',99999,'how many pictures to train')
 
 
 # dataset_name
+tf.app.flags.DEFINE_string('dataset_dir', './datasets', 'dataset directory')
 tf.app.flags.DEFINE_string('dataset_name', 'facades', 'dataset name')
+
 # folder position
-tf.app.flags.DEFINE_string('dataset_dir', './dataset_dir', 'dataset directory')
 tf.app.flags.DEFINE_string('output_dir', './output_dir', 'output directory')
 tf.app.flags.DEFINE_string('checkpoint_dir', './checkpoint_dir', 'checkpoint directory')
 tf.app.flags.DEFINE_string('log_dir', './log_dir', 'log directory')
@@ -37,6 +40,8 @@ def main(_):
 
 	with tf.Session() as sess:
 		if tf.gfile.Exists(dataset_dir):
+			pass
+		else:
 			print("\nError! Dataset not found!\n")
 			return
 			
@@ -65,8 +70,12 @@ def main(_):
 			tf.gfile.MakeDirs(log_dir)
 
 
-		model = Coop_pix2pix(sess, epoch=200, dataset_name=FLAGS.dataset_name, 
-			output_dir=FLAGS.output_dir, checkpoint_dir=FLAGS.checkpoint_dir, log_dir=FLAGS.log_dir)
+		model = Coop_pix2pix(sess, 
+				epoch=FLAGS.epoch, 
+				batch_size=FLAGS.batch_size,
+				picture_amount=FLAGS.picture_amount,
+				dataset_name=FLAGS.dataset_name, dataset_dir =FLAGS.dataset_dir, 
+				output_dir=FLAGS.output_dir, checkpoint_dir=FLAGS.checkpoint_dir, log_dir=FLAGS.log_dir)
 
 
 		model.train(sess)
