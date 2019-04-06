@@ -31,14 +31,14 @@ class Coop_pix2pix(object):
 	def train(self,sess):
 		self.build_model()
 		start_time = time.time()	
-		print("time: {:.6f} , Start training model......".format(0))
+		print("time: {:.4f} , Start training model......".format(0))
 			
 
 		
 
 		# prepare training data
 		training_data = glob('./datasets/{}/train/*.jpg'.format(self.dataset_name))
-		print("time: {:.6f} , Loading data finished! ".format(time.time() - start_time))
+		print("time: {:.4f} , Loading data finished! ".format(time.time() - start_time))
 
 
 
