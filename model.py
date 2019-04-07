@@ -16,7 +16,7 @@ class Coop_pix2pix(object):
 				output_size = 256,
 				input_pic_dim = 3, 
 				output_pic_dim = 3,				
-				dataset_name='facades', dataset_dir ='./datasets', 
+				dataset_name='facades', dataset_dir ='./test_datasets', 
 				output_dir='./output_dir', checkpoint_dir='./checkpoint_dir', log_dir='./log_dir'):
 		"""
 		args:
@@ -90,8 +90,10 @@ class Coop_pix2pix(object):
 
 
 	def generator(self, input_image, reuse=False):
-        with tf.variable_scope("generator", reuse=reuse):
+		with tf.variable_scope("generator", reuse=reuse):
 
+			return 0
+'''
             output_size = self.output_size
             
             
@@ -162,4 +164,4 @@ class Coop_pix2pix(object):
             # d8 is (256 x 256 x output_c_dim)
 
             return tf.nn.tanh(self.d8)
-
+'''

@@ -1,8 +1,18 @@
 '''
+# windows
 D:
 cd D:\test\mycode
 conda activate mlenv
 python main.py
+
+# mac
+cd /Users/howarder3/Documents/GitHub/Coop_pix2pix 
+python main.py
+
+# pip packages 
+pip freeze > requirements.txt
+pip -r requirements.txt
+
 '''
 
 import tensorflow as tf
@@ -20,7 +30,7 @@ tf.app.flags.DEFINE_integer('input_pic_dim',3,'input picture dimension : colorfu
 tf.app.flags.DEFINE_integer('output_pic_dim',3,'output picture dimension : colorful = 3, grayscale = 1')
 
 # dataset floder name
-tf.app.flags.DEFINE_string('dataset_dir', './datasets', 'dataset directory')
+tf.app.flags.DEFINE_string('dataset_dir', './test_datasets', 'dataset directory')
 tf.app.flags.DEFINE_string('dataset_name', 'facades', 'dataset name')
 
 # folder position

@@ -1,6 +1,8 @@
-"""
-Some codes from https://github.com/Newmu/dcgan_code
-"""
+'''
+This code is borrow from: https://github.com/yenchenlin/pix2pix-tensorflow
+Referenced from: https://github.com/Newmu/dcgan_code
+'''
+
 from __future__ import division
 import math
 import json
