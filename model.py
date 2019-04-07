@@ -10,7 +10,7 @@ from utils import *
 class Coop_pix2pix(object):
 	def __init__(self, sess, 
 				epoch=1, 
-				batch_size=1,
+				batch_size=10,
 				picture_amount=99999,
 				image_size = 256,
 				input_pic_dim = 3, 
@@ -51,8 +51,8 @@ class Coop_pix2pix(object):
 		self.data_A = self.input_data[:, :, :, :self.input_pic_dim]
 		self.data_B = self.input_data[:, :, :, self.input_pic_dim:self.input_pic_dim+self.output_pic_dim]
 
-		print("real_A shape = {}".format(self.data_A.shape))
-		print("real_B shape = {}".format(self.data_B.shape))
+		print("data_A shape = {}".format(self.data_A.shape))
+		print("data_B shape = {}".format(self.data_B.shape))
 
 
 
@@ -73,7 +73,6 @@ class Coop_pix2pix(object):
 				# find picture list index*self.batch_size to (index+1)*self.batch_size (one batch)
 				# if batch_size = 2, get one batch = batch[0], batch[1]
 				batch_files = training_data[index*self.batch_size:(index+1)*self.batch_size] 
-				print(batch_files)
 
 				# load data : list format, amount = one batch
 				batch = [load_data(batch_file) for batch_file in batch_files]
