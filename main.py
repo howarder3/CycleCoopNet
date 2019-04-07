@@ -14,7 +14,8 @@ from model import Coop_pix2pix
 tf.app.flags.DEFINE_integer('epoch',1,'how many epochs to train')
 tf.app.flags.DEFINE_integer('batch_size',10,'how many pic in one group(batch), iteration = picture_amount/batch_size')
 tf.app.flags.DEFINE_integer('picture_amount',99999,'how many pictures to train')
-tf.app.flags.DEFINE_integer('image_size',256,'image size')
+tf.app.flags.DEFINE_integer('image_size',256,'input image size')
+tf.app.flags.DEFINE_integer('output_size',256,'output image size')
 tf.app.flags.DEFINE_integer('input_pic_dim',3,'input picture dimension : colorful = 3, grayscale = 1')
 tf.app.flags.DEFINE_integer('output_pic_dim',3,'output picture dimension : colorful = 3, grayscale = 1')
 
@@ -78,6 +79,7 @@ def main(_):
 				batch_size=FLAGS.batch_size,
 				picture_amount=FLAGS.picture_amount,
 				image_size=FLAGS.image_size,
+				output_size = FLAGS.output_size,
 				input_pic_dim = FLAGS.input_pic_dim, 
 				output_pic_dim = FLAGS.output_pic_dim,
 				dataset_name=FLAGS.dataset_name, dataset_dir =FLAGS.dataset_dir, 
