@@ -1,6 +1,7 @@
 '''
 D:
 cd D:\test\mycode
+conda activate mlenv
 python main.py
 '''
 
@@ -13,9 +14,11 @@ from model import Coop_pix2pix
 tf.app.flags.DEFINE_integer('epoch',1,'how many epochs to train')
 tf.app.flags.DEFINE_integer('batch_size',1,'how many pic in one group(batch), iteration = picture_amount/batch_size')
 tf.app.flags.DEFINE_integer('picture_amount',99999,'how many pictures to train')
+tf.app.flags.DEFINE_integer('image_size',256,'image size')
+tf.app.flags.DEFINE_integer('input_pic_dim',3,'input picture dimension : colorful = 3, grayscale = 1')
+tf.app.flags.DEFINE_integer('output_pic_dim',3,'output picture dimension : colorful = 3, grayscale = 1')
 
-
-# dataset_name
+# dataset floder name
 tf.app.flags.DEFINE_string('dataset_dir', './datasets', 'dataset directory')
 tf.app.flags.DEFINE_string('dataset_name', 'facades', 'dataset name')
 
@@ -74,6 +77,9 @@ def main(_):
 				epoch=FLAGS.epoch, 
 				batch_size=FLAGS.batch_size,
 				picture_amount=FLAGS.picture_amount,
+				image_size=FLAGS.image_size,
+				input_pic_dim = FLAGS.input_pic_dim, 
+				output_pic_dim = FLAGS.output_pic_dim,
 				dataset_name=FLAGS.dataset_name, dataset_dir =FLAGS.dataset_dir, 
 				output_dir=FLAGS.output_dir, checkpoint_dir=FLAGS.checkpoint_dir, log_dir=FLAGS.log_dir)
 

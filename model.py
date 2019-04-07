@@ -12,12 +12,17 @@ class Coop_pix2pix(object):
 				epoch=1, 
 				batch_size=1,
 				picture_amount=99999,
+				image_size = 256,
+				input_pic_dim = 3, 
+				output_pic_dim = 3,
 				dataset_name='facades', dataset_dir ='./datasets', 
 				output_dir='./output_dir', checkpoint_dir='./checkpoint_dir', log_dir='./log_dir'):
 		"""
 		args:
 			sess: tensorflow session
 			batch_size: how many pic in one group(batch), iteration(num_batch) = picture_amount/batch_size
+			input_pic_dim: input picture dimension : colorful = 3, grayscale = 1
+			output_pic_dim: output picture dimension : colorful = 3, grayscale = 1 
 
 		"""
 
@@ -26,6 +31,9 @@ class Coop_pix2pix(object):
 		self.epoch = epoch		
 		self.batch_size = batch_size
 		self.picture_amount = picture_amount
+		self.image_size = image_size
+		self.input_pic_dim = input_pic_dim
+		self.output_pic_dim = output_pic_dim
 
 		self.dataset_dir = dataset_dir
 		self.dataset_name = dataset_name
@@ -35,7 +43,16 @@ class Coop_pix2pix(object):
 		self.log_dir = log_dir
 
 	def build_model(self):
-		pass
+		self.input_data = tf.placeholder(tf.float32,
+										[self.batch_size, self.image_size, self.image_size, self.input_pic_dim+self.output_pic_dim],
+										name='input_A_and_B_images')
+
+		# data domain A and data domain B
+		self.data_A = self.input_data[:, :, :, :self.input_pic_dim]
+		self.data_B = self.input_data[:, :, :, self.input_pic_dim:self.input_pic_dim+self.output_pic_dim]
+
+		print("real_A shape = {}".format(self.data_A.shape))
+		print("real_B shape = {}".format(self.data_B.shape))
 
 
 
@@ -58,13 +75,9 @@ class Coop_pix2pix(object):
 				batch_files = training_data[index*self.batch_size:(index+1)*self.batch_size] 
 				print(batch_files)
 
-				# load data 
-				# list format, amount = one batch
+				# load data : list format, amount = one batch
 				batch = [load_data(batch_file) for batch_file in batch_files]
 				batch_images = np.array(batch).astype(np.float32)
-
-				print(batch_images)
-				
 				print("time: {:.4f} , Loading data finished! ".format(time.time() - start_time))
 
 
