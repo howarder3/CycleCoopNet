@@ -5,6 +5,10 @@ import time
 from glob import glob
 from six.moves import xrange
 
+# self define function 
+# ops: layers structure
+from ops import *
+# utils: for loading data
 from utils import *
 
 class Coop_pix2pix(object):
@@ -71,6 +75,7 @@ class Coop_pix2pix(object):
 		
 
 		for epoch in xrange(self.epoch): # how many epochs to train
+			print("time: {:.4f} , Epoch: {} ".format(time.time() - start_time, epoch))
 			# prepare training data
 			training_data = glob('{}/{}/train/*.jpg'.format(self.dataset_dir, self.dataset_name))
 			
@@ -91,6 +96,22 @@ class Coop_pix2pix(object):
 
 	def generator(self, input_image, reuse=False):
 		with tf.variable_scope("generator", reuse=reuse):
+
+			output_size = self.output_size
+			output_size_2 = output_size/2
+			output_size_4 = output_size/4
+			output_size_8 = output_size/8
+			output_size_16 = output_size/16
+			output_size_32 = output_size/32
+			output_size_64 = output_size/64
+			output_size_128 = output_size/128
+
+			# input image = 256 * 256 * input_pic_dim
+			# conv2d(input_image, output_dimension (by how many filters), scope_name)
+			gen_layer_1_output = conv2d(input_image,64,"gen_layer_1_conv")
+
+
+
 
 			return 0
 '''
