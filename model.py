@@ -58,8 +58,8 @@ class Coop_pix2pix(object):
 		self.data_A = self.input_data[:, :, :, :self.input_pic_dim]
 		self.data_B = self.input_data[:, :, :, self.input_pic_dim:self.input_pic_dim+self.output_pic_dim]
 
-		print("data_A shape = {}".format(self.data_A.shape))
-		print("data_B shape = {}".format(self.data_B.shape))
+		print("data_A shape = {}".format(self.data_A.shape)) # data_A shape = (1, 256, 256, 3)
+		print("data_B shape = {}".format(self.data_B.shape)) # data_B shape = (1, 256, 256, 3)
 
 		self.generated_B = self.generator(self.data_A, reuse=False)
 
@@ -97,46 +97,44 @@ class Coop_pix2pix(object):
 	def generator(self, input_image, reuse=False):
 		with tf.variable_scope("generator", reuse=reuse):
 
-			output_size = self.output_size
-			output_size_2 = output_size/2
-			output_size_4 = output_size/4
-			output_size_8 = output_size/8
-			output_size_16 = output_size/16
-			output_size_32 = output_size/32
-			output_size_64 = output_size/64
-			output_size_128 = output_size/128
+			# output_size = self.output_size
+			# output_size_2 = output_size/2
+			# output_size_4 = output_size/4
+			# output_size_8 = output_size/8
+			# output_size_16 = output_size/16
+			# output_size_32 = output_size/32
+			# output_size_64 = output_size/64
+			# output_size_128 = output_size/128
 
-			# input image = 256 * 256 * input_pic_dim
+			num_encoder_filter = 64
+
+			# ---------- encoder part ----------
 			# conv2d(input_image, output_dimension (by how many filters), scope_name)
-			gen_layer_1_output = conv2d(input_image, 64, name='gen_layer_1_conv')
+			# input image = [batch_size, 256, 256, input_pic_dim]
+			gen_encode_layer_1_output = encode_conv2d(input_image, num_encoder_filter, name='gen_encode_layer_1_conv') 
+			# gen_encode_layer_1_output = (batch_size, 128, 128, num_encoder_filter)
+			gen_encode_layer_2_output = encode_conv2d(lrelu(gen_encode_layer_1_output), num_encoder_filter*2, name='gen_encode_layer_2_conv') 
+			# gen_encode_layer_2_output = (batch_size, 64, 64, num_encoder_filter*2)
+			gen_encode_layer_3_output = encode_conv2d(lrelu(gen_encode_layer_2_output), num_encoder_filter*4, name='gen_encode_layer_3_conv')
+			# gen_encode_layer_3_output = (batch_size, 32, 32, num_encoder_filter*4)
+			gen_encode_layer_4_output = encode_conv2d(lrelu(gen_encode_layer_3_output), num_encoder_filter*8, name='gen_encode_layer_4_conv')
+			# gen_encode_layer_4_output = (batch_size, 16, 16, num_encoder_filter*8)
+			gen_encode_layer_5_output = encode_conv2d(lrelu(gen_encode_layer_4_output), num_encoder_filter*8, name='gen_encode_layer_5_conv')
+			# gen_encode_layer_5_output = (batch_size, 8, 8, num_encoder_filter*8)
+			gen_encode_layer_6_output = encode_conv2d(lrelu(gen_encode_layer_5_output), num_encoder_filter*8, name='gen_encode_layer_6_conv')
+			# gen_encode_layer_6_output = (batch_size, 4, 4, num_encoder_filter*8)
+			gen_encode_layer_7_output = encode_conv2d(lrelu(gen_encode_layer_6_output), num_encoder_filter*8, name='gen_encode_layer_7_conv')
+			# gen_encode_layer_7_output = (batch_size, 2, 2, num_encoder_filter*8)
+			gen_encode_layer_8_output = encode_conv2d(lrelu(gen_encode_layer_7_output), num_encoder_filter*8, name='gen_encode_layer_8_conv')
+			# gen_encode_layer_8_output = (batch_size, 1, 1, num_encoder_filter*8)
 
 
+			
 
 
 			return 0
 '''
-            output_size = self.output_size
-            
-            
-            s2, s4, s8, s16, s32, s64, s128 = int(s/2), int(s/4), int(s/8), int(s/16), int(s/32), int(s/64), int(s/128)
 
-            # image is (256 x 256 x input_c_dim)
-            e1 = conv2d(image, self.gf_dim, name='g_e1_conv')
-            # e1 is (128 x 128 x self.gf_dim)
-            e2 = self.g_bn_e2(conv2d(lrelu(e1), self.gf_dim*2, name='g_e2_conv'))
-            # e2 is (64 x 64 x self.gf_dim*2)
-            e3 = self.g_bn_e3(conv2d(lrelu(e2), self.gf_dim*4, name='g_e3_conv'))
-            # e3 is (32 x 32 x self.gf_dim*4)
-            e4 = self.g_bn_e4(conv2d(lrelu(e3), self.gf_dim*8, name='g_e4_conv'))
-            # e4 is (16 x 16 x self.gf_dim*8)
-            e5 = self.g_bn_e5(conv2d(lrelu(e4), self.gf_dim*8, name='g_e5_conv'))
-            # e5 is (8 x 8 x self.gf_dim*8)
-            e6 = self.g_bn_e6(conv2d(lrelu(e5), self.gf_dim*8, name='g_e6_conv'))
-            # e6 is (4 x 4 x self.gf_dim*8)
-            e7 = self.g_bn_e7(conv2d(lrelu(e6), self.gf_dim*8, name='g_e7_conv'))
-            # e7 is (2 x 2 x self.gf_dim*8)
-            e8 = self.g_bn_e8(conv2d(lrelu(e7), self.gf_dim*8, name='g_e8_conv'))
-            # e8 is (1 x 1 x self.gf_dim*8)
 
             self.d1, self.d1_w, self.d1_b = deconv2d(tf.nn.relu(e8),
                 [self.batch_size, s128, s128, self.gf_dim*8], name='g_d1', with_w=True)
