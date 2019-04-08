@@ -108,7 +108,7 @@ class Coop_pix2pix(object):
 
 			# input image = 256 * 256 * input_pic_dim
 			# conv2d(input_image, output_dimension (by how many filters), scope_name)
-			gen_layer_1_output = conv2d(input_image,64,"gen_layer_1_conv")
+			gen_layer_1_output = conv2d(input_image, 64, name='gen_layer_1_conv')
 
 
 
