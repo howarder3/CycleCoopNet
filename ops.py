@@ -1,8 +1,6 @@
 import tensorflow as tf
 
 
-
-
 class batch_norm(object):
 	def __init__(self, epsilon=1e-5, momentum = 0.9, name="batch_norm"):
 		with tf.variable_scope(name):
@@ -15,11 +13,11 @@ class batch_norm(object):
 
 
 
-def encode_conv2d(input_image, output_dim, name="encode_conv2d"):
+def gen_encode_conv2d(input_image, output_dim, name="gen_encode_conv2d"):
 	with tf.variable_scope(name):
 		# input_image shape = [batch_size, 256, 256, 3]
 		# weight shape = [filter_width, filter_height, input_channels, output_channels(num_filters)] = [5,5,3,64] 
-		weight = tf.get_variable('weight',[5,5,input_image.get_shape()[-1],output_dim],
+		weight = tf.get_variable('gen_encode_weight',[5,5,input_image.get_shape()[-1],output_dim],
 								initializer=tf.truncated_normal_initializer(stddev=0.02))
 
 		# do convolution
@@ -35,12 +33,14 @@ def encode_conv2d(input_image, output_dim, name="encode_conv2d"):
 		# add bias
 		encode_conv_result_add_bias = tf.nn.bias_add(encode_conv_result, encode_bias)
 
-		print("{} shape: {}".format(name, encode_conv_result.shape))
+		encode_conv_output = tf.reshape(encode_conv_result_add_bias, encode_conv_result.get_shape())
 
-		return encode_conv_result_add_bias
+		print("{} shape: {}".format(name, encode_conv_output.shape))
+
+		return encode_conv_output
 
 
-def decode_conv2d(input_image, output_dim, name="decode_conv2d"):
+def gen_decode_conv2d(input_image, output_dim, name="gen_decode_conv2d"):
 	with tf.variable_scope(name):
 		print("{} shape: {}".format(name, input_image.shape))
 
@@ -48,7 +48,7 @@ def decode_conv2d(input_image, output_dim, name="decode_conv2d"):
 		previous_layer_shape = input_image.get_shape()
 
 		# weight shape = [filter_width, filter_height, output_channels, input_channels] = [5,5,,] 
-		weight = tf.get_variable('weight',[5, 5, output_dim, previous_layer_shape[-1]],
+		weight = tf.get_variable('gen_decode_weight',[5, 5, output_dim, previous_layer_shape[-1]],
 								initializer=tf.random_normal_initializer(stddev=0.02))
 
 		# output shape = [batch_size, input_shape*2, input_shape*2, output_dim]
@@ -66,52 +66,41 @@ def decode_conv2d(input_image, output_dim, name="decode_conv2d"):
 		# add bias
 		decode_conv_result_add_bias = tf.nn.bias_add(decode_conv_result, decode_bias)
 		
-		print("{} shape: {}".format(name, decode_conv_result_add_bias.shape))
+		decode_conv_output = tf.reshape(decode_conv_result_add_bias, decode_conv_result.get_shape())
 
-		return decode_conv_result_add_bias
+		print("{} shape: {}".format(name, decode_conv_output.shape))
 
-
-
-
+		return decode_conv_output
 
 
+def descriptor_conv2d(input_image, output_dim, name="descriptor_conv2d"):
+	with tf.variable_scope(name):
+		# input_image shape = [batch_size, 256, 256, 3]
+		# weight shape = [filter_width, filter_height, input_channels, output_channels(num_filters)] = [5,5,3,64] 
+		weight = tf.get_variable('descriptor_weight',[5,5,input_image.get_shape()[-1],output_dim],
+								initializer=tf.random_normal_initializer(stddev=0.01))
 
+		# do convolution
+		# weight shape = [filter_width, filter_height, input_channels, output_channels(num_filters)] = [5,5,3,64] 
+		# filter = 64 5*5 filters (3 channels)
+		# stride = 2*2 moving steps
+		# padding "same" = zero_padding
+		descriptor_conv_result = tf.nn.conv2d(input_image, weight, strides=[1,2,2,1], padding='SAME')
 
+		# output_dim: how many pictures output
+		descriptor_bias = tf.get_variable('bias', [output_dim], initializer=tf.constant_initializer(0.0))
 
+		# add bias
+		descriptor_conv_result_add_bias = tf.nn.bias_add(descriptor_conv_result, descriptor_bias)
 
+		descriptor_conv_output = tf.reshape(descriptor_conv_result_add_bias, descriptor_conv_result.get_shape())
 
+		print("{} shape: {}".format(name, descriptor_conv_output.shape))
 
+		return descriptor_conv_output
 
-'''
-def deconv2d(input_, output_shape,
-             k_h=5, k_w=5, d_h=2, d_w=2, stddev=0.02,
-             name="deconv2d", with_w=False):
-    with tf.variable_scope(name):
-        # filter : [height, width, output_channels, in_channels]
-        w = tf.get_variable('w', [k_h, k_w, output_shape[-1], input_.get_shape()[-1]],
-                            initializer=tf.random_normal_initializer(stddev=stddev))
-        
-        try:
-            deconv = tf.nn.conv2d_transpose(input_, w, output_shape=output_shape,
-                                strides=[1, d_h, d_w, 1])
-
-        # Support for verisons of TensorFlow before 0.7.0
-        except AttributeError:
-            deconv = tf.nn.deconv2d(input_, w, output_shape=output_shape,
-                                strides=[1, d_h, d_w, 1])
-
-        biases = tf.get_variable('biases', [output_shape[-1]], initializer=tf.constant_initializer(0.0))
-        deconv = tf.reshape(tf.nn.bias_add(deconv, biases), deconv.get_shape())
-
-        if with_w:
-            return deconv, w, biases
-        else:
-            return deconv
-'''
-
-
-# lrelu
-def lrelu(x, leak=0.2, name="lrelu"):
+# leaky_relu
+def leaky_relu(x, leak=0.2, name="leaky_relu"):
 	return tf.maximum(x, leak*x)		
 
 
