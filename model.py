@@ -49,6 +49,25 @@ class Coop_pix2pix(object):
 		self.checkpoint_dir = checkpoint_dir
 		self.log_dir = log_dir
 
+
+		self.gen_encode_batchnorm_layer2 = batch_norm(name='gen_encode_batchnorm_layer2')
+		self.gen_encode_batchnorm_layer3 = batch_norm(name='gen_encode_batchnorm_layer3')
+		self.gen_encode_batchnorm_layer4 = batch_norm(name='gen_encode_batchnorm_layer4')
+		self.gen_encode_batchnorm_layer5 = batch_norm(name='gen_encode_batchnorm_layer5')
+		self.gen_encode_batchnorm_layer6 = batch_norm(name='gen_encode_batchnorm_layer6')
+		self.gen_encode_batchnorm_layer7 = batch_norm(name='gen_encode_batchnorm_layer7')
+		self.gen_encode_batchnorm_layer8 = batch_norm(name='gen_encode_batchnorm_layer8')
+
+		self.gen_decode_batchnorm_layer1 = batch_norm(name='gen_decode_batchnorm_layer1')
+		self.gen_decode_batchnorm_layer2 = batch_norm(name='gen_decode_batchnorm_layer2')
+		self.gen_decode_batchnorm_layer3 = batch_norm(name='gen_decode_batchnorm_layer3')
+		self.gen_decode_batchnorm_layer4 = batch_norm(name='gen_decode_batchnorm_layer4')
+		self.gen_decode_batchnorm_layer5 = batch_norm(name='gen_decode_batchnorm_layer5')
+		self.gen_decode_batchnorm_layer6 = batch_norm(name='gen_decode_batchnorm_layer6')
+		self.gen_decode_batchnorm_layer7 = batch_norm(name='gen_decode_batchnorm_layer7')
+
+
+
 	def build_model(self):
 		self.input_data = tf.placeholder(tf.float32,
 										[self.batch_size, self.image_size, self.image_size, self.input_pic_dim+self.output_pic_dim],
@@ -97,42 +116,93 @@ class Coop_pix2pix(object):
 	def generator(self, input_image, reuse=False):
 		with tf.variable_scope("generator", reuse=reuse):
 
-			# output_size = self.output_size
-			# output_size_2 = output_size/2
-			# output_size_4 = output_size/4
-			# output_size_8 = output_size/8
-			# output_size_16 = output_size/16
-			# output_size_32 = output_size/32
-			# output_size_64 = output_size/64
-			# output_size_128 = output_size/128
-
-			num_encoder_filter = 64
+			num_filter = 64
 
 			# ---------- encoder part ----------
-			# conv2d(input_image, output_dimension (by how many filters), scope_name)
+			# encode_conv2d(input_image, output_dimension (by how many filters), scope_name)
 			# input image = [batch_size, 256, 256, input_pic_dim]
-			gen_encode_layer_1_output = encode_conv2d(input_image, num_encoder_filter, name='gen_encode_layer_1_conv') 
-			# gen_encode_layer_1_output = (batch_size, 128, 128, num_encoder_filter)
-			gen_encode_layer_2_output = encode_conv2d(lrelu(gen_encode_layer_1_output), num_encoder_filter*2, name='gen_encode_layer_2_conv') 
-			# gen_encode_layer_2_output = (batch_size, 64, 64, num_encoder_filter*2)
-			gen_encode_layer_3_output = encode_conv2d(lrelu(gen_encode_layer_2_output), num_encoder_filter*4, name='gen_encode_layer_3_conv')
-			# gen_encode_layer_3_output = (batch_size, 32, 32, num_encoder_filter*4)
-			gen_encode_layer_4_output = encode_conv2d(lrelu(gen_encode_layer_3_output), num_encoder_filter*8, name='gen_encode_layer_4_conv')
-			# gen_encode_layer_4_output = (batch_size, 16, 16, num_encoder_filter*8)
-			gen_encode_layer_5_output = encode_conv2d(lrelu(gen_encode_layer_4_output), num_encoder_filter*8, name='gen_encode_layer_5_conv')
-			# gen_encode_layer_5_output = (batch_size, 8, 8, num_encoder_filter*8)
-			gen_encode_layer_6_output = encode_conv2d(lrelu(gen_encode_layer_5_output), num_encoder_filter*8, name='gen_encode_layer_6_conv')
-			# gen_encode_layer_6_output = (batch_size, 4, 4, num_encoder_filter*8)
-			gen_encode_layer_7_output = encode_conv2d(lrelu(gen_encode_layer_6_output), num_encoder_filter*8, name='gen_encode_layer_7_conv')
-			# gen_encode_layer_7_output = (batch_size, 2, 2, num_encoder_filter*8)
-			gen_encode_layer_8_output = encode_conv2d(lrelu(gen_encode_layer_7_output), num_encoder_filter*8, name='gen_encode_layer_8_conv')
-			# gen_encode_layer_8_output = (batch_size, 1, 1, num_encoder_filter*8)
+			# gen_encode_layer_1_output = (batch_size, 128, 128, num_filter)
+			gen_encode_layer_1_conv = encode_conv2d(input_image, num_filter, name='gen_encode_layer_1_conv') 
 
-
+			# gen_encode_layer_2_output = (batch_size, 64, 64, num_filter*2)
+			gen_encode_layer_2_conv = encode_conv2d(lrelu(gen_encode_layer_1_conv), num_filter*2, name='gen_encode_layer_2_conv') 
+			gen_encode_layer_2_batchnorm = self.gen_encode_batchnorm_layer2(gen_encode_layer_2_conv)
 			
+			# gen_encode_layer_3_output = (batch_size, 32, 32, num_filter*4)
+			gen_encode_layer_3_conv = encode_conv2d(lrelu(gen_encode_layer_2_batchnorm), num_filter*4, name='gen_encode_layer_3_conv')
+			gen_encode_layer_3_batchnorm = self.gen_encode_batchnorm_layer3(gen_encode_layer_3_conv)\
+
+			# gen_encode_layer_4_output = (batch_size, 16, 16, num_filter*8)
+			gen_encode_layer_4_conv = encode_conv2d(lrelu(gen_encode_layer_3_batchnorm), num_filter*8, name='gen_encode_layer_4_conv') 
+			gen_encode_layer_4_batchnorm = self.gen_encode_batchnorm_layer4(gen_encode_layer_4_conv)
+
+			# gen_encode_layer_5_output = (batch_size, 8, 8, num_filter*8)
+			gen_encode_layer_5_conv = encode_conv2d(lrelu(gen_encode_layer_4_batchnorm), num_filter*8, name='gen_encode_layer_5_conv') 
+			gen_encode_layer_5_batchnorm = self.gen_encode_batchnorm_layer5(gen_encode_layer_5_conv)
+
+			# gen_encode_layer_6_output = (batch_size, 4, 4, num_filter*8)
+			gen_encode_layer_6_conv = encode_conv2d(lrelu(gen_encode_layer_5_batchnorm), num_filter*8, name='gen_encode_layer_6_conv') 
+			gen_encode_layer_6_batchnorm = self.gen_encode_batchnorm_layer6(gen_encode_layer_6_conv)
+
+			# gen_encode_layer_7_output = (batch_size, 2, 2, num_filter*8)
+			gen_encode_layer_7_conv = encode_conv2d(lrelu(gen_encode_layer_6_batchnorm), num_filter*8, name='gen_encode_layer_7_conv') 
+			gen_encode_layer_7_batchnorm = self.gen_encode_batchnorm_layer7(gen_encode_layer_7_conv)
+
+			# gen_encode_layer_8_output = (batch_size, 1, 1, num_filter*8)
+			gen_encode_layer_8_conv = encode_conv2d(lrelu(gen_encode_layer_7_batchnorm), num_filter*8, name='gen_encode_layer_8_conv') 
+			gen_encode_layer_8_batchnorm = self.gen_encode_batchnorm_layer8(gen_encode_layer_8_conv)
+
+			# ---------- decoder part ----------
+			# decode_conv2d(input_image, output_dimension (by how many filters), scope_name)
+			# input image = [batch_size, 1, 1, num_filter*8]
+			# gen_decode_layer_1_output = (batch_size, 2, 2, num_filter*8*2)
+			gen_decode_layer_1_deconv = decode_conv2d(relu(gen_encode_layer_8_batchnorm), num_filter*8, name='gen_decode_layer_1_deconv') 
+			gen_decode_layer_1_batchnorm = self.gen_decode_batchnorm_layer1(gen_decode_layer_1_deconv)
+			gen_decode_layer_1_dropout = tf.nn.dropout(gen_decode_layer_1_batchnorm, rate=0.5)
+			gen_decode_layer_1_concat = tf.concat([gen_decode_layer_1_dropout, gen_encode_layer_7_batchnorm], 3)
+
+			# gen_decode_layer_2_output = (batch_size, 4, 4, num_filter*8*2)
+			gen_decode_layer_2_deconv = decode_conv2d(relu(gen_decode_layer_1_concat), num_filter*8, name='gen_decode_layer_2_deconv') 
+			gen_decode_layer_2_batchnorm = self.gen_decode_batchnorm_layer2(gen_decode_layer_2_deconv)
+			gen_decode_layer_2_dropout = tf.nn.dropout(gen_decode_layer_2_batchnorm, rate=0.5)
+			gen_decode_layer_2_concat = tf.concat([gen_decode_layer_2_dropout, gen_encode_layer_6_batchnorm], 3)
+
+			# gen_decode_layer_3_output = (batch_size, 8, 8, num_filter*8*2)
+			gen_decode_layer_3_deconv = decode_conv2d(relu(gen_decode_layer_2_concat), num_filter*8, name='gen_decode_layer_3_deconv') 
+			gen_decode_layer_3_batchnorm = self.gen_decode_batchnorm_layer3(gen_decode_layer_3_deconv)
+			gen_decode_layer_3_dropout = tf.nn.dropout(gen_decode_layer_3_batchnorm, rate=0.5)
+			gen_decode_layer_3_concat = tf.concat([gen_decode_layer_3_dropout, gen_encode_layer_5_batchnorm], 3)
+
+			# gen_decode_layer_4_output = (batch_size, 16, 16, num_filter*8*2)
+			gen_decode_layer_4_deconv = decode_conv2d(relu(gen_decode_layer_3_concat), num_filter*8, name='gen_decode_layer_4_deconv') 
+			gen_decode_layer_4_batchnorm = self.gen_decode_batchnorm_layer4(gen_decode_layer_4_deconv)
+			gen_decode_layer_4_dropout = tf.nn.dropout(gen_decode_layer_4_batchnorm, rate=0.5)
+			gen_decode_layer_4_concat = tf.concat([gen_decode_layer_4_dropout, gen_encode_layer_4_batchnorm], 3)
+
+			# gen_decode_layer_5_output = (batch_size, 32, 32, num_filter*4*2)
+			gen_decode_layer_5_deconv = decode_conv2d(relu(gen_decode_layer_4_concat), num_filter*4, name='gen_decode_layer_5_deconv') 
+			gen_decode_layer_5_batchnorm = self.gen_decode_batchnorm_layer5(gen_decode_layer_5_deconv)
+			gen_decode_layer_5_dropout = tf.nn.dropout(gen_decode_layer_5_batchnorm, rate=0.5)
+			gen_decode_layer_5_concat = tf.concat([gen_decode_layer_5_dropout, gen_encode_layer_3_batchnorm], 3)
+
+			# gen_decode_layer_6_output = (batch_size, 64, 64, num_filter*2*2)
+			gen_decode_layer_6_deconv = decode_conv2d(relu(gen_decode_layer_5_concat), num_filter*2, name='gen_decode_layer_6_deconv') 
+			gen_decode_layer_6_batchnorm = self.gen_decode_batchnorm_layer6(gen_decode_layer_6_deconv)
+			gen_decode_layer_6_dropout = tf.nn.dropout(gen_decode_layer_6_batchnorm, rate=0.5)
+			gen_decode_layer_6_concat = tf.concat([gen_decode_layer_6_dropout, gen_encode_layer_2_batchnorm], 3)
+
+			# gen_decode_layer_7_output = (batch_size, 128, 128, num_filter*1*2)
+			gen_decode_layer_7_deconv = decode_conv2d(relu(gen_decode_layer_6_concat), num_filter, name='gen_decode_layer_7_deconv') 
+			gen_decode_layer_7_batchnorm = self.gen_decode_batchnorm_layer7(gen_decode_layer_7_deconv)
+			gen_decode_layer_7_dropout = tf.nn.dropout(gen_decode_layer_7_batchnorm, rate=0.5)
+			gen_decode_layer_7_concat = tf.concat([gen_decode_layer_7_dropout, gen_encode_layer_1_conv], 3)
 
 
-			return 0
+			# gen_decode_layer_8_output = (batch_size, 256, 256, output_pic_dim)
+			gen_decode_layer_8_deconv = decode_conv2d(relu(gen_decode_layer_7_concat), self.output_pic_dim, name='gen_decode_layer_8_deconv') 
+			generator_output = tf.nn.tanh(gen_decode_layer_8_deconv)
+
+			return generator_output
 '''
 
 
