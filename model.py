@@ -82,7 +82,7 @@ class Coop_pix2pix(object):
 		self.L1_lambda = 1
 
 		# learning rate
-		self.descriptor_learning_rate = 0.00001 # 0.01
+		self.descriptor_learning_rate = 0.000005 # 0.01
 		self.generator_learning_rate = 0.000001 # 0.0001
 
 	def build_model(self):
@@ -260,6 +260,7 @@ class Coop_pix2pix(object):
 				print("Epoch: [{:4d}] [{:4d}/{:4d}] time: {:.4f}, d_loss: {:.4f}, g_loss: {:.4f}, mse_loss: {:.4f}"
 					.format(epoch, index, num_batch, time.time() - start_time, descriptor_loss, generator_loss, mse_loss))
 
+				# if index == 0:
 				if np.mod(counter, 100) == 0:
 					save_images(generated_B, [self.batch_size, 1],
 						'./{}/train_generator_{:02d}_{:04d}.png'.format(self.output_dir, epoch, index))
