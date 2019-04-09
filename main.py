@@ -21,7 +21,7 @@ import os
 from model import Coop_pix2pix
 
 # parameters setting
-tf.app.flags.DEFINE_integer('epoch',10,'how many epochs to train')
+tf.app.flags.DEFINE_integer('epoch',3,'how many epochs to train')
 tf.app.flags.DEFINE_integer('batch_size',1,'how many pic in one group(batch), iteration = picture_amount/batch_size')
 tf.app.flags.DEFINE_integer('picture_amount',99999,'how many pictures to train')
 tf.app.flags.DEFINE_integer('image_size',256,'input image size')

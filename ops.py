@@ -42,8 +42,6 @@ def gen_encode_conv2d(input_image, output_dim, name="gen_encode_conv2d"):
 
 def gen_decode_conv2d(input_image, output_dim, name="gen_decode_conv2d"):
 	with tf.variable_scope(name):
-		print("{} shape: {}".format(name, input_image.shape))
-
 		# input_image shape = [batch_size, 1, 1, num_filter*8 *2(if concat)]
 		previous_layer_shape = input_image.get_shape()
 

@@ -9,6 +9,8 @@ __pycache__/
 # Data
 
 datasets/
+output_dir/
+checkpoint_dir/
 
 # Distribution / packaging
 .Python
