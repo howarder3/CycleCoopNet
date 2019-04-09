@@ -17,7 +17,7 @@ from data_io import *
 class Coop_pix2pix(object):
 	def __init__(self, sess, 
 				epoch=2000, 
-				batch_size=100,
+				batch_size=1,
 				picture_amount=99999,
 				image_size = 256,
 				output_size = 256,
@@ -205,8 +205,8 @@ class Coop_pix2pix(object):
 				# step D1: descriptor try to revised image:"generated_B"
 				revised_B = sess.run(self.langevin_descriptor, feed_dict={self.input_data_B: generated_B})
 
-				print(generated_B.shape)
-				print(revised_B.shape)
+				# print(generated_B.shape) # (1, 256, 256, 3)
+				# print(revised_B.shape) # (1, 256, 256, 3)
 
 				# step D2: update descriptor net
 				descriptor_loss = sess.run([self.des_loss, self.apply_d_grads],
@@ -220,7 +220,9 @@ class Coop_pix2pix(object):
 
 				# Compute Mean square error(MSE) for generator
 				mse = sess.run(self.recon_err, feed_dict={self.real_data_B: revised_B, self.input_data_B: generated_B})
+
 				sample_results[index * self.num_chain:(index + 1) * self.num_chain] = revised_B
+				print(sample_results.shape)
 
 
 				des_loss_avg.append(descriptor_loss)
@@ -236,6 +238,11 @@ class Coop_pix2pix(object):
 						'./{}/train_generator_{:02d}_{:04d}.png'.format(self.output_dir, epoch, index))
 					save_images(revised_B, [self.batch_size, 1],
 						'./{}/train_descriptor_{:02d}_{:04d}.png'.format(self.output_dir, epoch, index))
+
+					saveSampleResults(revised_B, "%s/des%03d.png" % (self.output_dir, epoch), col_num=1)
+					saveSampleResults(generated_B, "%s/gen%03d.png" % (self.output_dir, epoch), col_num=1)
+
+
 
 				if np.mod(counter, 500) == 0:
 					self.save(self.checkpoint_dir, counter)
