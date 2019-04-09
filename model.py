@@ -82,8 +82,8 @@ class Coop_pix2pix(object):
 		self.L1_lambda = 100
 
 		# learning rate
-		self.descriptor_learning_rate = 0.000001 # 0.01
-		self.generator_learning_rate = 0.000001 # 0.0001
+		self.descriptor_learning_rate = 0.0001 # 0.01
+		self.generator_learning_rate = 0.0001 # 0.0001
 
 	def build_model(self):
 		self.input_data_A = tf.placeholder(tf.float32,
