@@ -76,16 +76,13 @@ class Coop_pix2pix(object):
 		# descriptor langevin steps
 		self.descriptor_langevin_steps = 10 
 
-		# self.nTileRow = 12
-		# self.nTileCol = 12
-		self.num_chain = 1
-
 		self.descriptor_step_size = 0.002
 		self.sigma1 = 0.016
 		self.beta1 = 0.5
+		self.L1_lambda = 100
 
 		# learning rate
-		self.descriptor_learning_rate = 0.001
+		self.descriptor_learning_rate = 0.01
 		self.generator_learning_rate = 0.0001
 
 	def build_model(self):
@@ -111,54 +108,78 @@ class Coop_pix2pix(object):
 		# print("data_B shape = {}".format(self.data_B.shape)) # data_B shape = (1, 256, 256, 3)
 
 
-		self.generated_B = self.generator(self.input_data_A, reuse=False)
-		descripted_real_data_B = self.descriptor(self.real_data_B, reuse=False)
-		descripted_revised_B = self.descriptor(self.input_data_B, reuse=True)
+		self.generated_B = self.generator(self.input_data_A, reuse = False)
+		descripted_real_data_B = self.descriptor(self.real_data_B, reuse = False)
+		descripted_revised_B = self.descriptor(self.input_data_B, reuse = True)
+
+
+
 		
 
 		# symbolic langevins
 		self.langevin_descriptor = self.langevin_dynamics_descriptor(self.input_data_B)
 
 
-		# descriptor variables
-		self.des_vars = [var for var in tf.trainable_variables() if var.name.startswith('des')]
+		# # descriptor variables
+		# self.des_vars = [var for var in tf.trainable_variables() if var.name.startswith('des')]
 
-		self.des_loss = tf.reduce_sum(tf.subtract(tf.reduce_mean(descripted_real_data_B, axis=0), tf.reduce_mean(descripted_revised_B, axis=0)))
+		# self.des_loss = tf.reduce_sum(tf.subtract(tf.reduce_mean(descripted_real_data_B, axis=0), tf.reduce_mean(descripted_revised_B, axis=0)))
 
-		des_optim = tf.train.AdamOptimizer(self.descriptor_learning_rate, beta1=self.beta1) #.minimize(self.des_loss, var_list=self.des_vars)
-		des_grads_vars = des_optim.compute_gradients(self.des_loss, var_list=self.des_vars)
-		# des_grads = [tf.reduce_mean(tf.abs(grad)) for (grad, var) in des_grads_vars if '/w' in var.name]
-		# update by mean of gradients
-		self.apply_d_grads = des_optim.apply_gradients(des_grads_vars)
+		# des_optim = tf.train.AdamOptimizer(self.descriptor_learning_rate, beta1=self.beta1) #.minimize(self.des_loss, var_list=self.des_vars)
+		# des_grads_vars = des_optim.compute_gradients(self.des_loss, var_list=self.des_vars)
+		# # des_grads = [tf.reduce_mean(tf.abs(grad)) for (grad, var) in des_grads_vars if '/w' in var.name]
+		# # update by mean of gradients
+		# self.apply_d_grads = des_optim.apply_gradients(des_grads_vars)
 
 
 
-		# generator variables
-		self.gen_vars = [var for var in tf.trainable_variables() if var.name.startswith('gen')]
+		# # generator variables
+		# self.gen_vars = [var for var in tf.trainable_variables() if var.name.startswith('gen')]
 
-		self.gen_loss = tf.reduce_sum(tf.subtract(tf.reduce_mean(self.real_data_B, axis=0), tf.reduce_mean(self.generated_B, axis=0)))
+		# self.gen_loss = tf.reduce_sum(tf.subtract(tf.reduce_mean(self.real_data_B, axis=0), tf.reduce_mean(self.generated_B, axis=0)))
 
-		gen_optim = tf.train.AdamOptimizer(self.generator_learning_rate, beta1=self.beta1) #.minimize(self.gen_loss, var_list=self.gen_vars)
-		gen_grads_vars = gen_optim.compute_gradients(self.gen_loss, var_list=self.gen_vars)
-		# gen_grads = [tf.reduce_mean(tf.abs(grad)) for (grad, var) in gen_grads_vars if '/w' in var.name]
-		self.apply_g_grads = gen_optim.apply_gradients(gen_grads_vars)
+		# gen_optim = tf.train.AdamOptimizer(self.generator_learning_rate, beta1=self.beta1) #.minimize(self.gen_loss, var_list=self.gen_vars)
+		# gen_grads_vars = gen_optim.compute_gradients(self.gen_loss, var_list=self.gen_vars)
+		# # gen_grads = [tf.reduce_mean(tf.abs(grad)) for (grad, var) in gen_grads_vars if '/w' in var.name]
+		# self.apply_g_grads = gen_optim.apply_gradients(gen_grads_vars)
 
 
 		# Compute Mean square error(MSE) for generator
 		self.recon_err = tf.reduce_mean(
 			tf.pow(tf.subtract(tf.reduce_mean(descripted_real_data_B, axis=0), tf.reduce_mean(descripted_revised_B, axis=0)), 2))
 
+		# for data in self.des_vars:
+		# 	print(data)
+
+
+		# self.g_loss = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(logits=self.D_logits_, labels=tf.ones_like(self.D_))) \
+		# self.real_data_B ,  self.input_data_B:
+		self.d_loss = self.L1_lambda * tf.reduce_mean(tf.abs(descripted_real_data_B - descripted_revised_B))
+		# self.d_loss = self.L1_lambda * tf.reduce_mean(tf.abs(self.real_data_B - self.input_data_B))
+
+		self.g_loss = self.L1_lambda * tf.reduce_mean(tf.abs(self.real_data_B - self.generated_B))
+
+		t_vars = tf.trainable_variables()
+		self.d_vars = [var for var in t_vars if var.name.startswith('des')]
+		self.g_vars = [var for var in t_vars if var.name.startswith('gen')]
+
+
 		self.saver = tf.train.Saver(max_to_keep=50)	
 
 
 	def train(self,sess):
-
 		# start learning
 		start_time = time.time()
 		print("time: {:.4f} , Learning start!!! ".format(0))
 		
+
 		# build model
 		self.build_model()
+
+		"""Train pix2pix"""
+		d_optim = tf.train.AdamOptimizer(self.descriptor_learning_rate, beta1=self.beta1).minimize(self.d_loss, var_list=self.d_vars)
+		g_optim = tf.train.AdamOptimizer(self.generator_learning_rate, beta1=self.beta1).minimize(self.g_loss, var_list=self.g_vars)
+
 
 		# prepare training data
 		training_data = glob('{}/{}/train/*.jpg'.format(self.dataset_dir, self.dataset_name))
@@ -170,7 +191,7 @@ class Coop_pix2pix(object):
 		# initialize training
 		sess.run(tf.global_variables_initializer())
 
-		sample_results = np.random.randn(self.num_chain * num_batch, self.image_size, self.image_size, 3)
+		sample_results = np.random.randn(num_batch, self.image_size, self.image_size, 3)
 
 		counter = 0
 
@@ -205,24 +226,32 @@ class Coop_pix2pix(object):
 				# step D1: descriptor try to revised image:"generated_B"
 				revised_B = sess.run(self.langevin_descriptor, feed_dict={self.input_data_B: generated_B})
 
-				# print(generated_B.shape) # (1, 256, 256, 3)
-				# print(revised_B.shape) # (1, 256, 256, 3)
+				print(generated_B.shape) # (1, 256, 256, 3)
+				print(revised_B.shape) # (1, 256, 256, 3)
 
-				# step D2: update descriptor net
-				descriptor_loss = sess.run([self.des_loss, self.apply_d_grads],
-                                  feed_dict={self.real_data_B: data_B, self.input_data_B: revised_B})[0]
+				# # step D2: update descriptor net
+				# descriptor_loss = sess.run([self.des_loss, self.apply_d_grads],
+    #                               feed_dict={self.real_data_B: data_B, self.input_data_B: revised_B})[0]
 
-				# step G2: update generator net
-				generator_loss = sess.run([self.gen_loss, self.apply_g_grads],
-									feed_dict={self.real_data_B: revised_B, self.input_data_A: data_A})[0]
+				# # step G2: update generator net
+				# generator_loss = sess.run([self.gen_loss, self.apply_g_grads],
+				# 					feed_dict={self.real_data_B: revised_B, self.input_data_A: data_A})[0]
+
+				# Update D network
+				_ , descriptor_loss = self.sess.run([d_optim, self.d_loss],
+									feed_dict={self.real_data_B: data_B, self.input_data_B: revised_B})
+
+				# Update G network
+				_ , generator_loss = self.sess.run([g_optim, self.g_loss],
+									feed_dict={self.real_data_B: revised_B, self.input_data_A: data_A})
 
 
 
 				# Compute Mean square error(MSE) for generator
 				mse = sess.run(self.recon_err, feed_dict={self.real_data_B: revised_B, self.input_data_B: generated_B})
 
-				sample_results[index * self.num_chain:(index + 1) * self.num_chain] = revised_B
-				print(sample_results.shape)
+				sample_results[index : (index + 1)] = revised_B
+				# print(sample_results.shape)
 
 
 				des_loss_avg.append(descriptor_loss)
@@ -239,8 +268,8 @@ class Coop_pix2pix(object):
 					save_images(revised_B, [self.batch_size, 1],
 						'./{}/train_descriptor_{:02d}_{:04d}.png'.format(self.output_dir, epoch, index))
 
-					saveSampleResults(revised_B, "%s/des%03d.png" % (self.output_dir, epoch), col_num=1)
-					saveSampleResults(generated_B, "%s/gen%03d.png" % (self.output_dir, epoch), col_num=1)
+					saveSampleResults(revised_B, "%s/des_%03d.png" % (self.output_dir, epoch), col_num=1)
+					saveSampleResults(generated_B, "%s/gen_%03d.png" % (self.output_dir, epoch), col_num=1)
 
 
 
@@ -365,55 +394,76 @@ class Coop_pix2pix(object):
 			return generator_output
 
 
+	# def descriptor(self, input_image, reuse=False):
+	# 	with tf.variable_scope('des', reuse=reuse):
+
+	# 		num_filter = 64
+
+	# 		# ---------- descriptor part ----------
+	# 		# descriptor_conv2d(input_image, output_dimension (by how many filters), scope_name)
+	# 		# input image = [batch_size, 256, 256, input_pic_dim]
+
+	# 		# des_layer_0_conv = (batch_size, 128, 128, num_filter)
+	# 		des_layer_0_conv = descriptor_conv2d(input_image, num_filter, name='des_layer_0_conv')
+
+	# 		# des_layer_1_conv = (batch_size, 64, 64, num_filter*2)
+	# 		des_layer_1_conv = descriptor_conv2d(leaky_relu(des_layer_0_conv), num_filter*2, name='des_layer_1_conv')
+	# 		des_layer_1_batchnorm = self.descriptor_batchnorm_layer1(des_layer_1_conv)
+
+	# 		# des_layer_2_conv = (batch_size, 32, 32, num_filter*4)
+	# 		des_layer_2_conv = descriptor_conv2d(leaky_relu(des_layer_1_batchnorm), num_filter*4, name='des_layer_2_conv')
+	# 		des_layer_2_batchnorm = self.descriptor_batchnorm_layer2(des_layer_2_conv)
+			
+	# 		# des_layer_3_conv = (batch_size, 16, 16, num_filter*8)
+	# 		des_layer_3_conv = descriptor_conv2d(leaky_relu(des_layer_2_batchnorm), num_filter*8, name='des_layer_3_conv')
+	# 		des_layer_3_batchnorm = self.descriptor_batchnorm_layer3(des_layer_3_conv)
+
+	# 		# linearization the descriptor result
+	# 		des_layer_3_reshape = tf.reshape(leaky_relu(des_layer_3_batchnorm), [self.batch_size, -1])
+	# 		# des_layer_3_linearization = linearization(des_layer_3_reshape, 1, 'des_layer_3_linearization')
+	# 		# print(des_layer_3_batchnorm.shape) # (1, 16, 16, 512)
+	# 		# print(des_layer_3_reshape.shape) # (1, 131072)
+
+
+	# 		# input image = [batch_size, 256, 256, input_pic_dim]
+
+	# 		return des_layer_3_reshape
+
+
 	def descriptor(self, input_image, reuse=False):
 		with tf.variable_scope('des', reuse=reuse):
 
-			num_filter = 64
+			conv1 = conv2d(input_image, 64, kernal=(5, 5), strides=(2, 2), padding="SAME", activate_fn=leaky_relu,
+				name="conv1")
 
-			# ---------- descriptor part ----------
-			# descriptor_conv2d(input_image, output_dimension (by how many filters), scope_name)
-			# input image = [batch_size, 256, 256, input_pic_dim]
+			conv2 = conv2d(conv1, 128, kernal=(3, 3), strides=(2, 2), padding="SAME", activate_fn=leaky_relu,
+				name="conv2")
 
-			# des_layer_0_conv = (batch_size, 128, 128, num_filter)
-			des_layer_0_conv = descriptor_conv2d(input_image, num_filter, name='des_layer_0_conv')
+			conv3 = conv2d(conv2, 256, kernal=(3, 3), strides=(1, 1), padding="SAME", activate_fn=leaky_relu,
+				name="conv3")
 
-			# des_layer_1_conv = (batch_size, 64, 64, num_filter*2)
-			des_layer_1_conv = descriptor_conv2d(leaky_relu(des_layer_0_conv), num_filter*2, name='des_layer_1_conv')
-			des_layer_1_batchnorm = self.descriptor_batchnorm_layer1(des_layer_1_conv)
+			fc = fully_connected(conv3, 100, name="fc")
 
-			# des_layer_2_conv = (batch_size, 32, 32, num_filter*4)
-			des_layer_2_conv = descriptor_conv2d(leaky_relu(des_layer_1_batchnorm), num_filter*4, name='des_layer_2_conv')
-			des_layer_2_batchnorm = self.descriptor_batchnorm_layer2(des_layer_2_conv)
-			
-			# des_layer_3_conv = (batch_size, 16, 16, num_filter*8)
-			des_layer_3_conv = descriptor_conv2d(leaky_relu(des_layer_2_batchnorm), num_filter*8, name='des_layer_3_conv')
-			des_layer_3_batchnorm = self.descriptor_batchnorm_layer3(des_layer_3_conv)
+			return fc
 
-			# linearization the descriptor result
-			des_layer_3_reshape = tf.reshape(leaky_relu(des_layer_3_batchnorm), [self.batch_size, -1])
-			# des_layer_3_linearization = linearization(des_layer_3_reshape, 1, 'des_layer_3_linearization')
-			# print(des_layer_3_batchnorm.shape) # (1, 16, 16, 512)
-			# print(des_layer_3_reshape.shape) # (1, 131072)
+	def langevin_dynamics_descriptor(self, input_image_arg):
 
-
-			# input image = [batch_size, 256, 256, input_pic_dim]
-
-			return des_layer_3_reshape
-
-	def langevin_dynamics_descriptor(self, input_image):
 		def cond(i, input_image):
 			return tf.less(i, self.descriptor_langevin_steps)
 
 		def body(i, input_image):
-			noise = tf.random_normal(shape=[self.num_chain, self.image_size, self.image_size, 3], name='noise')
-			generated_input_image = self.descriptor(input_image, reuse=True)
-			grad = tf.gradients(generated_input_image, input_image, name='grad_des')[0]
+			noise = tf.random_normal(shape=[1, self.image_size, self.image_size, 3], name='noise')
+			descripted_input_image = self.descriptor(input_image, reuse=True)
+
+			print("descripted_input_image:",descripted_input_image.shape)
+
+			grad = tf.gradients(descripted_input_image, input_image, name='grad_des')[0]
 			input_image = input_image - 0.5 * self.descriptor_step_size * self.descriptor_step_size * (input_image / self.sigma1 / self.sigma1 - grad) + self.descriptor_step_size * noise
 			return tf.add(i, 1), input_image
 
 		with tf.name_scope("langevin_dynamics_descriptor"):
 			i = tf.constant(0)
-			i, input_image = tf.while_loop(cond, body, [i, input_image])
+			i, input_image = tf.while_loop(cond, body, [i, input_image_arg])
 			return input_image
 
 
@@ -430,10 +480,6 @@ class Coop_pix2pix(object):
 		self.saver.save(self.sess,
 			os.path.join(checkpoint_dir, model_name),
 			global_step=step)
-
-
-
-
 
 
 
