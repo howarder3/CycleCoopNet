@@ -226,8 +226,8 @@ class Coop_pix2pix(object):
 				# step D1: descriptor try to revised image:"generated_B"
 				revised_B = sess.run(self.langevin_descriptor, feed_dict={self.input_data_B: generated_B})
 
-				print(generated_B.shape) # (1, 256, 256, 3)
-				print(revised_B.shape) # (1, 256, 256, 3)
+				# print(generated_B.shape) # (1, 256, 256, 3)
+				# print(revised_B.shape) # (1, 256, 256, 3)
 
 				# # step D2: update descriptor net
 				# descriptor_loss = sess.run([self.des_loss, self.apply_d_grads],
@@ -441,6 +441,10 @@ class Coop_pix2pix(object):
 
 			conv3 = conv2d(conv2, 256, kernal=(3, 3), strides=(1, 1), padding="SAME", activate_fn=leaky_relu,
 				name="conv3")
+
+			# conv3_reshape = tf.reshape(conv3, [self.batch_size, 1, 1, -1])
+			# print(conv3_reshape.shape)
+			# conv3_reshape.get_shape()[-1] = (1, 1, 1, 1048576)
 
 			fc = fully_connected(conv3, 100, name="fc")
 
