@@ -119,17 +119,21 @@ class Coop_pix2pix(object):
 		# symbolic langevins
 		self.langevin_descriptor = self.langevin_dynamics_descriptor(self.input_data_B)
 
+		t_vars = tf.trainable_variables()
+		self.d_vars = [var for var in t_vars if var.name.startswith('des')]
+		self.g_vars = [var for var in t_vars if var.name.startswith('gen')]
 
-		# # descriptor variables
+
+		# descriptor variables
 		# self.des_vars = [var for var in tf.trainable_variables() if var.name.startswith('des')]
 
-		# self.des_loss = tf.reduce_sum(tf.subtract(tf.reduce_mean(descripted_real_data_B, axis=0), tf.reduce_mean(descripted_revised_B, axis=0)))
+		self.des_loss = tf.reduce_sum(tf.subtract(tf.reduce_mean(descripted_real_data_B, axis=0), tf.reduce_mean(descripted_revised_B, axis=0)))
 
-		# des_optim = tf.train.AdamOptimizer(self.descriptor_learning_rate, beta1=self.beta1) #.minimize(self.des_loss, var_list=self.des_vars)
-		# des_grads_vars = des_optim.compute_gradients(self.des_loss, var_list=self.des_vars)
-		# # des_grads = [tf.reduce_mean(tf.abs(grad)) for (grad, var) in des_grads_vars if '/w' in var.name]
-		# # update by mean of gradients
-		# self.apply_d_grads = des_optim.apply_gradients(des_grads_vars)
+		des_optim = tf.train.AdamOptimizer(self.descriptor_learning_rate, beta1=self.beta1) #.minimize(self.des_loss, var_list=self.des_vars)
+		des_grads_vars = des_optim.compute_gradients(self.des_loss, var_list=self.d_vars)
+		# des_grads = [tf.reduce_mean(tf.abs(grad)) for (grad, var) in des_grads_vars if '/w' in var.name]
+		# update by mean of gradients
+		self.apply_d_grads = des_optim.apply_gradients(des_grads_vars)
 
 
 
@@ -154,15 +158,10 @@ class Coop_pix2pix(object):
 
 		# self.g_loss = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(logits=self.D_logits_, labels=tf.ones_like(self.D_))) \
 		# self.real_data_B ,  self.input_data_B:
-		self.d_loss = self.L1_lambda * tf.reduce_mean(tf.abs(descripted_real_data_B - descripted_revised_B))
+		# self.d_loss = self.L1_lambda * tf.reduce_mean(tf.abs(descripted_real_data_B - descripted_revised_B))
 		# self.d_loss = self.L1_lambda * tf.reduce_mean(tf.abs(self.real_data_B - self.input_data_B))
 
 		self.g_loss = self.L1_lambda * tf.reduce_mean(tf.abs(self.real_data_B - self.generated_B))
-
-		t_vars = tf.trainable_variables()
-		self.d_vars = [var for var in t_vars if var.name.startswith('des')]
-		self.g_vars = [var for var in t_vars if var.name.startswith('gen')]
-
 
 		self.saver = tf.train.Saver(max_to_keep=50)	
 
@@ -177,7 +176,7 @@ class Coop_pix2pix(object):
 		self.build_model()
 
 		"""Train pix2pix"""
-		d_optim = tf.train.AdamOptimizer(self.descriptor_learning_rate, beta1=self.beta1).minimize(self.d_loss, var_list=self.d_vars)
+		# d_optim = tf.train.AdamOptimizer(self.descriptor_learning_rate, beta1=self.beta1).minimize(self.d_loss, var_list=self.d_vars)
 		g_optim = tf.train.AdamOptimizer(self.generator_learning_rate, beta1=self.beta1).minimize(self.g_loss, var_list=self.g_vars)
 
 
@@ -229,17 +228,17 @@ class Coop_pix2pix(object):
 				# print(generated_B.shape) # (1, 256, 256, 3)
 				# print(revised_B.shape) # (1, 256, 256, 3)
 
-				# # step D2: update descriptor net
-				# descriptor_loss = sess.run([self.des_loss, self.apply_d_grads],
-    #                               feed_dict={self.real_data_B: data_B, self.input_data_B: revised_B})[0]
+				# step D2: update descriptor net
+				descriptor_loss = sess.run([self.des_loss, self.apply_d_grads],
+                                  feed_dict={self.real_data_B: data_B, self.input_data_B: revised_B})[0]
 
 				# # step G2: update generator net
 				# generator_loss = sess.run([self.gen_loss, self.apply_g_grads],
 				# 					feed_dict={self.real_data_B: revised_B, self.input_data_A: data_A})[0]
 
-				# Update D network
-				_ , descriptor_loss = self.sess.run([d_optim, self.d_loss],
-									feed_dict={self.real_data_B: data_B, self.input_data_B: revised_B})
+				# # Update D network
+				# _ , descriptor_loss = self.sess.run([d_optim, self.d_loss],
+				# 					feed_dict={self.real_data_B: data_B, self.input_data_B: revised_B})
 
 				# Update G network
 				_ , generator_loss = self.sess.run([g_optim, self.g_loss],
@@ -446,7 +445,7 @@ class Coop_pix2pix(object):
 			# print(conv3_reshape.shape)
 			# conv3_reshape.get_shape()[-1] = (1, 1, 1, 1048576)
 
-			fc = fully_connected(conv3, 100, name="fc")
+			fc = fully_connected(conv3, 1000, name="fc")
 
 			return fc
 
