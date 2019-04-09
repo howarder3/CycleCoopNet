@@ -136,13 +136,13 @@ class Coop_pix2pix(object):
 		# descriptor variables
 		# self.des_vars = [var for var in tf.trainable_variables() if var.name.startswith('des')]
 
-		self.des_loss = tf.reduce_sum(tf.subtract(tf.reduce_mean(descripted_real_data_B, axis=0), tf.reduce_mean(descripted_revised_B, axis=0)))
+		self.d_loss = tf.reduce_sum(tf.subtract(tf.reduce_mean(descripted_real_data_B, axis=0), tf.reduce_mean(descripted_revised_B, axis=0)))
 
-		des_optim = tf.train.AdamOptimizer(self.descriptor_learning_rate, beta1=self.beta1) #.minimize(self.des_loss, var_list=self.des_vars)
-		des_grads_vars = des_optim.compute_gradients(self.des_loss, var_list=self.d_vars)
+		d_optim = tf.train.AdamOptimizer(self.descriptor_learning_rate, beta1=self.beta1)
+		des_grads_vars = d_optim.compute_gradients(self.d_loss, var_list=self.d_vars)
 
 		# update by mean of gradients
-		self.apply_d_grads = des_optim.apply_gradients(des_grads_vars)
+		self.apply_d_grads = d_optim.apply_gradients(des_grads_vars)
 
 
 
@@ -234,7 +234,7 @@ class Coop_pix2pix(object):
 				# print(revised_B.shape) # (1, 256, 256, 3)
 
 				# step D2: update descriptor net
-				descriptor_loss = sess.run([self.des_loss, self.apply_d_grads],
+				_ , descriptor_loss = sess.run([self.apply_d_grads, self.d_loss],
                                   feed_dict={self.real_data_B: data_B, self.input_data_B: revised_B})[0]
 
 				# # step G2: update generator net
