@@ -113,9 +113,6 @@ class Coop_pix2pix(object):
 		descripted_revised_B = self.descriptor(self.input_data_B, reuse = True)
 
 
-
-		
-
 		# symbolic langevins
 		self.langevin_descriptor = self.langevin_dynamics_descriptor(self.input_data_B)
 
@@ -134,9 +131,8 @@ class Coop_pix2pix(object):
 
 
 		# descriptor variables
-		# self.des_vars = [var for var in tf.trainable_variables() if var.name.startswith('des')]
-
-		self.d_loss = tf.reduce_sum(tf.subtract(tf.reduce_mean(descripted_real_data_B, axis=0), tf.reduce_mean(descripted_revised_B, axis=0)))
+		# self.d_loss = tf.reduce_sum(tf.subtract(tf.reduce_mean(descripted_real_data_B, axis=0), tf.reduce_mean(descripted_revised_B, axis=0)))
+		self.d_loss = self.L1_lambda * tf.reduce_mean(tf.abs(descripted_real_data_B - descripted_revised_B))
 
 		d_optim = tf.train.AdamOptimizer(self.descriptor_learning_rate, beta1=self.beta1)
 		des_grads_vars = d_optim.compute_gradients(self.d_loss, var_list=self.d_vars)
