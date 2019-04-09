@@ -234,7 +234,7 @@ class Coop_pix2pix(object):
 				_ , descriptor_loss = sess.run([self.apply_d_grads, self.d_loss],
                                   feed_dict={self.real_data_B: data_B, self.input_revised_B: revised_B})
 
-				print(descriptor_loss)
+				# print(descriptor_loss)
 
 				# # step G2: update generator net
 				# generator_loss = sess.run([self.gen_loss, self.apply_g_grads],
