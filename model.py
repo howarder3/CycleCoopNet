@@ -79,11 +79,11 @@ class Coop_pix2pix(object):
 		self.descriptor_step_size = 0.002
 		self.sigma1 = 0.016
 		self.beta1 = 0.5
-		self.L1_lambda = 100
+		self.L1_lambda = 1
 
 		# learning rate
-		self.descriptor_learning_rate = 0.0001 # 0.01
-		self.generator_learning_rate = 0.0001 # 0.0001
+		self.descriptor_learning_rate = 0.00001 # 0.01
+		self.generator_learning_rate = 0.000001 # 0.0001
 
 	def build_model(self):
 		self.input_data_A = tf.placeholder(tf.float32,
@@ -137,7 +137,7 @@ class Coop_pix2pix(object):
 
 		# descriptor variables
 		self.d_loss = tf.reduce_sum(tf.subtract(tf.reduce_mean(descripted_real_data_B, axis=0), tf.reduce_mean(descripted_revised_B, axis=0)))
-		# self.d_loss = self.L1_lambda * tf.reduce_mean(tf.abs(descripted_real_data_B - descripted_revised_B))
+		# self.d_loss = self.L1_lambda * tf.reduce_mean(tf.abs(tf.subtract(descripted_real_data_B, descripted_revised_B)))
 
 		d_optim = tf.train.AdamOptimizer(self.descriptor_learning_rate, beta1=self.beta1)
 		des_grads_vars = d_optim.compute_gradients(self.d_loss, var_list=self.d_vars)
@@ -175,7 +175,7 @@ class Coop_pix2pix(object):
 		# d_optim = tf.train.AdamOptimizer(self.descriptor_learning_rate, beta1=self.beta1).minimize(self.d_loss, var_list=self.d_vars)
 		# g_optim = tf.train.AdamOptimizer(self.generator_learning_rate, beta1=self.beta1).minimize(self.g_loss, var_list=self.g_vars)
 
-		self.saver = tf.train.Saver(max_to_keep=50)	
+		self.saver = tf.train.Saver()	
 
 
 	def train(self,sess):
