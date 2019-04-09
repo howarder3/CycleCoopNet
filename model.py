@@ -149,6 +149,7 @@ class Coop_pix2pix(object):
 
 		# # generator variables
 		self.g_loss = self.L1_lambda * tf.reduce_mean(tf.abs(self.input_revised_B - self.generated_B))
+		g_optim = tf.train.AdamOptimizer(self.generator_learning_rate, beta1=self.beta1).minimize(self.g_loss, var_list=self.g_vars)
 
 		# self.gen_loss = tf.reduce_sum(tf.subtract(tf.reduce_mean(self.real_data_B, axis=0), tf.reduce_mean(self.generated_B, axis=0)))
 
@@ -160,7 +161,8 @@ class Coop_pix2pix(object):
 
 		# Compute Mean square error(MSE) for generator
 		self.mse_loss = tf.reduce_mean(
-			tf.pow(tf.subtract(tf.reduce_mean(descripted_generated_B, axis=0), tf.reduce_mean(descripted_revised_B, axis=0)), 2))
+			tf.pow(tf.subtract(tf.reduce_mean(self.input_revised_B, axis=0), tf.reduce_mean(self.input_generated_B, axis=0)), 2))
+		
 
 		# self.g_loss = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(logits=self.D_logits_, labels=tf.ones_like(self.D_))) \
 		# self.real_data_B ,  self.input_data_B:
@@ -168,23 +170,21 @@ class Coop_pix2pix(object):
 		# self.d_loss = self.L1_lambda * tf.reduce_mean(tf.abs(self.real_data_B - self.input_data_B))
 
 		
+		"""Train pix2pix"""
+		# d_optim = tf.train.AdamOptimizer(self.descriptor_learning_rate, beta1=self.beta1).minimize(self.d_loss, var_list=self.d_vars)
+		# g_optim = tf.train.AdamOptimizer(self.generator_learning_rate, beta1=self.beta1).minimize(self.g_loss, var_list=self.g_vars)
 
 		self.saver = tf.train.Saver(max_to_keep=50)	
 
 
 	def train(self,sess):
+
 		# start learning
 		start_time = time.time()
-		print("time: {:.4f} , Learning start!!! ".format(0))
-		
+		print("time: {:.4f} , Learning start!!! ".format(0))		
 
 		# build model
 		self.build_model()
-
-		"""Train pix2pix"""
-		# d_optim = tf.train.AdamOptimizer(self.descriptor_learning_rate, beta1=self.beta1).minimize(self.d_loss, var_list=self.d_vars)
-		g_optim = tf.train.AdamOptimizer(self.generator_learning_rate, beta1=self.beta1).minimize(self.g_loss, var_list=self.g_vars)
-
 
 		# prepare training data
 		training_data = glob('{}/{}/train/*.jpg'.format(self.dataset_dir, self.dataset_name))
@@ -192,12 +192,13 @@ class Coop_pix2pix(object):
 		# iteration(num_batch) = picture_amount/batch_size
 		num_batch = min(len(training_data), self.picture_amount) // self.batch_size
 
-
 		# initialize training
 		sess.run(tf.global_variables_initializer())
 
+		# sample picture initialize
 		sample_results = np.random.randn(num_batch, self.image_size, self.image_size, 3)
 
+		# counter initialize
 		counter = 0
 
 		# start training	
@@ -251,10 +252,11 @@ class Coop_pix2pix(object):
 				# Compute Mean square error(MSE) for generator
 				mse_loss = sess.run(self.mse_loss, feed_dict={self.input_revised_B: revised_B, self.input_generated_B: generated_B})
 
+				# put picture in sanple picture
 				sample_results[index : (index + 1)] = revised_B
-				# print(sample_results.shape)
 
-				print("Epoch: [{:4d}] [{:4d}/{:4d}] time: {:.4f}, avg_d_loss: {:.4f}, avg_g_loss: {:.4f}, avg_mse: {:.4f}"
+
+				print("Epoch: [{:4d}] [{:4d}/{:4d}] time: {:.4f}, d_loss: {:.4f}, g_loss: {:.4f}, mse_loss: {:.4f}"
 					.format(epoch, index, num_batch, time.time() - start_time, descriptor_loss, generator_loss, mse_loss))
 
 				if np.mod(counter, 100) == 0:
