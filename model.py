@@ -136,14 +136,15 @@ class Coop_pix2pix(object):
 
 
 		# descriptor variables
-		# self.d_loss = tf.reduce_sum(tf.subtract(tf.reduce_mean(descripted_real_data_B, axis=0), tf.reduce_mean(descripted_revised_B, axis=0)))
-		self.d_loss = self.L1_lambda * tf.reduce_mean(tf.abs(descripted_real_data_B - descripted_revised_B))
+		self.d_loss = tf.reduce_sum(tf.subtract(tf.reduce_mean(descripted_real_data_B, axis=0), tf.reduce_mean(descripted_revised_B, axis=0)))
+		# self.d_loss = self.L1_lambda * tf.reduce_mean(tf.abs(descripted_real_data_B - descripted_revised_B))
 
 		d_optim = tf.train.AdamOptimizer(self.descriptor_learning_rate, beta1=self.beta1)
 		des_grads_vars = d_optim.compute_gradients(self.d_loss, var_list=self.d_vars)
 
 		# update by mean of gradients
 		self.apply_d_grads = d_optim.apply_gradients(des_grads_vars)
+
 
 
 
