@@ -89,9 +89,12 @@ class Coop_pix2pix(object):
 		self.input_data_A = tf.placeholder(tf.float32,
 				[self.batch_size, self.image_size, self.image_size, self.input_pic_dim],
 				name='input_images_A')
-		self.input_data_B = tf.placeholder(tf.float32,
+		self.input_generated_B = tf.placeholder(tf.float32,
 				[self.batch_size, self.image_size, self.image_size, self.input_pic_dim],
-				name='input_images_B')
+				name='input_generated_B')
+		self.input_revised_B = tf.placeholder(tf.float32,
+				[self.batch_size, self.image_size, self.image_size, self.input_pic_dim],
+				name='input_revised_B')
 		self.real_data_B = tf.placeholder(tf.float32,
 				[self.batch_size, self.image_size, self.image_size, self.input_pic_dim],
 				name='real_data_B')
@@ -109,12 +112,14 @@ class Coop_pix2pix(object):
 
 
 		self.generated_B = self.generator(self.input_data_A, reuse = False)
+
 		descripted_real_data_B = self.descriptor(self.real_data_B, reuse = False)
-		descripted_revised_B = self.descriptor(self.input_data_B, reuse = True)
+		descripted_generated_B = self.descriptor(self.input_generated_B, reuse = True)
+		descripted_revised_B = self.descriptor(self.input_revised_B, reuse = True)
 
 
 		# symbolic langevins
-		self.langevin_descriptor = self.langevin_dynamics_descriptor(self.input_data_B)
+		self.langevin_descriptor = self.langevin_dynamics_descriptor(self.input_generated_B)
 
 		t_vars = tf.trainable_variables()
 		self.d_vars = [var for var in t_vars if var.name.startswith('des')]
@@ -143,7 +148,7 @@ class Coop_pix2pix(object):
 
 
 		# # generator variables
-		# self.gen_vars = [var for var in tf.trainable_variables() if var.name.startswith('gen')]
+		self.g_loss = self.L1_lambda * tf.reduce_mean(tf.abs(self.input_revised_B - self.generated_B))
 
 		# self.gen_loss = tf.reduce_sum(tf.subtract(tf.reduce_mean(self.real_data_B, axis=0), tf.reduce_mean(self.generated_B, axis=0)))
 
@@ -154,15 +159,15 @@ class Coop_pix2pix(object):
 
 
 		# Compute Mean square error(MSE) for generator
-		self.recon_err = tf.reduce_mean(
-			tf.pow(tf.subtract(tf.reduce_mean(descripted_real_data_B, axis=0), tf.reduce_mean(descripted_revised_B, axis=0)), 2))
+		self.mse_loss = tf.reduce_mean(
+			tf.pow(tf.subtract(tf.reduce_mean(descripted_generated_B, axis=0), tf.reduce_mean(descripted_revised_B, axis=0)), 2))
 
 		# self.g_loss = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(logits=self.D_logits_, labels=tf.ones_like(self.D_))) \
 		# self.real_data_B ,  self.input_data_B:
 		# self.d_loss = self.L1_lambda * tf.reduce_mean(tf.abs(descripted_real_data_B - descripted_revised_B))
 		# self.d_loss = self.L1_lambda * tf.reduce_mean(tf.abs(self.real_data_B - self.input_data_B))
 
-		self.g_loss = self.L1_lambda * tf.reduce_mean(tf.abs(self.real_data_B - self.generated_B))
+		
 
 		self.saver = tf.train.Saver(max_to_keep=50)	
 
@@ -195,15 +200,11 @@ class Coop_pix2pix(object):
 
 		counter = 0
 
-		# saver = tf.train.Saver(max_to_keep=50)
-
-
 		# start training	
 		print("time: {:.4f} , Start training model......".format(time.time()-start_time))
 		
 
 		for epoch in xrange(self.epoch): # how many epochs to train
-			des_loss_avg, gen_loss_avg, mse_avg = [], [], []
 
 			for index in xrange(num_batch): # num_batch
 				# find picture list index*self.batch_size to (index+1)*self.batch_size (one batch)
@@ -224,14 +225,14 @@ class Coop_pix2pix(object):
 				# print(generated_B.shape) # (1, 256, 256, 3)
 
 				# step D1: descriptor try to revised image:"generated_B"
-				revised_B = sess.run(self.langevin_descriptor, feed_dict={self.input_data_B: generated_B})
+				revised_B = sess.run(self.langevin_descriptor, feed_dict={self.input_generated_B: generated_B})
 
 				# print(generated_B.shape) # (1, 256, 256, 3)
 				# print(revised_B.shape) # (1, 256, 256, 3)
 
 				# step D2: update descriptor net
 				_ , descriptor_loss = sess.run([self.apply_d_grads, self.d_loss],
-                                  feed_dict={self.real_data_B: data_B, self.input_data_B: revised_B})
+                                  feed_dict={self.real_data_B: data_B, self.input_revised_B: revised_B})
 
 				print(descriptor_loss)
 
@@ -245,24 +246,16 @@ class Coop_pix2pix(object):
 
 				# Update G network
 				_ , generator_loss = self.sess.run([g_optim, self.g_loss],
-									feed_dict={self.real_data_B: revised_B, self.input_data_A: data_A})
-
-
+									feed_dict={self.input_revised_B: revised_B, self.input_data_A: data_A})
 
 				# Compute Mean square error(MSE) for generator
-				mse = sess.run(self.recon_err, feed_dict={self.real_data_B: revised_B, self.input_data_B: generated_B})
+				mse_loss = sess.run(self.mse_loss, feed_dict={self.input_revised_B: revised_B, self.input_generated_B: generated_B})
 
 				sample_results[index : (index + 1)] = revised_B
 				# print(sample_results.shape)
 
-
-				des_loss_avg.append(descriptor_loss)
-				gen_loss_avg.append(generator_loss)
-				mse_avg.append(mse)
-
-
 				print("Epoch: [{:4d}] [{:4d}/{:4d}] time: {:.4f}, avg_d_loss: {:.4f}, avg_g_loss: {:.4f}, avg_mse: {:.4f}"
-					.format(epoch, index, num_batch, time.time() - start_time, np.mean(des_loss_avg), np.mean(gen_loss_avg), np.mean(mse_avg)))
+					.format(epoch, index, num_batch, time.time() - start_time, descriptor_loss, generator_loss, mse_loss))
 
 				if np.mod(counter, 100) == 0:
 					save_images(generated_B, [self.batch_size, 1],
