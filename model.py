@@ -149,7 +149,7 @@ class Coop_pix2pix(object):
 
 		# # generator variables
 		self.g_loss = self.L1_lambda * tf.reduce_mean(tf.abs(self.input_revised_B - self.generated_B))
-		g_optim = tf.train.AdamOptimizer(self.generator_learning_rate, beta1=self.beta1).minimize(self.g_loss, var_list=self.g_vars)
+		self.g_optim = tf.train.AdamOptimizer(self.generator_learning_rate, beta1=self.beta1).minimize(self.g_loss, var_list=self.g_vars)
 
 		# self.gen_loss = tf.reduce_sum(tf.subtract(tf.reduce_mean(self.real_data_B, axis=0), tf.reduce_mean(self.generated_B, axis=0)))
 
@@ -162,7 +162,7 @@ class Coop_pix2pix(object):
 		# Compute Mean square error(MSE) for generator
 		self.mse_loss = tf.reduce_mean(
 			tf.pow(tf.subtract(tf.reduce_mean(self.input_revised_B, axis=0), tf.reduce_mean(self.input_generated_B, axis=0)), 2))
-		
+
 
 		# self.g_loss = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(logits=self.D_logits_, labels=tf.ones_like(self.D_))) \
 		# self.real_data_B ,  self.input_data_B:
@@ -246,7 +246,7 @@ class Coop_pix2pix(object):
 				# 					feed_dict={self.real_data_B: data_B, self.input_data_B: revised_B})
 
 				# Update G network
-				_ , generator_loss = self.sess.run([g_optim, self.g_loss],
+				_ , generator_loss = self.sess.run([self.g_optim, self.g_loss],
 									feed_dict={self.input_revised_B: revised_B, self.input_data_A: data_A})
 
 				# Compute Mean square error(MSE) for generator
