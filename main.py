@@ -8,7 +8,7 @@ python main.py
 # lab
 D:
 cd D:\GitHub\Coop_pix2pix
-python main.py --dataset_dir datasets --picture_amount 1
+python main.py --dataset_dir datasets --picture_amount 100
 
 # mac
 cd /Users/howarder3/Documents/GitHub/Coop_pix2pix 
@@ -24,6 +24,7 @@ import tensorflow as tf
 import os
 
 from model import Coop_pix2pix
+
 
 # parameters setting
 tf.app.flags.DEFINE_integer('epoch',2000,'how many epochs to train')

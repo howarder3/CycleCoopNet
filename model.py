@@ -123,6 +123,15 @@ class Coop_pix2pix(object):
 		self.d_vars = [var for var in t_vars if var.name.startswith('des')]
 		self.g_vars = [var for var in t_vars if var.name.startswith('gen')]
 
+		print("\n------  self.d_vars  ------\n")
+		for var in self.d_vars:
+			print(var)
+
+		print("\n------  self.g_vars  ------\n")
+		for var in self.g_vars:
+			print(var)
+
+
 
 		# descriptor variables
 		# self.des_vars = [var for var in tf.trainable_variables() if var.name.startswith('des')]
@@ -131,7 +140,7 @@ class Coop_pix2pix(object):
 
 		des_optim = tf.train.AdamOptimizer(self.descriptor_learning_rate, beta1=self.beta1) #.minimize(self.des_loss, var_list=self.des_vars)
 		des_grads_vars = des_optim.compute_gradients(self.des_loss, var_list=self.d_vars)
-		# des_grads = [tf.reduce_mean(tf.abs(grad)) for (grad, var) in des_grads_vars if '/w' in var.name]
+
 		# update by mean of gradients
 		self.apply_d_grads = des_optim.apply_gradients(des_grads_vars)
 
@@ -151,10 +160,6 @@ class Coop_pix2pix(object):
 		# Compute Mean square error(MSE) for generator
 		self.recon_err = tf.reduce_mean(
 			tf.pow(tf.subtract(tf.reduce_mean(descripted_real_data_B, axis=0), tf.reduce_mean(descripted_revised_B, axis=0)), 2))
-
-		# for data in self.des_vars:
-		# 	print(data)
-
 
 		# self.g_loss = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(logits=self.D_logits_, labels=tf.ones_like(self.D_))) \
 		# self.real_data_B ,  self.input_data_B:
@@ -445,7 +450,7 @@ class Coop_pix2pix(object):
 			# print(conv3_reshape.shape)
 			# conv3_reshape.get_shape()[-1] = (1, 1, 1, 1048576)
 
-			fc = fully_connected(conv3, 1000, name="fc")
+			fc = fully_connected(conv3, 100, name="fc")
 
 			return fc
 
