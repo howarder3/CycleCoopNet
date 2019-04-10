@@ -40,9 +40,9 @@ tf.app.flags.DEFINE_string('dataset_dir', './test_datasets', 'dataset directory'
 tf.app.flags.DEFINE_string('dataset_name', 'facades', 'dataset name')
 
 # folder position
-tf.app.flags.DEFINE_string('output_dir', './output_dir', 'output directory')
-tf.app.flags.DEFINE_string('checkpoint_dir', './checkpoint_dir', 'checkpoint directory')
-tf.app.flags.DEFINE_string('log_dir', './log_dir', 'log directory')
+tf.app.flags.DEFINE_string('output_dir', './output', 'output directory')
+tf.app.flags.DEFINE_string('checkpoint_dir', './checkpoint', 'checkpoint directory')
+tf.app.flags.DEFINE_string('log_dir', './log', 'log directory')
 
 
 

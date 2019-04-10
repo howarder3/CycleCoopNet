@@ -82,8 +82,8 @@ class Coop_pix2pix(object):
 		self.L1_lambda = 1
 
 		# learning rate
-		self.descriptor_learning_rate = 0.000001 # 0.01
-		self.generator_learning_rate = 0.000001 # 0.0001
+		self.descriptor_learning_rate = 0.00001 # 0.01
+		self.generator_learning_rate  = 0.000001 # 0.0001
 
 	def build_model(self):
 		self.input_data_A = tf.placeholder(tf.float32,
@@ -218,8 +218,8 @@ class Coop_pix2pix(object):
 				batch_images = np.array(batch).astype(np.float32)
 
 				# data domain A and data domain B
-				data_A = batch_images[:, :, :, :self.input_pic_dim]
-				data_B = batch_images[:, :, :, self.input_pic_dim:self.input_pic_dim+self.output_pic_dim]
+				data_B = batch_images[:, :, :, :self.input_pic_dim]
+				data_A = batch_images[:, :, :, self.input_pic_dim:self.input_pic_dim+self.output_pic_dim]
 
 
 				# step G1: try to generate B domain(target domain) picture
@@ -260,15 +260,22 @@ class Coop_pix2pix(object):
 				print("Epoch: [{:4d}] [{:4d}/{:4d}] time: {:.4f}, d_loss: {:.4f}, g_loss: {:.4f}, mse_loss: {:.4f}"
 					.format(epoch, index, num_batch, time.time() - start_time, descriptor_loss, generator_loss, mse_loss))
 
+				# if need calculate time interval
+				# start_time = time.time()
+
 				# if index == 0:
 				if np.mod(counter, 100) == 0:
+					save_images(data_A, [self.batch_size, 1],
+						'./{}/{:02d}_{:04d}_01_input_data_A.png'.format(self.output_dir, epoch, index))
 					save_images(generated_B, [self.batch_size, 1],
-						'./{}/train_generator_{:02d}_{:04d}.png'.format(self.output_dir, epoch, index))
+						'./{}/{:02d}_{:04d}_02_output_generator.png'.format(self.output_dir, epoch, index))
 					save_images(revised_B, [self.batch_size, 1],
-						'./{}/train_descriptor_{:02d}_{:04d}.png'.format(self.output_dir, epoch, index))
+						'./{}/{:02d}_{:04d}_03_output_descriptor.png'.format(self.output_dir, epoch, index))
+					save_images(data_B, [self.batch_size, 1],
+						'./{}/{:02d}_{:04d}_04_input_data_B.png'.format(self.output_dir, epoch, index))
 
-					saveSampleResults(revised_B, "%s/des_%03d.png" % (self.output_dir, epoch), col_num=1)
-					saveSampleResults(generated_B, "%s/gen_%03d.png" % (self.output_dir, epoch), col_num=1)
+					# saveSampleResults(revised_B, "%s/des_%03d.png" % (self.output_dir, epoch), col_num=1)
+					# saveSampleResults(generated_B, "%s/gen_%03d.png" % (self.output_dir, epoch), col_num=1)
 
 
 

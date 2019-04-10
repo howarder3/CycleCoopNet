@@ -9,9 +9,14 @@ __pycache__/
 # Data
 
 datasets/
+log/
+log_dir/
+output/
 output_dir/
+checkpoint/
 checkpoint_dir/
-output_dir_result_v1/
+
+output_dir_result_d_lr_00001
 
 
 # Distribution / packaging
