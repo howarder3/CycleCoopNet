@@ -106,6 +106,7 @@ def leaky_relu(x, leak=0.2, name="leaky_relu"):
 def relu(x, name="relu"):
 	return tf.nn.relu(x)
 	
+# linearization	
 def linearization(input_image, output_size, name="descriptor_linear"):
     shape = input_image.get_shape().as_list()
 
@@ -115,4 +116,19 @@ def linearization(input_image, output_size, name="descriptor_linear"):
         bias = tf.get_variable("bias", [output_size],
             initializer=tf.constant_initializer(0.0))
 
-        return tf.matmul(input_image, matrix) + bias
+        descriptor_linear_output = tf.matmul(input_image, matrix) + bias
+
+        print("{} shape: {}".format(name, descriptor_linear_output.shape))
+
+        return descriptor_linear_output
+
+
+
+
+
+
+
+
+
+
+        
