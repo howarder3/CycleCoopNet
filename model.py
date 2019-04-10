@@ -82,8 +82,10 @@ class Coop_pix2pix(object):
 		self.L1_lambda = 1
 
 		# learning rate
-		self.descriptor_learning_rate = 0.00001 # 0.01
-		self.generator_learning_rate  = 0.000001 # 0.0001
+		self.descriptor_learning_rate = 1e-6 # 0.01
+		self.generator_learning_rate  = 1e-5 # 0.0001
+		# print(1e-5) # 0.00001
+
 
 	def build_model(self):
 		self.input_data_A = tf.placeholder(tf.float32,
@@ -136,44 +138,45 @@ class Coop_pix2pix(object):
 
 
 		# descriptor variables
+
+		# descriptor loss functions
 		self.d_loss = tf.reduce_sum(tf.subtract(tf.reduce_mean(descripted_real_data_B, axis=0), tf.reduce_mean(descripted_revised_B, axis=0)))
 		# self.d_loss = self.L1_lambda * tf.reduce_mean(tf.abs(tf.subtract(descripted_real_data_B, descripted_revised_B)))
+		# # self.d_loss = tf.reduce_mean(tf.subtract(descripted_real_data_B, descripted_revised_B))
 
-		d_optim = tf.train.AdamOptimizer(self.descriptor_learning_rate, beta1=self.beta1)
-		des_grads_vars = d_optim.compute_gradients(self.d_loss, var_list=self.d_vars)
+		# self.d_loss = self.L1_lambda * tf.reduce_mean(tf.abs(descripted_real_data_B - descripted_revised_B))
+		# self.d_loss = self.L1_lambda * tf.reduce_mean(tf.abs(self.real_data_B - self.input_data_B))
 
-		# update by mean of gradients
-		self.apply_d_grads = d_optim.apply_gradients(des_grads_vars)
+		self.d_optim = tf.train.AdamOptimizer(self.descriptor_learning_rate, beta1=self.beta1).minimize(self.d_loss, var_list=self.d_vars)
+
+		# d_optim = tf.train.AdamOptimizer(self.descriptor_learning_rate, beta1=self.beta1)
+		# des_grads_vars = d_optim.compute_gradients(self.d_loss, var_list=self.d_vars)
+
+		# # update by mean of gradients
+		# self.apply_d_grads = d_optim.apply_gradients(des_grads_vars)
 
 
 
 
 		# # generator variables
-		self.g_loss = self.L1_lambda * tf.reduce_mean(tf.abs(self.input_revised_B - self.generated_B))
+
+		# generator loss functions
+		# self.g_loss = self.L1_lambda * tf.reduce_mean(tf.abs(self.input_revised_B - self.generated_B))
+		self.g_loss = tf.reduce_sum(tf.subtract(tf.reduce_mean(self.input_revised_B, axis=0), tf.reduce_mean(self.generated_B, axis=0)))
+		# self.g_loss = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(logits=self.D_logits_, labels=tf.ones_like(self.D_))) \
+
 		self.g_optim = tf.train.AdamOptimizer(self.generator_learning_rate, beta1=self.beta1).minimize(self.g_loss, var_list=self.g_vars)
 
-		# self.gen_loss = tf.reduce_sum(tf.subtract(tf.reduce_mean(self.real_data_B, axis=0), tf.reduce_mean(self.generated_B, axis=0)))
-
-		# gen_optim = tf.train.AdamOptimizer(self.generator_learning_rate, beta1=self.beta1) #.minimize(self.gen_loss, var_list=self.gen_vars)
-		# gen_grads_vars = gen_optim.compute_gradients(self.gen_loss, var_list=self.gen_vars)
-		# # gen_grads = [tf.reduce_mean(tf.abs(grad)) for (grad, var) in gen_grads_vars if '/w' in var.name]
-		# self.apply_g_grads = gen_optim.apply_gradients(gen_grads_vars)
+		# g_optim = tf.train.AdamOptimizer(self.generator_learning_rate, beta1=self.beta1) 
+		# gen_grads_vars = g_optim.compute_gradients(self.g_loss, var_list=self.g_vars)
+		# # # gen_grads = [tf.reduce_mean(tf.abs(grad)) for (grad, var) in gen_grads_vars if '/w' in var.name]
+		# self.apply_g_grads = g_optim.apply_gradients(gen_grads_vars)
 
 
 		# Compute Mean square error(MSE) for generator
 		self.mse_loss = tf.reduce_mean(
 			tf.pow(tf.subtract(tf.reduce_mean(self.input_revised_B, axis=0), tf.reduce_mean(self.input_generated_B, axis=0)), 2))
 
-
-		# self.g_loss = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(logits=self.D_logits_, labels=tf.ones_like(self.D_))) \
-		# self.real_data_B ,  self.input_data_B:
-		# self.d_loss = self.L1_lambda * tf.reduce_mean(tf.abs(descripted_real_data_B - descripted_revised_B))
-		# self.d_loss = self.L1_lambda * tf.reduce_mean(tf.abs(self.real_data_B - self.input_data_B))
-
-		
-		"""Train pix2pix"""
-		# d_optim = tf.train.AdamOptimizer(self.descriptor_learning_rate, beta1=self.beta1).minimize(self.d_loss, var_list=self.d_vars)
-		# g_optim = tf.train.AdamOptimizer(self.generator_learning_rate, beta1=self.beta1).minimize(self.g_loss, var_list=self.g_vars)
 
 		self.saver = tf.train.Saver()	
 
@@ -233,7 +236,7 @@ class Coop_pix2pix(object):
 				# print(revised_B.shape) # (1, 256, 256, 3)
 
 				# step D2: update descriptor net
-				_ , descriptor_loss = sess.run([self.apply_d_grads, self.d_loss],
+				_ , descriptor_loss = sess.run([self.d_optim, self.d_loss],
                                   feed_dict={self.real_data_B: data_B, self.input_revised_B: revised_B})
 
 				# print(descriptor_loss)
@@ -264,7 +267,7 @@ class Coop_pix2pix(object):
 				# start_time = time.time()
 
 				# if index == 0:
-				if np.mod(counter, 100) == 0:
+				if np.mod(counter, 10) == 0:
 					save_images(data_A, [self.batch_size, 1],
 						'./{}/{:02d}_{:04d}_01_input_data_A.png'.format(self.output_dir, epoch, index))
 					save_images(generated_B, [self.batch_size, 1],
@@ -278,7 +281,6 @@ class Coop_pix2pix(object):
 					# saveSampleResults(generated_B, "%s/gen_%03d.png" % (self.output_dir, epoch), col_num=1)
 
 
-
 				if np.mod(counter, 500) == 0:
 					self.save(self.checkpoint_dir, counter)
 
@@ -286,24 +288,10 @@ class Coop_pix2pix(object):
 
 
 
-				# if index == 0 and epoch % 1 == 0:
-				# 	if not os.path.exists(self.output_dir):
-				# 		os.makedirs(self.output_dir)
-				# 	saveSampleResults(revised_B, "%s/des%03d.png" % (self.output_dir, epoch), col_num=self.nTileCol)
-				# 	saveSampleResults(generated_B, "%s/gen%03d.png" % (self.output_dir, epoch), col_num=self.nTileCol)
-
 			# # print("time: {:.4f} , Epoch: {} ".format(time.time() - start_time, epoch))
 			# print('Epoch #{:d}, avg.descriptor loss: {:.4f}, avg.generator loss: {:.4f}, avg.L2 distance: {:4.4f}, '
 			# 	'time: {:.2f}s'.format(epoch, np.mean(des_loss_avg), np.mean(gen_loss_avg), np.mean(mse_avg), time.time() - start_time))
 
-
-			# if epoch % 1 == 0:
-			# 	if not os.path.exists(self.checkpoint_dir):
-			# 		os.makedirs(self.checkpoint_dir)
-			# 	saver.save(sess, "%s/%s" % (self.checkpoint_dir, 'model.ckpt'), global_step=epoch)
-
-			# 	if not os.path.exists(self.log_dir):
-			# 		os.makedirs(self.log_dir)
 
 
 	def generator(self, input_image, reuse=False):
@@ -399,45 +387,10 @@ class Coop_pix2pix(object):
 
 			return generator_output
 
-
-	# def descriptor(self, input_image, reuse=False):
-	# 	with tf.variable_scope('des', reuse=reuse):
-
-	# 		num_filter = 64
-
-	# 		# ---------- descriptor part ----------
-	# 		# descriptor_conv2d(input_image, output_dimension (by how many filters), scope_name)
-	# 		# input image = [batch_size, 256, 256, input_pic_dim]
-
-	# 		# des_layer_0_conv = (batch_size, 128, 128, num_filter)
-	# 		des_layer_0_conv = descriptor_conv2d(input_image, num_filter, name='des_layer_0_conv')
-
-	# 		# des_layer_1_conv = (batch_size, 64, 64, num_filter*2)
-	# 		des_layer_1_conv = descriptor_conv2d(leaky_relu(des_layer_0_conv), num_filter*2, name='des_layer_1_conv')
-	# 		des_layer_1_batchnorm = self.descriptor_batchnorm_layer1(des_layer_1_conv)
-
-	# 		# des_layer_2_conv = (batch_size, 32, 32, num_filter*4)
-	# 		des_layer_2_conv = descriptor_conv2d(leaky_relu(des_layer_1_batchnorm), num_filter*4, name='des_layer_2_conv')
-	# 		des_layer_2_batchnorm = self.descriptor_batchnorm_layer2(des_layer_2_conv)
-			
-	# 		# des_layer_3_conv = (batch_size, 16, 16, num_filter*8)
-	# 		des_layer_3_conv = descriptor_conv2d(leaky_relu(des_layer_2_batchnorm), num_filter*8, name='des_layer_3_conv')
-	# 		des_layer_3_batchnorm = self.descriptor_batchnorm_layer3(des_layer_3_conv)
-
-	# 		# linearization the descriptor result
-	# 		des_layer_3_reshape = tf.reshape(leaky_relu(des_layer_3_batchnorm), [self.batch_size, -1])
-	# 		# des_layer_3_linearization = linearization(des_layer_3_reshape, 1, 'des_layer_3_linearization')
-	# 		# print(des_layer_3_batchnorm.shape) # (1, 16, 16, 512)
-	# 		# print(des_layer_3_reshape.shape) # (1, 131072)
-
-
-	# 		# input image = [batch_size, 256, 256, input_pic_dim]
-
-	# 		return des_layer_3_reshape
-
-
 	def descriptor(self, input_image, reuse=False):
 		with tf.variable_scope('des', reuse=reuse):
+
+			# print("\n------  descriptor layers  ------\n")
 
 			conv1 = conv2d(input_image, 64, kernal=(5, 5), strides=(2, 2), padding="SAME", activate_fn=leaky_relu,
 				name="conv1")

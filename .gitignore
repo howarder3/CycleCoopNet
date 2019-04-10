@@ -10,14 +10,10 @@ __pycache__/
 
 datasets/
 log/
-log_dir/
 output/
-output_dir/
 checkpoint/
-checkpoint_dir/
 
-output_dir_result_d_lr_00001
-
+output_reference/
 
 # Distribution / packaging
 .Python
