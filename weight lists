@@ -1,19 +1,66 @@
+(mlenv) D:\GitHub\Coop_pix2pix>python main.py --dataset_dir datasets
+
+gen_encode_layer_1_conv shape: (1, 128, 128, 64)
+gen_encode_layer_2_conv shape: (1, 64, 64, 128)
+gen_encode_layer_3_conv shape: (1, 32, 32, 256)
+gen_encode_layer_4_conv shape: (1, 16, 16, 512)
+gen_encode_layer_5_conv shape: (1, 8, 8, 512)
+gen_encode_layer_6_conv shape: (1, 4, 4, 512)
+gen_encode_layer_7_conv shape: (1, 2, 2, 512)
+gen_encode_layer_8_conv shape: (1, 1, 1, 512)
+gen_decode_layer_1_deconv shape: (1, 2, 2, 512)
+gen_decode_layer_2_deconv shape: (1, 4, 4, 512)
+gen_decode_layer_3_deconv shape: (1, 8, 8, 512)
+gen_decode_layer_4_deconv shape: (1, 16, 16, 512)
+gen_decode_layer_5_deconv shape: (1, 32, 32, 256)
+gen_decode_layer_6_deconv shape: (1, 64, 64, 128)
+gen_decode_layer_7_deconv shape: (1, 128, 128, 64)
+gen_decode_layer_8_deconv shape: (1, 256, 256, 3)
+
+des_layer_0_conv shape: (1, 128, 128, 64)
+des_layer_1_conv shape: (1, 64, 64, 128)
+des_layer_2_conv shape: (1, 32, 32, 256)
+des_layer_3_conv shape: (1, 16, 16, 512)
+des_layer_3_linearization shape: (1, 100)
+des_layer_3_linearization:  (1, 100)
+
+des_layer_0_conv shape: (1, 128, 128, 64)
+des_layer_1_conv shape: (1, 64, 64, 128)
+des_layer_2_conv shape: (1, 32, 32, 256)
+des_layer_3_conv shape: (1, 16, 16, 512)
+des_layer_3_linearization shape: (1, 100)
+des_layer_3_linearization:  (1, 100)
+
+des_layer_0_conv shape: (1, 128, 128, 64)
+des_layer_1_conv shape: (1, 64, 64, 128)
+des_layer_2_conv shape: (1, 32, 32, 256)
+des_layer_3_conv shape: (1, 16, 16, 512)
+des_layer_3_linearization shape: (1, 100)
+des_layer_3_linearization:  (1, 100)
+
+des_layer_0_conv shape: (1, 128, 128, 64)
+des_layer_1_conv shape: (1, 64, 64, 128)
+des_layer_2_conv shape: (1, 32, 32, 256)
+des_layer_3_conv shape: (1, 16, 16, 512)
+des_layer_3_linearization shape: (1, 100)
+des_layer_3_linearization:  (1, 100)
+
 ------  self.des_vars  ------
 
 <tf.Variable 'des/des_layer_0_conv/descriptor_weight:0' shape=(5, 5, 3, 64) dtype=float32_ref>
 <tf.Variable 'des/des_layer_0_conv/bias:0' shape=(64,) dtype=float32_ref>
 <tf.Variable 'des/des_layer_1_conv/descriptor_weight:0' shape=(5, 5, 64, 128) dtype=float32_ref>
 <tf.Variable 'des/des_layer_1_conv/bias:0' shape=(128,) dtype=float32_ref>
-<tf.Variable 'des/descriptor_batchnorm_layer1/beta:0' shape=(128,) dtype=float32_ref>
-<tf.Variable 'des/descriptor_batchnorm_layer1/gamma:0' shape=(128,) dtype=float32_ref>
+<tf.Variable 'des/des_layer_1_batchnorm/beta:0' shape=(128,) dtype=float32_ref>
+<tf.Variable 'des/des_layer_1_batchnorm/gamma:0' shape=(128,) dtype=float32_ref>
 <tf.Variable 'des/des_layer_2_conv/descriptor_weight:0' shape=(5, 5, 128, 256) dtype=float32_ref>
 <tf.Variable 'des/des_layer_2_conv/bias:0' shape=(256,) dtype=float32_ref>
-<tf.Variable 'des/descriptor_batchnorm_layer2/beta:0' shape=(256,) dtype=float32_ref>
-<tf.Variable 'des/descriptor_batchnorm_layer2/gamma:0' shape=(256,) dtype=float32_ref>
+<tf.Variable 'des/des_layer_2_batchnorm/beta:0' shape=(256,) dtype=float32_ref>
+<tf.Variable 'des/des_layer_2_batchnorm/gamma:0' shape=(256,) dtype=float32_ref>
 <tf.Variable 'des/des_layer_3_conv/descriptor_weight:0' shape=(5, 5, 256, 512) dtype=float32_ref>
 <tf.Variable 'des/des_layer_3_conv/bias:0' shape=(512,) dtype=float32_ref>
-<tf.Variable 'des/descriptor_batchnorm_layer3/beta:0' shape=(512,) dtype=float32_ref>
-<tf.Variable 'des/descriptor_batchnorm_layer3/gamma:0' shape=(512,) dtype=float32_ref>
+<tf.Variable 'des/des_layer_3_batchnorm/beta:0' shape=(512,) dtype=float32_ref>
+<tf.Variable 'des/des_layer_3_batchnorm/gamma:0' shape=(512,) dtype=float32_ref>
 <tf.Variable 'des/des_layer_3_linearization/Matrix:0' shape=(131072, 100) dtype=float32_ref>
 <tf.Variable 'des/des_layer_3_linearization/bias:0' shape=(100,) dtype=float32_ref>
 
@@ -23,59 +70,59 @@
 <tf.Variable 'gen/gen_encode_layer_1_conv/bias:0' shape=(64,) dtype=float32_ref>
 <tf.Variable 'gen/gen_encode_layer_2_conv/gen_encode_weight:0' shape=(5, 5, 64, 128) dtype=float32_ref>
 <tf.Variable 'gen/gen_encode_layer_2_conv/bias:0' shape=(128,) dtype=float32_ref>
-<tf.Variable 'gen/gen_encode_batchnorm_layer2/beta:0' shape=(128,) dtype=float32_ref>
-<tf.Variable 'gen/gen_encode_batchnorm_layer2/gamma:0' shape=(128,) dtype=float32_ref>
+<tf.Variable 'gen/gen_encode_layer_2_batchnorm/beta:0' shape=(128,) dtype=float32_ref>
+<tf.Variable 'gen/gen_encode_layer_2_batchnorm/gamma:0' shape=(128,) dtype=float32_ref>
 <tf.Variable 'gen/gen_encode_layer_3_conv/gen_encode_weight:0' shape=(5, 5, 128, 256) dtype=float32_ref>
 <tf.Variable 'gen/gen_encode_layer_3_conv/bias:0' shape=(256,) dtype=float32_ref>
-<tf.Variable 'gen/gen_encode_batchnorm_layer3/beta:0' shape=(256,) dtype=float32_ref>
-<tf.Variable 'gen/gen_encode_batchnorm_layer3/gamma:0' shape=(256,) dtype=float32_ref>
+<tf.Variable 'gen/gen_encode_layer_3_batchnorm/beta:0' shape=(256,) dtype=float32_ref>
+<tf.Variable 'gen/gen_encode_layer_3_batchnorm/gamma:0' shape=(256,) dtype=float32_ref>
 <tf.Variable 'gen/gen_encode_layer_4_conv/gen_encode_weight:0' shape=(5, 5, 256, 512) dtype=float32_ref>
 <tf.Variable 'gen/gen_encode_layer_4_conv/bias:0' shape=(512,) dtype=float32_ref>
-<tf.Variable 'gen/gen_encode_batchnorm_layer4/beta:0' shape=(512,) dtype=float32_ref>
-<tf.Variable 'gen/gen_encode_batchnorm_layer4/gamma:0' shape=(512,) dtype=float32_ref>
+<tf.Variable 'gen/gen_encode_layer_4_batchnorm/beta:0' shape=(512,) dtype=float32_ref>
+<tf.Variable 'gen/gen_encode_layer_4_batchnorm/gamma:0' shape=(512,) dtype=float32_ref>
 <tf.Variable 'gen/gen_encode_layer_5_conv/gen_encode_weight:0' shape=(5, 5, 512, 512) dtype=float32_ref>
 <tf.Variable 'gen/gen_encode_layer_5_conv/bias:0' shape=(512,) dtype=float32_ref>
-<tf.Variable 'gen/gen_encode_batchnorm_layer5/beta:0' shape=(512,) dtype=float32_ref>
-<tf.Variable 'gen/gen_encode_batchnorm_layer5/gamma:0' shape=(512,) dtype=float32_ref>
+<tf.Variable 'gen/gen_encode_layer_5_batchnorm/beta:0' shape=(512,) dtype=float32_ref>
+<tf.Variable 'gen/gen_encode_layer_5_batchnorm/gamma:0' shape=(512,) dtype=float32_ref>
 <tf.Variable 'gen/gen_encode_layer_6_conv/gen_encode_weight:0' shape=(5, 5, 512, 512) dtype=float32_ref>
 <tf.Variable 'gen/gen_encode_layer_6_conv/bias:0' shape=(512,) dtype=float32_ref>
-<tf.Variable 'gen/gen_encode_batchnorm_layer6/beta:0' shape=(512,) dtype=float32_ref>
-<tf.Variable 'gen/gen_encode_batchnorm_layer6/gamma:0' shape=(512,) dtype=float32_ref>
+<tf.Variable 'gen/gen_encode_layer_6_batchnorm/beta:0' shape=(512,) dtype=float32_ref>
+<tf.Variable 'gen/gen_encode_layer_6_batchnorm/gamma:0' shape=(512,) dtype=float32_ref>
 <tf.Variable 'gen/gen_encode_layer_7_conv/gen_encode_weight:0' shape=(5, 5, 512, 512) dtype=float32_ref>
 <tf.Variable 'gen/gen_encode_layer_7_conv/bias:0' shape=(512,) dtype=float32_ref>
-<tf.Variable 'gen/gen_encode_batchnorm_layer7/beta:0' shape=(512,) dtype=float32_ref>
-<tf.Variable 'gen/gen_encode_batchnorm_layer7/gamma:0' shape=(512,) dtype=float32_ref>
+<tf.Variable 'gen/gen_encode_layer_7_batchnorm/beta:0' shape=(512,) dtype=float32_ref>
+<tf.Variable 'gen/gen_encode_layer_7_batchnorm/gamma:0' shape=(512,) dtype=float32_ref>
 <tf.Variable 'gen/gen_encode_layer_8_conv/gen_encode_weight:0' shape=(5, 5, 512, 512) dtype=float32_ref>
 <tf.Variable 'gen/gen_encode_layer_8_conv/bias:0' shape=(512,) dtype=float32_ref>
-<tf.Variable 'gen/gen_encode_batchnorm_layer8/beta:0' shape=(512,) dtype=float32_ref>
-<tf.Variable 'gen/gen_encode_batchnorm_layer8/gamma:0' shape=(512,) dtype=float32_ref>
+<tf.Variable 'gen/gen_encode_layer_8_batchnorm/beta:0' shape=(512,) dtype=float32_ref>
+<tf.Variable 'gen/gen_encode_layer_8_batchnorm/gamma:0' shape=(512,) dtype=float32_ref>
 <tf.Variable 'gen/gen_decode_layer_1_deconv/gen_decode_weight:0' shape=(5, 5, 512, 512) dtype=float32_ref>
 <tf.Variable 'gen/gen_decode_layer_1_deconv/bias:0' shape=(512,) dtype=float32_ref>
-<tf.Variable 'gen/gen_decode_batchnorm_layer1/beta:0' shape=(512,) dtype=float32_ref>
-<tf.Variable 'gen/gen_decode_batchnorm_layer1/gamma:0' shape=(512,) dtype=float32_ref>
+<tf.Variable 'gen/gen_decode_layer_1_batchnorm/beta:0' shape=(512,) dtype=float32_ref>
+<tf.Variable 'gen/gen_decode_layer_1_batchnorm/gamma:0' shape=(512,) dtype=float32_ref>
 <tf.Variable 'gen/gen_decode_layer_2_deconv/gen_decode_weight:0' shape=(5, 5, 512, 1024) dtype=float32_ref>
 <tf.Variable 'gen/gen_decode_layer_2_deconv/bias:0' shape=(512,) dtype=float32_ref>
-<tf.Variable 'gen/gen_decode_batchnorm_layer2/beta:0' shape=(512,) dtype=float32_ref>
-<tf.Variable 'gen/gen_decode_batchnorm_layer2/gamma:0' shape=(512,) dtype=float32_ref>
+<tf.Variable 'gen/gen_decode_layer_2_batchnorm/beta:0' shape=(512,) dtype=float32_ref>
+<tf.Variable 'gen/gen_decode_layer_2_batchnorm/gamma:0' shape=(512,) dtype=float32_ref>
 <tf.Variable 'gen/gen_decode_layer_3_deconv/gen_decode_weight:0' shape=(5, 5, 512, 1024) dtype=float32_ref>
 <tf.Variable 'gen/gen_decode_layer_3_deconv/bias:0' shape=(512,) dtype=float32_ref>
-<tf.Variable 'gen/gen_decode_batchnorm_layer3/beta:0' shape=(512,) dtype=float32_ref>
-<tf.Variable 'gen/gen_decode_batchnorm_layer3/gamma:0' shape=(512,) dtype=float32_ref>
+<tf.Variable 'gen/gen_decode_layer_3_batchnorm/beta:0' shape=(512,) dtype=float32_ref>
+<tf.Variable 'gen/gen_decode_layer_3_batchnorm/gamma:0' shape=(512,) dtype=float32_ref>
 <tf.Variable 'gen/gen_decode_layer_4_deconv/gen_decode_weight:0' shape=(5, 5, 512, 1024) dtype=float32_ref>
 <tf.Variable 'gen/gen_decode_layer_4_deconv/bias:0' shape=(512,) dtype=float32_ref>
-<tf.Variable 'gen/gen_decode_batchnorm_layer4/beta:0' shape=(512,) dtype=float32_ref>
-<tf.Variable 'gen/gen_decode_batchnorm_layer4/gamma:0' shape=(512,) dtype=float32_ref>
+<tf.Variable 'gen/gen_decode_layer_4_batchnorm/beta:0' shape=(512,) dtype=float32_ref>
+<tf.Variable 'gen/gen_decode_layer_4_batchnorm/gamma:0' shape=(512,) dtype=float32_ref>
 <tf.Variable 'gen/gen_decode_layer_5_deconv/gen_decode_weight:0' shape=(5, 5, 256, 1024) dtype=float32_ref>
 <tf.Variable 'gen/gen_decode_layer_5_deconv/bias:0' shape=(256,) dtype=float32_ref>
-<tf.Variable 'gen/gen_decode_batchnorm_layer5/beta:0' shape=(256,) dtype=float32_ref>
-<tf.Variable 'gen/gen_decode_batchnorm_layer5/gamma:0' shape=(256,) dtype=float32_ref>
+<tf.Variable 'gen/gen_decode_layer_5_batchnorm/beta:0' shape=(256,) dtype=float32_ref>
+<tf.Variable 'gen/gen_decode_layer_5_batchnorm/gamma:0' shape=(256,) dtype=float32_ref>
 <tf.Variable 'gen/gen_decode_layer_6_deconv/gen_decode_weight:0' shape=(5, 5, 128, 512) dtype=float32_ref>
 <tf.Variable 'gen/gen_decode_layer_6_deconv/bias:0' shape=(128,) dtype=float32_ref>
-<tf.Variable 'gen/gen_decode_batchnorm_layer6/beta:0' shape=(128,) dtype=float32_ref>
-<tf.Variable 'gen/gen_decode_batchnorm_layer6/gamma:0' shape=(128,) dtype=float32_ref>
+<tf.Variable 'gen/gen_decode_layer_6_batchnorm/beta:0' shape=(128,) dtype=float32_ref>
+<tf.Variable 'gen/gen_decode_layer_6_batchnorm/gamma:0' shape=(128,) dtype=float32_ref>
 <tf.Variable 'gen/gen_decode_layer_7_deconv/gen_decode_weight:0' shape=(5, 5, 64, 256) dtype=float32_ref>
 <tf.Variable 'gen/gen_decode_layer_7_deconv/bias:0' shape=(64,) dtype=float32_ref>
-<tf.Variable 'gen/gen_decode_batchnorm_layer7/beta:0' shape=(64,) dtype=float32_ref>
-<tf.Variable 'gen/gen_decode_batchnorm_layer7/gamma:0' shape=(64,) dtype=float32_ref>
+<tf.Variable 'gen/gen_decode_layer_7_batchnorm/beta:0' shape=(64,) dtype=float32_ref>
+<tf.Variable 'gen/gen_decode_layer_7_batchnorm/gamma:0' shape=(64,) dtype=float32_ref>
 <tf.Variable 'gen/gen_decode_layer_8_deconv/gen_decode_weight:0' shape=(5, 5, 3, 128) dtype=float32_ref>
 <tf.Variable 'gen/gen_decode_layer_8_deconv/bias:0' shape=(3,) dtype=float32_ref>

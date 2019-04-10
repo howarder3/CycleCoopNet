@@ -53,21 +53,21 @@ class Coop_pix2pix(object):
 		self.log_dir = log_dir
 
 
-		self.gen_encode_layer2_batchnorm = batch_norm(name='gen_encode_layer2_batchnorm')
-		self.gen_encode_layer3_batchnorm = batch_norm(name='gen_encode_layer3_batchnorm')
-		self.gen_encode_layer4_batchnorm = batch_norm(name='gen_encode_layer4_batchnorm')
-		self.gen_encode_layer5_batchnorm = batch_norm(name='gen_encode_layer5_batchnorm')
-		self.gen_encode_layer6_batchnorm = batch_norm(name='gen_encode_layer6_batchnorm')
-		self.gen_encode_layer7_batchnorm = batch_norm(name='gen_encode_layer7_batchnorm')
-		self.gen_encode_layer8_batchnorm = batch_norm(name='gen_encode_layer8_batchnorm')
+		self.gen_encode_layer2_batchnorm = batch_norm(name='gen_encode_layer_2_batchnorm')
+		self.gen_encode_layer3_batchnorm = batch_norm(name='gen_encode_layer_3_batchnorm')
+		self.gen_encode_layer4_batchnorm = batch_norm(name='gen_encode_layer_4_batchnorm')
+		self.gen_encode_layer5_batchnorm = batch_norm(name='gen_encode_layer_5_batchnorm')
+		self.gen_encode_layer6_batchnorm = batch_norm(name='gen_encode_layer_6_batchnorm')
+		self.gen_encode_layer7_batchnorm = batch_norm(name='gen_encode_layer_7_batchnorm')
+		self.gen_encode_layer8_batchnorm = batch_norm(name='gen_encode_layer_8_batchnorm')
 
-		self.gen_decode_layer1_batchnorm = batch_norm(name='gen_decode_layer1_batchnorm')
-		self.gen_decode_layer2_batchnorm = batch_norm(name='gen_decode_layer2_batchnorm')
-		self.gen_decode_layer3_batchnorm = batch_norm(name='gen_decode_layer3_batchnorm')
-		self.gen_decode_layer4_batchnorm = batch_norm(name='gen_decode_layer4_batchnorm')
-		self.gen_decode_layer5_batchnorm = batch_norm(name='gen_decode_layer5_batchnorm')
-		self.gen_decode_layer6_batchnorm = batch_norm(name='gen_decode_layer6_batchnorm')
-		self.gen_decode_layer7_batchnorm = batch_norm(name='gen_decode_layer7_batchnorm')
+		self.gen_decode_layer1_batchnorm = batch_norm(name='gen_decode_layer_1_batchnorm')
+		self.gen_decode_layer2_batchnorm = batch_norm(name='gen_decode_layer_2_batchnorm')
+		self.gen_decode_layer3_batchnorm = batch_norm(name='gen_decode_layer_3_batchnorm')
+		self.gen_decode_layer4_batchnorm = batch_norm(name='gen_decode_layer_4_batchnorm')
+		self.gen_decode_layer5_batchnorm = batch_norm(name='gen_decode_layer_5_batchnorm')
+		self.gen_decode_layer6_batchnorm = batch_norm(name='gen_decode_layer_6_batchnorm')
+		self.gen_decode_layer7_batchnorm = batch_norm(name='gen_decode_layer_7_batchnorm')
 
 		self.des_layer_1_batchnorm = batch_norm(name='des_layer_1_batchnorm')
 		self.des_layer_2_batchnorm = batch_norm(name='des_layer_2_batchnorm')
@@ -82,8 +82,8 @@ class Coop_pix2pix(object):
 		self.beta1 = 0.5
 
 		# learning rate
-		self.descriptor_learning_rate = 0.007 # 1e-6 # 0.01
-		self.generator_learning_rate  = 0.0001 # 1e-4 # 0.0001
+		self.descriptor_learning_rate = 0.01 # 0.001 # 1e-6 # 0.01 # 0.007
+		self.generator_learning_rate  = 0.0001 # 1e-4 # 0.0001 # 0.0001
 		# print(1e-5) # 0.00001
 
 
@@ -298,6 +298,8 @@ class Coop_pix2pix(object):
 	def generator(self, input_image, reuse=False):
 		with tf.variable_scope("gen", reuse=reuse):
 
+			print("\n------  generator layers shape  ------\n")
+
 			num_filter = 64
 
 			# ---------- encoder part ----------
@@ -412,6 +414,8 @@ class Coop_pix2pix(object):
 
 	def descriptor(self, input_image, reuse=False):
 		with tf.variable_scope('des', reuse=reuse):
+
+			print("\n------  descriptor layers shape  ------\n")
 
 			num_filter = 64
 
