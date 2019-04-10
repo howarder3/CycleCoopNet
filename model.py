@@ -82,8 +82,8 @@ class Coop_pix2pix(object):
 		self.beta1 = 0.5
 
 		# learning rate
-		self.descriptor_learning_rate = 0.01 # 0.001 # 1e-6 # 0.01 # 0.007
-		self.generator_learning_rate  = 0.0001 # 1e-4 # 0.0001 # 0.0001
+		self.descriptor_learning_rate = 1e-4 # 0.01 # 0.001 # 1e-6 # 0.01 # 0.007
+		self.generator_learning_rate  = 1e-5 # 0.0001 # 1e-4 # 0.0001 # 0.0001
 		# print(1e-5) # 0.00001
 
 
