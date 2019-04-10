@@ -16,9 +16,9 @@ from data_io import *
 
 class Coop_pix2pix(object):
 	def __init__(self, sess, 
-				epoch = 1000, 
-				batch_size=1,
-				picture_amount=99999,
+				epoch = 200, 
+				batch_size = 1,
+				picture_amount = 99999,
 				image_size = 256,
 				output_size = 256,
 				input_pic_dim = 3, 
@@ -81,8 +81,8 @@ class Coop_pix2pix(object):
 		self.beta1 = 0.5
 
 		# learning rate
-		self.descriptor_learning_rate = 1e-5 # 0.01
-		self.generator_learning_rate  = 1e-5 # 0.0001
+		self.descriptor_learning_rate = 0.0002 # 1e-6 # 0.01
+		self.generator_learning_rate  = 0.0002 # 1e-4 # 0.0001
 		# print(1e-5) # 0.00001
 
 
@@ -139,9 +139,9 @@ class Coop_pix2pix(object):
 		# descriptor variables
 
 		# descriptor loss functions
-		self.d_loss = tf.reduce_mean(tf.abs(descripted_real_data_B - descripted_revised_B))
+		# self.d_loss = tf.reduce_mean(tf.abs(descripted_real_data_B - descripted_revised_B))
 		# # self.d_loss = tf.reduce_mean(tf.abs(self.input_real_data_B - self.input_revised_B))
-		# self.d_loss = tf.reduce_sum(tf.subtract(tf.reduce_mean(descripted_real_data_B, axis=0), tf.reduce_mean(descripted_revised_B, axis=0)))
+		self.d_loss = tf.reduce_sum(tf.subtract(tf.reduce_mean(descripted_real_data_B, axis=0), tf.reduce_mean(descripted_revised_B, axis=0)))
 		# self.d_loss = self.L1_lambda * tf.reduce_mean(tf.abs(tf.subtract(descripted_real_data_B, descripted_revised_B)))
 		# # self.d_loss = tf.reduce_mean(tf.subtract(descripted_real_data_B, descripted_revised_B))
 
@@ -159,7 +159,7 @@ class Coop_pix2pix(object):
 		# # generator variables
 
 		# generator loss functions
-		self.g_loss = tf.reduce_mean(tf.abs(self.input_revised_B - self.generated_B))
+		self.g_loss = tf.reduce_mean(tf.abs(tf.subtract(self.input_real_data_B, self.generated_B)))
 		# self.g_loss = tf.reduce_sum(tf.subtract(tf.reduce_mean(self.input_real_data_B, axis=0), tf.reduce_mean(self.generated_B, axis=0)))
 		self.g_optim = tf.train.AdamOptimizer(self.generator_learning_rate, beta1=self.beta1).minimize(self.g_loss, var_list=self.g_vars)
 
@@ -242,7 +242,9 @@ class Coop_pix2pix(object):
 				# 					feed_dict={self.input_real_data_B: revised_B, self.input_data_A: data_A})[0]
 
 				_ , generator_loss = self.sess.run([self.g_optim, self.g_loss],
-									feed_dict={self.input_revised_B: revised_B, self.input_data_A: data_A})
+									feed_dict={self.input_real_data_B: data_B, self.input_data_A: data_A})
+
+				# self.input_revised_B: revised_B
 
 
 				# # Update D network
@@ -408,6 +410,42 @@ class Coop_pix2pix(object):
 			fc = fully_connected(conv3, 100, name="fc")
 
 			return fc
+
+		# def descriptor(self, input_image, reuse=False):
+	# 	with tf.variable_scope('des', reuse=reuse):
+
+	# 		num_filter = 64
+
+	# 		# ---------- descriptor part ----------
+	# 		# descriptor_conv2d(input_image, output_dimension (by how many filters), scope_name)
+	# 		# input image = [batch_size, 256, 256, input_pic_dim]
+
+	# 		# des_layer_0_conv = (batch_size, 128, 128, num_filter)
+	# 		des_layer_0_conv = descriptor_conv2d(input_image, num_filter, name='des_layer_0_conv')
+
+	# 		# des_layer_1_conv = (batch_size, 64, 64, num_filter*2)
+	# 		des_layer_1_conv = descriptor_conv2d(leaky_relu(des_layer_0_conv), num_filter*2, name='des_layer_1_conv')
+	# 		des_layer_1_batchnorm = self.descriptor_batchnorm_layer1(des_layer_1_conv)
+
+	# 		# des_layer_2_conv = (batch_size, 32, 32, num_filter*4)
+	# 		des_layer_2_conv = descriptor_conv2d(leaky_relu(des_layer_1_batchnorm), num_filter*4, name='des_layer_2_conv')
+	# 		des_layer_2_batchnorm = self.descriptor_batchnorm_layer2(des_layer_2_conv)
+			
+	# 		# des_layer_3_conv = (batch_size, 16, 16, num_filter*8)
+	# 		des_layer_3_conv = descriptor_conv2d(leaky_relu(des_layer_2_batchnorm), num_filter*8, name='des_layer_3_conv')
+	# 		des_layer_3_batchnorm = self.descriptor_batchnorm_layer3(des_layer_3_conv)
+
+	# 		# linearization the descriptor result
+	# 		des_layer_3_reshape = tf.reshape(leaky_relu(des_layer_3_batchnorm), [self.batch_size, -1])
+	# 		# des_layer_3_linearization = linearization(des_layer_3_reshape, 1, 'des_layer_3_linearization')
+	# 		# print(des_layer_3_batchnorm.shape) # (1, 16, 16, 512)
+	# 		# print(des_layer_3_reshape.shape) # (1, 131072)
+
+
+	# 		# input image = [batch_size, 256, 256, input_pic_dim]
+
+	# 		return des_layer_3_reshape
+
 
 	def langevin_dynamics_descriptor(self, input_image_arg):
 
