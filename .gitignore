@@ -11,6 +11,8 @@ __pycache__/
 datasets/
 output_dir/
 checkpoint_dir/
+output_dir_result_v1/
+
 
 # Distribution / packaging
 .Python
