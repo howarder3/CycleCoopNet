@@ -16,7 +16,7 @@ from data_io import *
 
 class Coop_pix2pix(object):
 	def __init__(self, sess, 
-				epoch=2000, 
+				epoch = 1000, 
 				batch_size=1,
 				picture_amount=99999,
 				image_size = 256,
@@ -79,7 +79,6 @@ class Coop_pix2pix(object):
 		self.descriptor_step_size = 0.002
 		self.sigma1 = 0.016
 		self.beta1 = 0.5
-		self.L1_lambda = 1
 
 		# learning rate
 		self.descriptor_learning_rate = 1e-6 # 0.01
@@ -97,7 +96,7 @@ class Coop_pix2pix(object):
 		self.input_revised_B = tf.placeholder(tf.float32,
 				[self.batch_size, self.image_size, self.image_size, self.input_pic_dim],
 				name='input_revised_B')
-		self.real_data_B = tf.placeholder(tf.float32,
+		self.input_real_data_B = tf.placeholder(tf.float32,
 				[self.batch_size, self.image_size, self.image_size, self.input_pic_dim],
 				name='real_data_B')
 
@@ -115,7 +114,7 @@ class Coop_pix2pix(object):
 
 		self.generated_B = self.generator(self.input_data_A, reuse = False)
 
-		descripted_real_data_B = self.descriptor(self.real_data_B, reuse = False)
+		descripted_real_data_B = self.descriptor(self.input_real_data_B, reuse = False)
 		descripted_generated_B = self.descriptor(self.input_generated_B, reuse = True)
 		descripted_revised_B = self.descriptor(self.input_revised_B, reuse = True)
 
@@ -140,12 +139,11 @@ class Coop_pix2pix(object):
 		# descriptor variables
 
 		# descriptor loss functions
-		self.d_loss = tf.reduce_sum(tf.subtract(tf.reduce_mean(descripted_real_data_B, axis=0), tf.reduce_mean(descripted_revised_B, axis=0)))
+		self.d_loss = tf.reduce_mean(tf.abs(descripted_real_data_B - descripted_revised_B))
+		# # self.d_loss = tf.reduce_mean(tf.abs(self.input_real_data_B - self.input_revised_B))
+		# self.d_loss = tf.reduce_sum(tf.subtract(tf.reduce_mean(descripted_real_data_B, axis=0), tf.reduce_mean(descripted_revised_B, axis=0)))
 		# self.d_loss = self.L1_lambda * tf.reduce_mean(tf.abs(tf.subtract(descripted_real_data_B, descripted_revised_B)))
 		# # self.d_loss = tf.reduce_mean(tf.subtract(descripted_real_data_B, descripted_revised_B))
-
-		# self.d_loss = self.L1_lambda * tf.reduce_mean(tf.abs(descripted_real_data_B - descripted_revised_B))
-		# self.d_loss = self.L1_lambda * tf.reduce_mean(tf.abs(self.real_data_B - self.input_data_B))
 
 		self.d_optim = tf.train.AdamOptimizer(self.descriptor_learning_rate, beta1=self.beta1).minimize(self.d_loss, var_list=self.d_vars)
 
@@ -161,10 +159,8 @@ class Coop_pix2pix(object):
 		# # generator variables
 
 		# generator loss functions
-		# self.g_loss = self.L1_lambda * tf.reduce_mean(tf.abs(self.input_revised_B - self.generated_B))
-		self.g_loss = tf.reduce_sum(tf.subtract(tf.reduce_mean(self.input_revised_B, axis=0), tf.reduce_mean(self.generated_B, axis=0)))
-		# self.g_loss = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(logits=self.D_logits_, labels=tf.ones_like(self.D_))) \
-
+		self.g_loss = tf.reduce_mean(tf.abs(self.input_revised_B - self.generated_B))
+		# self.g_loss = tf.reduce_sum(tf.subtract(tf.reduce_mean(self.input_real_data_B, axis=0), tf.reduce_mean(self.generated_B, axis=0)))
 		self.g_optim = tf.train.AdamOptimizer(self.generator_learning_rate, beta1=self.beta1).minimize(self.g_loss, var_list=self.g_vars)
 
 		# g_optim = tf.train.AdamOptimizer(self.generator_learning_rate, beta1=self.beta1) 
@@ -173,9 +169,9 @@ class Coop_pix2pix(object):
 		# self.apply_g_grads = g_optim.apply_gradients(gen_grads_vars)
 
 
-		# Compute Mean square error(MSE) for generator
+		# Compute Mean square error(MSE) for generated data and real data
 		self.mse_loss = tf.reduce_mean(
-			tf.pow(tf.subtract(tf.reduce_mean(self.input_revised_B, axis=0), tf.reduce_mean(self.input_generated_B, axis=0)), 2))
+			tf.pow(tf.subtract(tf.reduce_mean(self.input_real_data_B, axis=0), tf.reduce_mean(self.generated_B, axis=0)), 2))
 
 
 		self.saver = tf.train.Saver()	
@@ -237,24 +233,28 @@ class Coop_pix2pix(object):
 
 				# step D2: update descriptor net
 				_ , descriptor_loss = sess.run([self.d_optim, self.d_loss],
-                                  feed_dict={self.real_data_B: data_B, self.input_revised_B: revised_B})
+                                  feed_dict={self.input_real_data_B: data_B, self.input_revised_B: revised_B})
 
 				# print(descriptor_loss)
 
 				# # step G2: update generator net
 				# generator_loss = sess.run([self.gen_loss, self.apply_g_grads],
-				# 					feed_dict={self.real_data_B: revised_B, self.input_data_A: data_A})[0]
+				# 					feed_dict={self.input_real_data_B: revised_B, self.input_data_A: data_A})[0]
 
-				# # Update D network
-				# _ , descriptor_loss = self.sess.run([d_optim, self.d_loss],
-				# 					feed_dict={self.real_data_B: data_B, self.input_data_B: revised_B})
-
-				# Update G network
 				_ , generator_loss = self.sess.run([self.g_optim, self.g_loss],
 									feed_dict={self.input_revised_B: revised_B, self.input_data_A: data_A})
 
-				# Compute Mean square error(MSE) for generator
-				mse_loss = sess.run(self.mse_loss, feed_dict={self.input_revised_B: revised_B, self.input_generated_B: generated_B})
+
+				# # Update D network
+				# _ , descriptor_loss = self.sess.run([d_optim, self.d_loss],
+				# 					feed_dict={self.input_real_data_B: data_B, self.input_data_B: revised_B})
+
+				# Update G network
+				# _ , generator_loss = self.sess.run([self.g_optim, self.g_loss],
+				# 					feed_dict={self.input_revised_B: revised_B, self.input_data_A: data_A})
+
+				# Compute Mean square error(MSE) for generated data and real data
+				mse_loss = sess.run(self.mse_loss, feed_dict={self.input_real_data_B: data_B, self.input_data_A: data_A})
 
 				# put picture in sanple picture
 				sample_results[index : (index + 1)] = revised_B
@@ -418,7 +418,7 @@ class Coop_pix2pix(object):
 			noise = tf.random_normal(shape=[1, self.image_size, self.image_size, 3], name='noise')
 			descripted_input_image = self.descriptor(input_image, reuse=True)
 
-			print("descripted_input_image:",descripted_input_image.shape)
+			# print("descripted_input_image:",descripted_input_image.shape)
 
 			grad = tf.gradients(descripted_input_image, input_image, name='grad_des')[0]
 			input_image = input_image - 0.5 * self.descriptor_step_size * self.descriptor_step_size * (input_image / self.sigma1 / self.sigma1 - grad) + self.descriptor_step_size * noise
