@@ -100,33 +100,3 @@ def transform(image, npx=64, is_crop=True, resize_w=64):
 def inverse_transform(images):
     return (images+1.)/2.
 
-
-
-def conv2d(input_, output_dim, kernal=(5, 5), strides=(2, 2), padding='SAME', activate_fn=None, name="conv2d"):
-    if type(kernal) == list or type(kernal) == tuple:
-        [k_h, k_w] = list(kernal)
-    else:
-        k_h = k_w = kernal
-    if type(strides) == list or type(strides) == tuple:
-        [d_h, d_w] = list(strides)
-    else:
-        d_h = d_w = strides
-
-    with tf.variable_scope(name):
-        if type(padding) == list or type(padding) == tuple:
-            padding = [0] + list(padding) + [0]
-            input_ = tf.pad(input_, [[p, p] for p in padding], "CONSTANT")
-            padding = 'VALID'
-
-        w = tf.get_variable('w', [k_h, k_w, input_.get_shape()[-1], output_dim],
-                            initializer=tf.random_normal_initializer(stddev=0.01))
-        conv = tf.nn.conv2d(input_, w, strides=[1, d_h, d_w, 1], padding=padding)
-        biases = tf.get_variable('biases', [output_dim], initializer=tf.constant_initializer(0.0))
-        conv = tf.nn.bias_add(conv, biases)
-        if activate_fn:
-            conv = activate_fn(conv)
-        return conv
-
-def fully_connected(input_, output_dim, name="fc"):
-    shape = input_.shape
-    return conv2d(input_, output_dim, kernal=list(shape[1:3]), strides=(1, 1), padding="VALID", name=name)

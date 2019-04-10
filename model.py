@@ -439,16 +439,18 @@ class Coop_pix2pix(object):
 			des_layer_3_batchnorm = self.des_layer_3_batchnorm(des_layer_3_conv)
 
 			# linearization the descriptor result
-			des_layer_3_reshape = tf.reshape(leaky_relu(des_layer_3_batchnorm), [self.batch_size, -1])
-			des_layer_3_linearization = linearization(des_layer_3_reshape, 100, 'des_layer_3_linearization')
-			# print(des_layer_3_batchnorm.shape) # (1, 16, 16, 512)
-			# print(des_layer_3_reshape.shape) # (1, 131072)
-			print("des_layer_3_linearization: ",des_layer_3_linearization.shape)
+			# des_layer_3_reshape = tf.reshape(leaky_relu(des_layer_3_batchnorm), [self.batch_size, -1])
+			# des_layer_3_linearization = linearization(des_layer_3_reshape, 100, 'des_layer_3_linearization')
+			# # print(des_layer_3_batchnorm.shape) # (1, 16, 16, 512)
+			# # print(des_layer_3_reshape.shape) # (1, 131072)
+			# print("des_layer_3_linearization: ",des_layer_3_linearization.shape)
 
+
+			des_layer_3_fully_connected = fully_connected(leaky_relu(des_layer_3_batchnorm), 100, name="des_fully_connected")
 
 			# input image = [batch_size, 256, 256, input_pic_dim]
 
-			return des_layer_3_linearization
+			return des_layer_3_fully_connected # des_layer_3_linearization
 
 
 	def langevin_dynamics_descriptor(self, input_image_arg):

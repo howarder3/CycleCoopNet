@@ -45,6 +45,14 @@ des_layer_3_conv shape: (1, 16, 16, 512)
 des_layer_3_linearization shape: (1, 100)
 des_layer_3_linearization:  (1, 100)
 
+
+inputs.shape  = (?, 64, 64, 3)
+conv1.shape  = (?, 32, 32, 64)
+conv2.shape  = (?, 16, 16, 128)
+conv3.shape  = (?, 16, 16, 256)
+fc.shape  = (?, 1, 1, 100)
+
+
 ------  self.des_vars  ------
 
 <tf.Variable 'des/des_layer_0_conv/descriptor_weight:0' shape=(5, 5, 3, 64) dtype=float32_ref>
