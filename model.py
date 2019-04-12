@@ -19,10 +19,11 @@ class Coop_pix2pix(object):
 				epoch = 1000, 
 				batch_size = 1,
 				picture_amount = 99999,
-				image_size = 256,
-				output_size = 256,
-				input_pic_dim = 3, 
-				output_pic_dim = 3,				
+				image_size = 256, output_size = 256,
+				input_pic_dim = 3, output_pic_dim = 3,	
+				langevin_revision_steps = 1,
+				descriptor_learning_rate = 0.01,
+				generator_learning_rate = 0.0001,
 				dataset_name='facades', dataset_dir ='./test_datasets', 
 				output_dir='./output_dir', checkpoint_dir='./checkpoint_dir', log_dir='./log_dir'):
 		"""
@@ -31,6 +32,9 @@ class Coop_pix2pix(object):
 			batch_size: how many pic in one group(batch), iteration(num_batch) = picture_amount/batch_size
 			input_pic_dim: input picture dimension : colorful = 3, grayscale = 1
 			output_pic_dim: output picture dimension : colorful = 3, grayscale = 1 
+			langevin_revision_steps = langevin revision steps
+			descriptor_learning_rate = descriptor learning rate
+			generator_learning_rate = generator learning rate
 
 		"""
 
@@ -43,6 +47,15 @@ class Coop_pix2pix(object):
 		self.output_size = output_size
 		self.input_pic_dim = input_pic_dim
 		self.output_pic_dim = output_pic_dim
+
+		# descriptor langevin steps
+		self.langevin_revision_steps = langevin_revision_steps
+		self.descriptor_step_size = 0.002
+
+		# learning rate
+		self.descriptor_learning_rate = descriptor_learning_rate 
+		self.generator_learning_rate  = generator_learning_rate 
+		# print(1e-5) # 0.00001
 		
 
 		self.dataset_dir = dataset_dir
@@ -73,18 +86,9 @@ class Coop_pix2pix(object):
 		self.des_layer_2_batchnorm = batch_norm(name='des_layer_2_batchnorm')
 		self.des_layer_3_batchnorm = batch_norm(name='des_layer_3_batchnorm')
 
-		# descriptor langevin steps
-		self.descriptor_sample_steps = 10 
-
-		self.descriptor_step_size = 0.002
 		self.sigma1 = 0.016
 		self.sigma2 = 0.3
 		self.beta1 = 0.5
-
-		# learning rate
-		self.descriptor_learning_rate = 0.01 # 0.007 # 1e-6 # 0.01 # 0.001 # 1e-6 # 0.01 # 0.007
-		self.generator_learning_rate  = 0.0001 # 1e-5 # 0.0001 # 1e-4 # 0.0001 # 0.0001
-		# print(1e-5) # 0.00001
 
 		self.input_revised_B = tf.placeholder(tf.float32,
 				[self.batch_size, self.image_size, self.image_size, self.input_pic_dim],
@@ -101,31 +105,18 @@ class Coop_pix2pix(object):
 
 
 	def build_model(self):
-		# self.input_data = tf.placeholder(tf.float32,
-		# 		[self.batch_size, self.image_size, self.image_size, self.input_pic_dim+self.output_pic_dim],
-		# 		name='input_A_and_B_images')
 
-		# # data domain A and data domain B
-		# self.data_A = self.input_data[:, :, :, :self.input_pic_dim]
-		# self.data_B = self.input_data[:, :, :, self.input_pic_dim:self.input_pic_dim+self.output_pic_dim]
-
-		# print("data_A shape = {}".format(self.data_A.shape)) # data_A shape = (1, 256, 256, 3)
-		# print("data_B shape = {}".format(self.data_B.shape)) # data_B shape = (1, 256, 256, 3)
-
-
+		# generator 
 		self.generated_B = self.generator(self.input_real_data_A, reuse = False)
 
-		# descripted_real_data_B = self.descriptor(self.input_real_data_B, reuse = False)
-		# descripted_generated_B = self.descriptor(self.input_generated_B, reuse = True)
-		# descripted_revised_B = self.descriptor(self.input_revised_B, reuse = True)
-
+		# descriptor
 		described_real_data_B = self.descriptor(self.input_real_data_B, reuse=False)
 		described_revised_B = self.descriptor(self.input_revised_B, reuse=True)
 		descripted_generated_B = self.descriptor(self.input_generated_B, reuse=True)
 
 
 		# symbolic langevins
-		self.langevin_descriptor = self.langevin_dynamics_descriptor(self.input_revised_B)
+		self.des_langevin_revision_output = self.des_langevin_revision(self.input_revised_B)
 
 		t_vars = tf.trainable_variables()
 		self.des_vars = [var for var in t_vars if var.name.startswith('des')]
@@ -148,38 +139,16 @@ class Coop_pix2pix(object):
 		# descriptor loss functions
 		self.des_loss = tf.reduce_sum(tf.subtract(tf.reduce_mean(described_revised_B, axis=0), tf.reduce_mean(described_real_data_B, axis=0)))
 
-
-		# self.d_loss = tf.reduce_mean(tf.abs(descripted_real_data_B - descripted_revised_B))
-		# # self.d_loss = tf.reduce_mean(tf.abs(self.input_real_data_B - self.input_revised_B))
-		## self.des_loss = tf.reduce_sum(tf.subtract(tf.reduce_mean(descripted_real_data_B, axis=0), tf.reduce_mean(descripted_revised_B, axis=0)))
-		# self.d_loss = self.L1_lambda * tf.reduce_mean(tf.abs(tf.subtract(descripted_real_data_B, descripted_revised_B)))
-		# # self.d_loss = tf.reduce_mean(tf.subtract(descripted_real_data_B, descripted_revised_B))
-		# self.d_loss_real = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(logits=self.D_logits, labels=tf.ones_like(self.D)))
-        # self.d_loss_fake = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(logits=self.D_logits_, labels=tf.zeros_like(self.D_)))
-
 		self.des_optim = tf.train.AdamOptimizer(self.descriptor_learning_rate, beta1=self.beta1).minimize(self.des_loss, var_list=self.des_vars)
 
 
-
-
-
 		# generator loss functions
-		# self.g_loss = tf.reduce_mean(tf.abs(tf.subtract(self.input_revised_B, self.generated_B)))
-		# self.gen_loss = tf.reduce_sum(tf.reduce_mean(1.0 / (2 * self.sigma2 * self.sigma2) * tf.square(self.input_revised_B - self.generated_B), axis=0))
-		## self.gen_loss = tf.reduce_sum(tf.reduce_mean(1.0 / (2 * self.sigma2 * self.sigma2) * tf.square(self.input_real_data_B - self.generated_B), axis=0))
-		# self.g_loss = tf.reduce_sum(tf.subtract(tf.reduce_mean(self.input_real_data_B, axis=0), tf.reduce_mean(self.generated_B, axis=0)))
-		# self.g_loss = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(logits=self.D_logits_, labels=tf.ones_like(self.D_))) \
-        #                 + self.L1_lambda * tf.reduce_mean(tf.abs(self.real_B - self.fake_B))
-
 		self.gen_loss = tf.reduce_sum(tf.reduce_mean(1.0 / (2 * self.sigma2 * self.sigma2) * tf.square(self.input_revised_B - self.generated_B), axis=0))
 		
 		self.gen_optim = tf.train.AdamOptimizer(self.generator_learning_rate, beta1=self.beta1).minimize(self.gen_loss, var_list=self.gen_vars)
 
 
-
 		# Compute Mean square error(MSE) for generated data and real data
-		# self.mse_loss = tf.reduce_mean(
-		# 	tf.pow(tf.subtract(tf.reduce_mean(self.input_real_data_B, axis=0), tf.reduce_mean(self.generated_B, axis=0)), 2))
 		self.mse_loss = tf.reduce_mean(
             tf.pow(tf.subtract(tf.reduce_mean(self.input_generated_B, axis=0), tf.reduce_mean(self.input_revised_B, axis=0)), 2))
 
@@ -226,41 +195,24 @@ class Coop_pix2pix(object):
 				batch_images = np.array(batch).astype(np.float32)
 
 				# data domain A and data domain B
-				data_B = batch_images[:, :, :, :self.input_pic_dim]
-				data_A = batch_images[:, :, :, self.input_pic_dim:self.input_pic_dim+self.output_pic_dim]
-
+				data_B = batch_images[:, :, :, : self.input_pic_dim] 
+				data_A = batch_images[:, :, :, self.input_pic_dim:self.input_pic_dim+self.output_pic_dim] 
 
 				# step G1: try to generate B domain(target domain) picture
 				generated_B = sess.run(self.generated_B, feed_dict={self.input_real_data_A: data_A})
-				# print(generated_B.shape) # (1, 256, 256, 3)
 
 				# step D1: descriptor try to revised image:"generated_B"
-				# revised_B = sess.run(self.langevin_descriptor, feed_dict={self.input_generated_B: generated_B})
-
-				revised_B = sess.run(self.langevin_descriptor, feed_dict={self.input_revised_B: generated_B})
-
-				# print(generated_B.shape) # (1, 256, 256, 3)
-				# print(revised_B.shape) # (1, 256, 256, 3)
+				revised_B = sess.run(self.des_langevin_revision_output, feed_dict={self.input_revised_B: generated_B})
 
 				# step D2: update descriptor net
-				# _ , descriptor_loss = sess.run([self.des_optim, self.des_loss],
-    #                               feed_dict={self.input_real_data_B: data_B, self.input_revised_B: revised_B})
-
 				descriptor_loss , _ = sess.run([self.des_loss, self.des_optim],
                                   		feed_dict={self.input_real_data_B: data_B, self.input_revised_B: revised_B})
 
 				# print(descriptor_loss)
 
-				# # step G2: update generator net
-				# generator_loss = sess.run([self.gen_loss, self.apply_g_grads],
-				# 					feed_dict={self.input_real_data_B: revised_B, self.input_real_data_A: data_A})[0]
-
-				# _ , generator_loss = sess.run([self.gen_optim, self.gen_loss],
-				# 					feed_dict={self.input_real_data_B: data_B, self.input_real_data_A: data_A})
-
+				# step G2: update generator net
 				generator_loss , _ = sess.run([self.gen_loss, self.gen_optim],
                                   		feed_dict={self.input_revised_B: revised_B, self.input_real_data_A: data_A})	
-
 
 				# Compute Mean square error(MSE) for generated data and revised data
 				mse_loss = sess.run(self.mse_loss, feed_dict={self.input_revised_B: revised_B, self.input_generated_B: generated_B})
@@ -276,7 +228,12 @@ class Coop_pix2pix(object):
 				# if need calculate time interval
 				# start_time = time.time()
 
-				# if index == 0:
+				# print("data_A shape = {}".format(self.data_A.shape)) # data_A shape = (1, 256, 256, 3)
+				# print(generated_B.shape) # (1, 256, 256, 3)
+				# print(revised_B.shape) # (1, 256, 256, 3)
+				# print("data_B shape = {}".format(self.data_B.shape)) # data_B shape = (1, 256, 256, 3)
+
+
 				if np.mod(counter, 10) == 0:
 					save_images(data_A, [self.batch_size, 1],
 						'./{}/ep{:03d}_{:03d}_01_input_data_A.png'.format(self.output_dir, epoch, index))
@@ -286,9 +243,6 @@ class Coop_pix2pix(object):
 						'./{}/ep{:03d}_{:03d}_03_output_descriptor.png'.format(self.output_dir, epoch, index))
 					save_images(data_B, [self.batch_size, 1],
 						'./{}/ep{:03d}_{:03d}_04_input_data_B.png'.format(self.output_dir, epoch, index))
-
-					# saveSampleResults(revised_B, "%s/des_%03d.png" % (self.output_dir, epoch), col_num=1)
-					# saveSampleResults(generated_B, "%s/gen_%03d.png" % (self.output_dir, epoch), col_num=1)
 
 				counter += 1
 
@@ -398,27 +352,6 @@ class Coop_pix2pix(object):
 
 			return generator_output
 
-	# def descriptor(self, input_image, reuse=False):
-	# 	with tf.variable_scope('des', reuse=reuse):
-
-	# 		# print("\n------  descriptor layers  ------\n")
-
-	# 		conv1 = conv2d(input_image, 64, kernal=(5, 5), strides=(2, 2), padding="SAME", activate_fn=leaky_relu,
-	# 			name="conv1")
-
-	# 		conv2 = conv2d(conv1, 128, kernal=(3, 3), strides=(2, 2), padding="SAME", activate_fn=leaky_relu,
-	# 			name="conv2")
-
-	# 		conv3 = conv2d(conv2, 256, kernal=(3, 3), strides=(1, 1), padding="SAME", activate_fn=leaky_relu,
-	# 			name="conv3")
-
-	# 		# conv3_reshape = tf.reshape(conv3, [self.batch_size, 1, 1, -1])
-	# 		# print(conv3_reshape.shape)
-	# 		# conv3_reshape.get_shape()[-1] = (1, 1, 1, 1048576)
-
-	# 		fc = fully_connected(conv3, 100, name="fc")
-
-	# 		return fc
 
 	def descriptor(self, input_image, reuse=False):
 		with tf.variable_scope('des', reuse=reuse):
@@ -455,17 +388,22 @@ class Coop_pix2pix(object):
 			# print("des_layer_3_linearization: ",des_layer_3_linearization.shape)
 
 
-			des_layer_3_fully_connected = fully_connected(leaky_relu(des_layer_3_batchnorm), 100, name="des_fully_connected")
+
+			des_layer_4_fully_connected = fully_connected(leaky_relu(des_layer_3_batchnorm), 8192, name="des_layer_4_fully_connected")
+
+			des_layer_5_fully_connected = fully_connected(leaky_relu(des_layer_4_fully_connected), 1024, name="des_layer_5_fully_connected")
+
+
 
 			# input image = [batch_size, 256, 256, input_pic_dim]
 
-			return des_layer_3_fully_connected # des_layer_3_linearization
+			return des_layer_5_fully_connected # des_layer_3_linearization
 
 
-	def langevin_dynamics_descriptor(self, input_image_arg):
+	def des_langevin_revision(self, input_image_arg):
 
 		def cond(i, input_image):
-			return tf.less(i, self.descriptor_sample_steps)
+			return tf.less(i, self.langevin_revision_steps)
 
 		def body(i, input_image):
 			noise = tf.random_normal(shape=[1, self.image_size, self.image_size, 3], name='noise')
@@ -477,7 +415,7 @@ class Coop_pix2pix(object):
 			input_image = input_image - 0.5 * self.descriptor_step_size * self.descriptor_step_size * (input_image / self.sigma1 / self.sigma1 - grad) + self.descriptor_step_size * noise
 			return tf.add(i, 1), input_image
 
-		with tf.name_scope("langevin_dynamics_descriptor"):
+		with tf.name_scope("des_langevin_revision"):
 			i = tf.constant(0)
 			i, input_image = tf.while_loop(cond, body, [i, input_image_arg])
 			return input_image
