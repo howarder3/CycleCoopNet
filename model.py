@@ -236,13 +236,13 @@ class Coop_pix2pix(object):
 
 				if np.mod(counter, 10) == 0:
 					save_images(data_A, [self.batch_size, 1],
-						'./{}/ep{:03d}_{:03d}_01_input_data_A.png'.format(self.output_dir, epoch, index))
+						'./{}/ep{:02d}_{:04d}_01_input_data_A.png'.format(self.output_dir, epoch, index))
 					save_images(generated_B, [self.batch_size, 1],
-						'./{}/ep{:03d}_{:03d}_02_output_generator.png'.format(self.output_dir, epoch, index))
+						'./{}/ep{:02d}_{:04d}_02_output_generator.png'.format(self.output_dir, epoch, index))
 					save_images(revised_B, [self.batch_size, 1],
-						'./{}/ep{:03d}_{:03d}_03_output_descriptor.png'.format(self.output_dir, epoch, index))
+						'./{}/ep{:02d}_{:04d}_03_output_descriptor.png'.format(self.output_dir, epoch, index))
 					save_images(data_B, [self.batch_size, 1],
-						'./{}/ep{:03d}_{:03d}_04_input_data_B.png'.format(self.output_dir, epoch, index))
+						'./{}/ep{:02d}_{:04d}_04_input_data_B.png'.format(self.output_dir, epoch, index))
 
 				counter += 1
 
@@ -366,33 +366,29 @@ class Coop_pix2pix(object):
 			# input image = [batch_size, 256, 256, input_pic_dim]
 
 			# des_layer_0_conv = (batch_size, 128, 128, num_filter)
-			des_layer_0_conv = descriptor_conv2d(input_image, num_filter, name='des_layer_0_conv')
+			des_layer_0_conv = des_conv2d(input_image, num_filter, name='des_layer_0_conv')
 
 			# des_layer_1_conv = (batch_size, 64, 64, num_filter*2)
-			des_layer_1_conv = descriptor_conv2d(leaky_relu(des_layer_0_conv), num_filter*2, name='des_layer_1_conv')
+			des_layer_1_conv = des_conv2d(leaky_relu(des_layer_0_conv), num_filter*2, name='des_layer_1_conv')
 			des_layer_1_batchnorm = self.des_layer_1_batchnorm(des_layer_1_conv)
 
 			# des_layer_2_conv = (batch_size, 32, 32, num_filter*4)
-			des_layer_2_conv = descriptor_conv2d(leaky_relu(des_layer_1_batchnorm), num_filter*4, name='des_layer_2_conv')
+			des_layer_2_conv = des_conv2d(leaky_relu(des_layer_1_batchnorm), num_filter*4, name='des_layer_2_conv')
 			des_layer_2_batchnorm = self.des_layer_2_batchnorm(des_layer_2_conv)
 			
 			# des_layer_3_conv = (batch_size, 16, 16, num_filter*8)
-			des_layer_3_conv = descriptor_conv2d(leaky_relu(des_layer_2_batchnorm), num_filter*8, name='des_layer_3_conv')
+			des_layer_3_conv = des_conv2d(leaky_relu(des_layer_2_batchnorm), num_filter*8, name='des_layer_3_conv')
 			des_layer_3_batchnorm = self.des_layer_3_batchnorm(des_layer_3_conv)
 
 			# linearization the descriptor result
-			# des_layer_3_reshape = tf.reshape(leaky_relu(des_layer_3_batchnorm), [self.batch_size, -1])
-			# des_layer_3_linearization = linearization(des_layer_3_reshape, 100, 'des_layer_3_linearization')
 			# # print(des_layer_3_batchnorm.shape) # (1, 16, 16, 512)
 			# # print(des_layer_3_reshape.shape) # (1, 131072)
-			# print("des_layer_3_linearization: ",des_layer_3_linearization.shape)
 
+			des_layer_4_fully_connected = des_fully_connected(leaky_relu(des_layer_3_batchnorm), 1024, name="des_layer_4_fully_connected")
 
-			des_layer_4_fully_connected = fully_connected(leaky_relu(des_layer_3_batchnorm), 1024, name="des_layer_4_fully_connected")
+			des_layer_5_fully_connected = fully_connected(leaky_relu(des_layer_4_fully_connected), 100, name="des_layer_5_fully_connected")
 
-			# des_layer_5_fully_connected = fully_connected(leaky_relu(des_layer_4_fully_connected), 1024, name="des_layer_5_fully_connected")
-
-			return des_layer_4_fully_connected 
+			return des_layer_5_fully_connected 
 
 
 	def des_langevin_revision(self, input_image_arg):
@@ -404,8 +400,6 @@ class Coop_pix2pix(object):
 			noise = tf.random_normal(shape=[1, self.image_size, self.image_size, 3], name='noise')
 			descripted_input_image = self.descriptor(input_image, reuse=True)
 
-			# print("descripted_input_image:",descripted_input_image.shape)
-
 			grad = tf.gradients(descripted_input_image, input_image, name='grad_des')[0]
 			input_image = input_image - 0.5 * self.descriptor_step_size * self.descriptor_step_size * (input_image / self.sigma1 / self.sigma1 - grad) + self.descriptor_step_size * noise
 			return tf.add(i, 1), input_image
@@ -414,7 +408,6 @@ class Coop_pix2pix(object):
 			i = tf.constant(0)
 			i, input_image = tf.while_loop(cond, body, [i, input_image_arg])
 			return input_image
-
 
 
 
