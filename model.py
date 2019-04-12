@@ -86,7 +86,6 @@ class Coop_pix2pix(object):
 		self.des_layer_2_batchnorm = batch_norm(name='des_layer_2_batchnorm')
 		self.des_layer_3_batchnorm = batch_norm(name='des_layer_3_batchnorm')
 		self.des_layer_4_batchnorm = batch_norm(name='des_layer_4_batchnorm')
-		self.des_layer_5_batchnorm = batch_norm(name='des_layer_5_batchnorm')
 
 		self.sigma1 = 0.016
 		self.sigma2 = 0.3
@@ -390,9 +389,8 @@ class Coop_pix2pix(object):
 			des_layer_4_batchnorm = self.des_layer_4_batchnorm(des_layer_4_fully_connected)
 
 			des_layer_5_fully_connected = des_fully_connected(leaky_relu(des_layer_4_fully_connected), 100, name="des_layer_5_fully_connected")
-			des_layer_5_batchnorm = self.des_layer_5_batchnorm(des_layer_5_fully_connected)
 
-			return des_layer_5_batchnorm 
+			return des_layer_5_fully_connected 
 
 
 	def des_langevin_revision(self, input_image_arg):
