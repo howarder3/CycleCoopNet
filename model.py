@@ -388,16 +388,11 @@ class Coop_pix2pix(object):
 			# print("des_layer_3_linearization: ",des_layer_3_linearization.shape)
 
 
+			des_layer_4_fully_connected = fully_connected(leaky_relu(des_layer_3_batchnorm), 1024, name="des_layer_4_fully_connected")
 
-			des_layer_4_fully_connected = fully_connected(leaky_relu(des_layer_3_batchnorm), 8192, name="des_layer_4_fully_connected")
+			# des_layer_5_fully_connected = fully_connected(leaky_relu(des_layer_4_fully_connected), 1024, name="des_layer_5_fully_connected")
 
-			des_layer_5_fully_connected = fully_connected(leaky_relu(des_layer_4_fully_connected), 1024, name="des_layer_5_fully_connected")
-
-
-
-			# input image = [batch_size, 256, 256, input_pic_dim]
-
-			return des_layer_5_fully_connected # des_layer_3_linearization
+			return des_layer_4_fully_connected 
 
 
 	def des_langevin_revision(self, input_image_arg):
