@@ -1,25 +1,3 @@
-'''
-# windows
-D:
-cd D:\test\mycode
-conda activate mlenv
-python main.py
-
-# lab
-D:
-cd D:\GitHub\Coop_pix2pix
-python main.py --dataset_dir datasets --picture_amount 100
-
-# mac
-cd /Users/howarder3/Documents/GitHub/Coop_pix2pix 
-python main.py
-
-# pip packages 
-pip freeze > requirements.txt
-pip -r requirements.txt
-
-'''
-
 import tensorflow as tf
 import os
 

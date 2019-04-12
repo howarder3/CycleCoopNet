@@ -88,16 +88,13 @@ class Coop_pix2pix(object):
 
 		self.input_revised_B = tf.placeholder(tf.float32,
 				[self.batch_size, self.image_size, self.image_size, self.input_pic_dim],
-				name='input_revised_B')
-		self.input_generated_B = tf.placeholder(tf.float32,
-				[self.batch_size, self.image_size, self.image_size, self.input_pic_dim],
-				name='input_generated_B')
+				name='syn')
 		self.input_real_data_B = tf.placeholder(tf.float32,
 				[self.batch_size, self.image_size, self.image_size, self.input_pic_dim],
-				name='input_real_data_B')
+				name='obs')
 		self.input_real_data_A = tf.placeholder(tf.float32,
 				[self.batch_size, self.image_size, self.image_size, self.input_pic_dim],
-				name='input_real_data_A')
+				name='input_images_A')
 
 
 	def build_model(self):
@@ -136,7 +133,6 @@ class Coop_pix2pix(object):
 
 		described_real_data_B = self.descriptor(self.input_real_data_B, reuse=False)
 		described_revised_B = self.descriptor(self.input_revised_B, reuse=True)
-		descripted_generated_B = self.descriptor(self.input_generated_B, reuse=True)
 
 
 		# symbolic langevins
@@ -154,7 +150,6 @@ class Coop_pix2pix(object):
 		for var in self.gen_vars:
 			print(var)
 
-		print("")
 
 
 		# descriptor variables
@@ -195,7 +190,7 @@ class Coop_pix2pix(object):
 		# self.mse_loss = tf.reduce_mean(
 		# 	tf.pow(tf.subtract(tf.reduce_mean(self.input_real_data_B, axis=0), tf.reduce_mean(self.generated_B, axis=0)), 2))
 		self.mse_loss = tf.reduce_mean(
-            tf.pow(tf.subtract(tf.reduce_mean(self.input_generated_B, axis=0), tf.reduce_mean(self.input_revised_B, axis=0)), 2))
+            tf.pow(tf.subtract(tf.reduce_mean(self.input_revised_B, axis=0), tf.reduce_mean(self.input_real_data_B, axis=0)), 2))
 
 		self.saver = tf.train.Saver()	
 
@@ -251,7 +246,7 @@ class Coop_pix2pix(object):
 				# step D1: descriptor try to revised image:"generated_B"
 				# revised_B = sess.run(self.langevin_descriptor, feed_dict={self.input_generated_B: generated_B})
 
-				revised_B = sess.run(self.langevin_descriptor, feed_dict={self.input_revised_B: generated_B})
+				syn = sess.run(self.langevin_descriptor, feed_dict={self.input_revised_B: generated_B})
 
 				# print(generated_B.shape) # (1, 256, 256, 3)
 				# print(revised_B.shape) # (1, 256, 256, 3)
@@ -261,7 +256,7 @@ class Coop_pix2pix(object):
     #                               feed_dict={self.input_real_data_B: data_B, self.input_revised_B: revised_B})
 
 				descriptor_loss , _ = sess.run([self.des_loss, self.des_optim],
-                                  		feed_dict={self.input_real_data_B: data_B, self.input_revised_B: revised_B})
+                                  		feed_dict={self.input_real_data_B: data_B, self.input_revised_B: syn})
 
 				# print(descriptor_loss)
 
@@ -273,7 +268,7 @@ class Coop_pix2pix(object):
 				# 					feed_dict={self.input_real_data_B: data_B, self.input_real_data_A: data_A})
 
 				generator_loss , _ = sess.run([self.gen_loss, self.gen_optim],
-                                  		feed_dict={self.input_revised_B: revised_B, self.input_real_data_A: data_A})
+                                  		feed_dict={self.input_revised_B: syn, self.input_real_data_A: data_A})
 
 
 				# _ , generator_loss = self.sess.run([self.gen_optim, self.gen_loss],
@@ -293,9 +288,7 @@ class Coop_pix2pix(object):
 				# Compute Mean square error(MSE) for generated data and real data
 				# mse_loss = sess.run(self.mse_loss, feed_dict={self.input_real_data_B: data_B, self.input_real_data_A: data_A})
 
-				# mse_loss = sess.run(self.mse_loss, feed_dict={self.input_real_data_B: syn, self.input_revised_B: generated_B})
-				mse_loss = sess.run(self.mse_loss, feed_dict={self.input_revised_B: revised_B, self.input_generated_B: generated_B})
-
+				mse_loss = sess.run(self.mse_loss, feed_dict={self.input_real_data_B: syn, self.input_revised_B: generated_B})
 
 				# put picture in sample picture
 				# sample_results[index : (index + 1)] = revised_B
@@ -315,7 +308,7 @@ class Coop_pix2pix(object):
 						'./{}/{:02d}_{:04d}_02_output_generator.png'.format(self.output_dir, epoch, index))
 					# save_images(revised_B, [self.batch_size, 1],
 					# 	'./{}/{:02d}_{:04d}_03_output_descriptor.png'.format(self.output_dir, epoch, index))
-					save_images(revised_B, [self.batch_size, 1],
+					save_images(syn, [self.batch_size, 1],
 						'./{}/{:02d}_{:04d}_03_output_descriptor.png'.format(self.output_dir, epoch, index))
 					save_images(data_B, [self.batch_size, 1],
 						'./{}/{:02d}_{:04d}_04_input_data_B.png'.format(self.output_dir, epoch, index))
