@@ -279,24 +279,22 @@ class Coop_pix2pix(object):
 				# if index == 0:
 				if np.mod(counter, 10) == 0:
 					save_images(data_A, [self.batch_size, 1],
-						'./{}/ep{:02d}_{:04d}_01_input_data_A.png'.format(self.output_dir, epoch, index))
+						'./{}/ep{:03d}_{:03d}_01_input_data_A.png'.format(self.output_dir, epoch, index))
 					save_images(generated_B, [self.batch_size, 1],
-						'./{}/ep{:02d}_{:04d}_02_output_generator.png'.format(self.output_dir, epoch, index))
+						'./{}/ep{:03d}_{:03d}_02_output_generator.png'.format(self.output_dir, epoch, index))
 					save_images(revised_B, [self.batch_size, 1],
-						'./{}/ep{:02d}_{:04d}_03_output_descriptor.png'.format(self.output_dir, epoch, index))
+						'./{}/ep{:03d}_{:03d}_03_output_descriptor.png'.format(self.output_dir, epoch, index))
 					save_images(data_B, [self.batch_size, 1],
-						'./{}/ep{:02d}_{:04d}_04_input_data_B.png'.format(self.output_dir, epoch, index))
+						'./{}/ep{:03d}_{:03d}_04_input_data_B.png'.format(self.output_dir, epoch, index))
 
 					# saveSampleResults(revised_B, "%s/des_%03d.png" % (self.output_dir, epoch), col_num=1)
 					# saveSampleResults(generated_B, "%s/gen_%03d.png" % (self.output_dir, epoch), col_num=1)
 
 				counter += 1
 
-			if np.mod(epoch, 10) == 0:
-				self.save(self.checkpoint_dir, epoch)
+			self.save(self.checkpoint_dir, epoch)
 
-
-
+			
 			# # print("time: {:.4f} , Epoch: {} ".format(time.time() - start_time, epoch))
 			# print('Epoch #{:d}, avg.descriptor loss: {:.4f}, avg.generator loss: {:.4f}, avg.L2 distance: {:4.4f}, '
 			# 	'time: {:.2f}s'.format(epoch, np.mean(des_loss_avg), np.mean(gen_loss_avg), np.mean(mse_avg), time.time() - start_time))
