@@ -17,7 +17,7 @@ tf.app.flags.DEFINE_integer('output_pic_dim',3,'output picture dimension : color
 # learning rate
 tf.app.flags.DEFINE_float('descriptor_learning_rate',0.01,'descriptor learning rate') # 0.01 # 0.007 # 1e-6 # 0.01 # 0.001 # 1e-6 # 0.01 # 0.007
 tf.app.flags.DEFINE_float('generator_learning_rate',0.0001,'generator learning rate') # 0.0001 # 1e-5 # 0.0001 # 1e-4 # 0.0001 # 0.0001
-tf.app.flags.DEFINE_integer('langevin_revision_steps',10,'langevin revision steps')
+tf.app.flags.DEFINE_integer('langevin_revision_steps',30,'langevin revision steps') # 10
 
 # dataset floder name
 tf.app.flags.DEFINE_string('dataset_dir', './test_datasets', 'dataset directory')
