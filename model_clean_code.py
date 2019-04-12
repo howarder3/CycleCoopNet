@@ -31,9 +31,7 @@ class Coop_pix2pix(object):
 			batch_size: how many pic in one group(batch), iteration(num_batch) = picture_amount/batch_size
 			input_pic_dim: input picture dimension : colorful = 3, grayscale = 1
 			output_pic_dim: output picture dimension : colorful = 3, grayscale = 1 
-
 		"""
-
 
 		self.sess = sess
 		self.epoch = epoch		
@@ -143,7 +141,7 @@ class Coop_pix2pix(object):
 			print(var)
 
 		print("")
-		
+
 
 		# descriptor loss functions
 		self.des_loss = tf.reduce_sum(tf.subtract(tf.reduce_mean(described_revised_B, axis=0), tf.reduce_mean(described_real_data_B, axis=0)))
@@ -242,44 +240,17 @@ class Coop_pix2pix(object):
 				# print(generated_B.shape) # (1, 256, 256, 3)
 				# print(revised_B.shape) # (1, 256, 256, 3)
 
-				# step D2: update descriptor net
-				# _ , descriptor_loss = sess.run([self.des_optim, self.des_loss],
-    #                               feed_dict={self.input_real_data_B: data_B, self.input_revised_B: revised_B})
-
+				# step D2: update descriptor network
 				descriptor_loss , _ = sess.run([self.des_loss, self.des_optim],
                                   		feed_dict={self.input_real_data_B: data_B, self.input_revised_B: revised_B})
 
-				# print(descriptor_loss)
 
-				# # step G2: update generator net
-				# generator_loss = sess.run([self.gen_loss, self.apply_g_grads],
-				# 					feed_dict={self.input_real_data_B: revised_B, self.input_real_data_A: data_A})[0]
-
-				# _ , generator_loss = sess.run([self.gen_optim, self.gen_loss],
-				# 					feed_dict={self.input_real_data_B: data_B, self.input_real_data_A: data_A})
-
+				# # step G2: update generator network
 				generator_loss , _ = sess.run([self.gen_loss, self.gen_optim],
                                   		feed_dict={self.input_revised_B: revised_B, self.input_real_data_A: data_A})
 
 
-				# _ , generator_loss = self.sess.run([self.gen_optim, self.gen_loss],
-				# 					feed_dict={self.input_revised_B: revised_B, self.input_real_data_A: data_A})
-
-				# self.input_revised_B: revised_B
-
-
-				# # Update D network
-				# _ , descriptor_loss = self.sess.run([d_optim, self.d_loss],
-				# 					feed_dict={self.input_real_data_B: data_B, self.input_data_B: revised_B})
-
-				# Update G network
-				# _ , generator_loss = self.sess.run([self.g_optim, self.g_loss],
-				# 					feed_dict={self.input_revised_B: revised_B, self.input_real_data_A: data_A})
-
 				# Compute Mean square error(MSE) for generated data and real data
-				# mse_loss = sess.run(self.mse_loss, feed_dict={self.input_real_data_B: data_B, self.input_real_data_A: data_A})
-
-				# mse_loss = sess.run(self.mse_loss, feed_dict={self.input_real_data_B: syn, self.input_revised_B: generated_B})
 				mse_loss = sess.run(self.mse_loss, feed_dict={self.input_revised_B: revised_B, self.input_generated_B: generated_B})
 
 
@@ -296,32 +267,18 @@ class Coop_pix2pix(object):
 				# if index == 0:
 				if np.mod(counter, 10) == 0:
 					save_images(data_A, [self.batch_size, 1],
-						'./{}/{:02d}_{:04d}_01_input_data_A.png'.format(self.output_dir, epoch, index))
+						'./{}/ep{:02d}_{:04d}_01_input_data_A.png'.format(self.output_dir, epoch, index))
 					save_images(generated_B, [self.batch_size, 1],
-						'./{}/{:02d}_{:04d}_02_output_generator.png'.format(self.output_dir, epoch, index))
-					# save_images(revised_B, [self.batch_size, 1],
-					# 	'./{}/{:02d}_{:04d}_03_output_descriptor.png'.format(self.output_dir, epoch, index))
+						'./{}/ep{:02d}_{:04d}_02_output_generator.png'.format(self.output_dir, epoch, index))
 					save_images(revised_B, [self.batch_size, 1],
-						'./{}/{:02d}_{:04d}_03_output_descriptor.png'.format(self.output_dir, epoch, index))
+						'./{}/ep{:02d}_{:04d}_03_output_descriptor.png'.format(self.output_dir, epoch, index))
 					save_images(data_B, [self.batch_size, 1],
-						'./{}/{:02d}_{:04d}_04_input_data_B.png'.format(self.output_dir, epoch, index))
-
-					# saveSampleResults(revised_B, "%s/des_%03d.png" % (self.output_dir, epoch), col_num=1)
-					# saveSampleResults(generated_B, "%s/gen_%03d.png" % (self.output_dir, epoch), col_num=1)
-
+						'./{}/ep{:02d}_{:04d}_04_input_data_B.png'.format(self.output_dir, epoch, index))
 
 				if np.mod(counter, 500) == 0:
 					self.save(self.checkpoint_dir, counter)
 
 				counter += 1
-
-
-
-			# # print("time: {:.4f} , Epoch: {} ".format(time.time() - start_time, epoch))
-			# print('Epoch #{:d}, avg.descriptor loss: {:.4f}, avg.generator loss: {:.4f}, avg.L2 distance: {:4.4f}, '
-			# 	'time: {:.2f}s'.format(epoch, np.mean(des_loss_avg), np.mean(gen_loss_avg), np.mean(mse_avg), time.time() - start_time))
-
-
 
 	def generator(self, input_image, reuse=False):
 		with tf.variable_scope("gen", reuse=reuse):
@@ -419,28 +376,6 @@ class Coop_pix2pix(object):
 			generator_output = tf.nn.tanh(gen_decode_layer_8_deconv)
 
 			return generator_output
-
-	# def descriptor(self, input_image, reuse=False):
-	# 	with tf.variable_scope('des', reuse=reuse):
-
-	# 		# print("\n------  descriptor layers  ------\n")
-
-	# 		conv1 = conv2d(input_image, 64, kernal=(5, 5), strides=(2, 2), padding="SAME", activate_fn=leaky_relu,
-	# 			name="conv1")
-
-	# 		conv2 = conv2d(conv1, 128, kernal=(3, 3), strides=(2, 2), padding="SAME", activate_fn=leaky_relu,
-	# 			name="conv2")
-
-	# 		conv3 = conv2d(conv2, 256, kernal=(3, 3), strides=(1, 1), padding="SAME", activate_fn=leaky_relu,
-	# 			name="conv3")
-
-	# 		# conv3_reshape = tf.reshape(conv3, [self.batch_size, 1, 1, -1])
-	# 		# print(conv3_reshape.shape)
-	# 		# conv3_reshape.get_shape()[-1] = (1, 1, 1, 1048576)
-
-	# 		fc = fully_connected(conv3, 100, name="fc")
-
-	# 		return fc
 
 	def descriptor(self, input_image, reuse=False):
 		with tf.variable_scope('des', reuse=reuse):
