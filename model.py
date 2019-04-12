@@ -82,7 +82,7 @@ class Coop_pix2pix(object):
 		self.beta1 = 0.5
 
 		# learning rate
-		self.descriptor_learning_rate = 0.007 # 1e-6 # 0.01 # 0.001 # 1e-6 # 0.01 # 0.007
+		self.descriptor_learning_rate = 0.01 # 0.007 # 1e-6 # 0.01 # 0.001 # 1e-6 # 0.01 # 0.007
 		self.generator_learning_rate  = 0.0001 # 1e-5 # 0.0001 # 1e-4 # 0.0001 # 0.0001
 		# print(1e-5) # 0.00001
 
@@ -183,7 +183,7 @@ class Coop_pix2pix(object):
 		self.mse_loss = tf.reduce_mean(
             tf.pow(tf.subtract(tf.reduce_mean(self.input_generated_B, axis=0), tf.reduce_mean(self.input_revised_B, axis=0)), 2))
 
-		self.saver = tf.train.Saver()	
+		self.saver = tf.train.Saver(max_to_keep=50)	
 
 
 	def train(self,sess):
@@ -259,27 +259,10 @@ class Coop_pix2pix(object):
 				# 					feed_dict={self.input_real_data_B: data_B, self.input_real_data_A: data_A})
 
 				generator_loss , _ = sess.run([self.gen_loss, self.gen_optim],
-                                  		feed_dict={self.input_revised_B: revised_B, self.input_real_data_A: data_A})
+                                  		feed_dict={self.input_revised_B: revised_B, self.input_real_data_A: data_A})	
 
 
-				# _ , generator_loss = self.sess.run([self.gen_optim, self.gen_loss],
-				# 					feed_dict={self.input_revised_B: revised_B, self.input_real_data_A: data_A})
-
-				# self.input_revised_B: revised_B
-
-
-				# # Update D network
-				# _ , descriptor_loss = self.sess.run([d_optim, self.d_loss],
-				# 					feed_dict={self.input_real_data_B: data_B, self.input_data_B: revised_B})
-
-				# Update G network
-				# _ , generator_loss = self.sess.run([self.g_optim, self.g_loss],
-				# 					feed_dict={self.input_revised_B: revised_B, self.input_real_data_A: data_A})
-
-				# Compute Mean square error(MSE) for generated data and real data
-				# mse_loss = sess.run(self.mse_loss, feed_dict={self.input_real_data_B: data_B, self.input_real_data_A: data_A})
-
-				# mse_loss = sess.run(self.mse_loss, feed_dict={self.input_real_data_B: syn, self.input_revised_B: generated_B})
+				# Compute Mean square error(MSE) for generated data and revised data
 				mse_loss = sess.run(self.mse_loss, feed_dict={self.input_revised_B: revised_B, self.input_generated_B: generated_B})
 
 
@@ -296,24 +279,21 @@ class Coop_pix2pix(object):
 				# if index == 0:
 				if np.mod(counter, 10) == 0:
 					save_images(data_A, [self.batch_size, 1],
-						'./{}/{:02d}_{:04d}_01_input_data_A.png'.format(self.output_dir, epoch, index))
+						'./{}/ep{:02d}_{:04d}_01_input_data_A.png'.format(self.output_dir, epoch, index))
 					save_images(generated_B, [self.batch_size, 1],
-						'./{}/{:02d}_{:04d}_02_output_generator.png'.format(self.output_dir, epoch, index))
-					# save_images(revised_B, [self.batch_size, 1],
-					# 	'./{}/{:02d}_{:04d}_03_output_descriptor.png'.format(self.output_dir, epoch, index))
+						'./{}/ep{:02d}_{:04d}_02_output_generator.png'.format(self.output_dir, epoch, index))
 					save_images(revised_B, [self.batch_size, 1],
-						'./{}/{:02d}_{:04d}_03_output_descriptor.png'.format(self.output_dir, epoch, index))
+						'./{}/ep{:02d}_{:04d}_03_output_descriptor.png'.format(self.output_dir, epoch, index))
 					save_images(data_B, [self.batch_size, 1],
-						'./{}/{:02d}_{:04d}_04_input_data_B.png'.format(self.output_dir, epoch, index))
+						'./{}/ep{:02d}_{:04d}_04_input_data_B.png'.format(self.output_dir, epoch, index))
 
 					# saveSampleResults(revised_B, "%s/des_%03d.png" % (self.output_dir, epoch), col_num=1)
 					# saveSampleResults(generated_B, "%s/gen_%03d.png" % (self.output_dir, epoch), col_num=1)
 
-
-				if np.mod(counter, 500) == 0:
-					self.save(self.checkpoint_dir, counter)
-
 				counter += 1
+
+			if np.mod(epoch, 10) == 0:
+				self.save(self.checkpoint_dir, epoch)
 
 
 
@@ -508,16 +488,16 @@ class Coop_pix2pix(object):
 
 
 	def save(self, checkpoint_dir, step):
-		model_name = "pix2pix.model"
-		model_dir = "%s_%s_%s" % (self.dataset_name, self.batch_size, self.output_size)
+		saver_name = "epoch"
+		model_dir = "{}".format(self.dataset_name)
 		checkpoint_dir = os.path.join(checkpoint_dir, model_dir)
 
 		if not os.path.exists(checkpoint_dir):
 			os.makedirs(checkpoint_dir)
 
 		self.saver.save(self.sess,
-			os.path.join(checkpoint_dir, model_name),
-			global_step=step)
+					os.path.join(checkpoint_dir, saver_name),
+					global_step=step)
 
 
 
