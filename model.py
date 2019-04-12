@@ -386,7 +386,7 @@ class Coop_pix2pix(object):
 
 			des_layer_4_fully_connected = des_fully_connected(leaky_relu(des_layer_3_batchnorm), 1024, name="des_layer_4_fully_connected")
 
-			des_layer_5_fully_connected = fully_connected(leaky_relu(des_layer_4_fully_connected), 100, name="des_layer_5_fully_connected")
+			des_layer_5_fully_connected = des_fully_connected(leaky_relu(des_layer_4_fully_connected), 100, name="des_layer_5_fully_connected")
 
 			return des_layer_5_fully_connected 
 

@@ -102,8 +102,8 @@ def des_fully_connected(input_image, output_dim, name="des_fully_connected"):
 	with tf.variable_scope(name):
 
 		# weight shape = [filter_width, filter_height, output_channels, input_channels] = [5,5,,] 
-	    weight = tf.get_variable('fully_connected_weight', [input_image.get_shape()[1], input_image.get_shape()[2], input_image.get_shape()[-1], output_dim],
-	       				 initializer=tf.random_normal_initializer(stddev=0.01))
+		weight = tf.get_variable('fully_connected_weight', [input_image.get_shape()[1], input_image.get_shape()[2], input_image.get_shape()[-1], output_dim],
+		   				 initializer=tf.random_normal_initializer(stddev=0.01))
 
 		# do deconvolution
 		# weight shape = [filter_width, filter_height, output_channels, input_channels] = [size,size,,] 
