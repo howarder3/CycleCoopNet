@@ -116,9 +116,6 @@ def merge(images, size):
 # def get_image(image_path, image_size, is_crop=True, resize_w=64, is_grayscale = False):
 #     return transform(imread(image_path, is_grayscale), image_size, is_crop, resize_w)
 
-
-
-
 # def transform(image, npx=64, is_crop=True, resize_w=64):
 #     # npx : # of pixels width/height of image
 #     if is_crop:
@@ -126,9 +123,6 @@ def merge(images, size):
 #     else:
 #         cropped_image = image
 #     return np.array(cropped_image)/127.5 - 1.
-
-
-
 
 
 # def clip_by_value(input_, min=0, max=1):
