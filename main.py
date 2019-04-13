@@ -13,11 +13,11 @@ tf.app.flags.DEFINE_integer('output_size',256,'output image size')
 tf.app.flags.DEFINE_integer('input_pic_dim',3,'input picture dimension : colorful = 3, grayscale = 1')
 tf.app.flags.DEFINE_integer('output_pic_dim',3,'output picture dimension : colorful = 3, grayscale = 1')
 
-
 # learning rate
 tf.app.flags.DEFINE_float('descriptor_learning_rate',0.01,'descriptor learning rate') # 0.01 # 0.007 # 1e-6 # 0.01 # 0.001 # 1e-6 # 0.01 # 0.007
 tf.app.flags.DEFINE_float('generator_learning_rate',0.0001,'generator learning rate') # 0.0001 # 1e-5 # 0.0001 # 1e-4 # 0.0001 # 0.0001
 tf.app.flags.DEFINE_integer('langevin_revision_steps',30,'langevin revision steps') # 10
+tf.app.flags.DEFINE_float('langevin_step_size',0.002,'langevin step size') # 0.002
 
 # dataset floder name
 tf.app.flags.DEFINE_string('dataset_dir', './test_datasets', 'dataset directory')
@@ -81,6 +81,7 @@ def main(_):
 				image_size=FLAGS.image_size, output_size = FLAGS.output_size,
 				input_pic_dim = FLAGS.input_pic_dim, output_pic_dim = FLAGS.output_pic_dim,
 				langevin_revision_steps = FLAGS.langevin_revision_steps,
+				langevin_step_size = FLAGS.langevin_step_size,
 				descriptor_learning_rate = FLAGS.descriptor_learning_rate,
 				generator_learning_rate = FLAGS.generator_learning_rate,
 				dataset_name=FLAGS.dataset_name, dataset_dir =FLAGS.dataset_dir, 

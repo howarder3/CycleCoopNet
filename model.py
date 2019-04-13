@@ -9,10 +9,9 @@ from six.moves import xrange
 # --------- self define function ---------
 # ops: layers structure
 from ops import *
+
 # utils: for loading data, model
 from utils import *
-# data_io: for data_io
-from data_io import *
 
 class Coop_pix2pix(object):
 	def __init__(self, sess, 
@@ -21,7 +20,8 @@ class Coop_pix2pix(object):
 				picture_amount = 99999,
 				image_size = 256, output_size = 256,
 				input_pic_dim = 3, output_pic_dim = 3,	
-				langevin_revision_steps = 1,
+				langevin_revision_steps = 1, 
+				langevin_step_size = 0.002,
 				descriptor_learning_rate = 0.01,
 				generator_learning_rate = 0.0001,
 				dataset_name='facades', dataset_dir ='./test_datasets', 
@@ -50,7 +50,7 @@ class Coop_pix2pix(object):
 
 		# descriptor langevin steps
 		self.langevin_revision_steps = langevin_revision_steps
-		self.descriptor_step_size = 0.002
+		self.langevin_step_size = langevin_step_size
 
 		# learning rate
 		self.descriptor_learning_rate = descriptor_learning_rate 
@@ -399,7 +399,7 @@ class Coop_pix2pix(object):
 			descripted_input_image = self.descriptor(input_image, reuse=True)
 
 			grad = tf.gradients(descripted_input_image, input_image, name='grad_des')[0]
-			input_image = input_image - 0.5 * self.descriptor_step_size * self.descriptor_step_size * (input_image / self.sigma1 / self.sigma1 - grad) + self.descriptor_step_size * noise
+			input_image = input_image - 0.5 * self.langevin_step_size * self.langevin_step_size * (input_image / self.sigma1 / self.sigma1 - grad) + self.langevin_step_size * noise
 			return tf.add(i, 1), input_image
 
 		with tf.name_scope("des_langevin_revision"):
