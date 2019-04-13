@@ -175,7 +175,7 @@ class Coop_pix2pix(object):
 
 		# counter initialize
 		counter = 1
-		counter_end = 200 * self.num_batch # self.epoch * self.num_batch
+		counter_end = 200 * num_batch # self.epoch * num_batch
 
 		# start training	
 		start_time = time.time()
@@ -221,8 +221,10 @@ class Coop_pix2pix(object):
 				# sample_results[index : (index + 1)] = revised_B
 
 				print("Epoch: [{:4d}] [{:4d}/{:4d}] time: {}, eta: {}, d_loss: {:.4f}, g_loss: {:.4f}, mse_loss: {:.4f}"
-					.format(epoch, index, num_batch, str(datetime.timedelta(seconds=int(time.time()-start_time))), 
-						str(datetime.timedelta(seconds=int((time.time()-start_time)*(counter_end-counter)/counter)), descriptor_loss, generator_loss, mse_loss))
+					.format(epoch, index, num_batch, 
+						str(datetime.timedelta(seconds=int(time.time()-start_time))),
+							str(datetime.timedelta(seconds=int((time.time()-start_time)*(counter_end-counter)/counter))),
+								 descriptor_loss, generator_loss, mse_loss))
 
 				# if need calculate time interval
 				# start_time = time.time()
@@ -233,7 +235,7 @@ class Coop_pix2pix(object):
 				# print("data_B shape = {}".format(self.data_B.shape)) # data_B shape = (1, 256, 256, 3)
 
 
-				if np.mod(counter, 10) == 0:
+				if np.mod(counter, 10) == 1:
 					save_images(data_A, [self.batch_size, 1],
 						'./{}/ep{:02d}_{:04d}_01_input_data_A.png'.format(self.output_dir, epoch, index))
 					save_images(generated_B, [self.batch_size, 1],
