@@ -175,7 +175,7 @@ class Coop_pix2pix(object):
 
 		# counter initialize
 		counter = 1
-		counter_end = self.epoch * self.num_batch
+		counter_end = 200 * self.num_batch # self.epoch * self.num_batch
 
 		# start training	
 		start_time = time.time()
