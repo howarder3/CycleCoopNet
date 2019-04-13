@@ -1,27 +1,24 @@
 '''
-This code is borrow from: https://github.com/yenchenlin/pix2pix-tensorflow
-Referenced from: https://github.com/Newmu/dcgan_code
+These utils are referenced from: 
+https://github.com/yenchenlin/pix2pix-tensorflow
+https://github.com/zilongzheng/CoopNets
+https://github.com/Newmu/dcgan_code
+
 '''
 
-from __future__ import division
-import math
-import json
-import random
-import pprint
 import scipy
-
 import numpy as np
-import tensorflow as tf
 
-from time import gmtime, strftime
+# from time import gmtime, strftime
+# import tensorflow as tf
+# from __future__ import division
+# import math
+# import json
+# import random
+# import pprint
 
 
-pp = pprint.PrettyPrinter()
-
-get_stddev = lambda x, k_h, k_w: 1/math.sqrt(k_w*k_h*x.get_shape()[-1])
-
-# -----------------------------
-# new added functions for pix2pix
+# ----------  input image and crop  ----------
 
 def load_data(image_path, flip=True, is_test=False):
     img_A, img_B = load_image(image_path)
@@ -43,6 +40,12 @@ def load_image(image_path):
 
     return img_A, img_B
 
+def imread(path, is_grayscale = False):
+    if (is_grayscale):
+        return scipy.misc.imread(path, flatten = True).astype(np.float)
+    else:
+        return scipy.misc.imread(path).astype(np.float)
+
 def preprocess_A_and_B(img_A, img_B, load_size=286, fine_size=256, flip=True, is_test=False):
     if is_test:
         img_A = scipy.misc.imresize(img_A, [fine_size, fine_size])
@@ -62,22 +65,16 @@ def preprocess_A_and_B(img_A, img_B, load_size=286, fine_size=256, flip=True, is
 
     return img_A, img_B
 
-# -----------------------------
-
-def get_image(image_path, image_size, is_crop=True, resize_w=64, is_grayscale = False):
-    return transform(imread(image_path, is_grayscale), image_size, is_crop, resize_w)
+# ----------  save image  ----------
 
 def save_images(images, size, image_path):
     return imsave(inverse_transform(images), size, image_path)
 
-def imread(path, is_grayscale = False):
-    if (is_grayscale):
-        return scipy.misc.imread(path, flatten = True).astype(np.float)
-    else:
-        return scipy.misc.imread(path).astype(np.float)
+def imsave(images, size, path):
+    return scipy.misc.imsave(path, merge(images, size))
 
-def merge_images(images, size):
-    return inverse_transform(images)
+def inverse_transform(images):
+    return (images+1.)/2.
 
 def merge(images, size):
     h, w = images.shape[1], images.shape[2]
@@ -89,89 +86,117 @@ def merge(images, size):
 
     return img
 
-def imsave(images, size, path):
-    return scipy.misc.imsave(path, merge(images, size))
 
-def transform(image, npx=64, is_crop=True, resize_w=64):
-    # npx : # of pixels width/height of image
-    if is_crop:
-        cropped_image = center_crop(image, npx, resize_w=resize_w)
-    else:
-        cropped_image = image
-    return np.array(cropped_image)/127.5 - 1.
-
-def inverse_transform(images):
-    return (images+1.)/2.
+# def merge_images(images, size):
+#     return inverse_transform(images)
 
 
 
-def clip_by_value(input_, min=0, max=1):
-    return np.minimum(max, np.maximum(min, input_))
-
-def img2cell(images, row_num=10, col_num=10, margin_syn=2):
-    [num_images, image_size] = images.shape[0:2]
-    num_cells = int(math.ceil(num_images / (col_num * row_num)))
-    cell_image = np.zeros((num_cells, row_num * image_size + (row_num-1)*margin_syn,
-                           col_num * image_size + (col_num-1)*margin_syn, 3))
-    for i in range(num_images):
-        cell_id = int(math.floor(i / (col_num * row_num)))
-        idx = i % (col_num * row_num)
-        ir = int(math.floor(idx / col_num))
-        ic = idx % col_num
-        temp = clip_by_value(np.squeeze(images[i]), -1, 1)
-        temp = (temp + 1) / 2 * 255
-        temp = clip_by_value(np.round(temp), min=0, max=255)
-        gLow = np.min(temp, axis=(0, 1, 2))
-        gHigh = np.max(temp, axis=(0, 1, 2))
-        temp = (temp - gLow) / (gHigh - gLow)
-        cell_image[cell_id, (image_size+margin_syn)*ir:image_size + (image_size+margin_syn)*ir,
-                    (image_size+margin_syn)*ic:image_size + (image_size+margin_syn)*ic,:] = temp
-    return cell_image
-
-def saveSampleResults(sample_results, filename, col_num=10, margin_syn=2):
-    cell_image = img2cell(sample_results, col_num, col_num, margin_syn)
-    scipy.misc.imsave(filename, np.squeeze(cell_image))
-
-def sample_model(self, sample_dir, epoch, idx):
-    sample_images = self.load_random_samples()
-    samples, d_loss, g_loss = self.sess.run(
-        [self.fake_B_sample, self.d_loss, self.g_loss],
-        feed_dict={self.real_data: sample_images}
-    )
-    save_images(samples, [self.batch_size, 1],
-                './{}/train_{:02d}_{:04d}.png'.format(sample_dir, epoch, idx))
-    print("[Sample] d_loss: {:.8f}, g_loss: {:.8f}".format(d_loss, g_loss))
-
-def save_images(images, size, image_path):
-    return imsave(inverse_transform(images), size, image_path)
-
-def imsave(images, size, path):
-    return scipy.misc.imsave(path, merge(images, size))
 
 
-def save(self, checkpoint_dir, step):
-    model_name = "pix2pix.model"
-    model_dir = "%s_%s_%s" % (self.dataset_name, self.batch_size, self.output_size)
-    checkpoint_dir = os.path.join(checkpoint_dir, model_dir)
-
-    if not os.path.exists(checkpoint_dir):
-        os.makedirs(checkpoint_dir)
-
-    self.saver.save(self.sess,
-                    os.path.join(checkpoint_dir, model_name),
-                    global_step=step)
-
-def inverse_transform(images):
-    return (images+1.)/2.
 
 
-def merge(images, size):
-    h, w = images.shape[1], images.shape[2]
-    img = np.zeros((h * size[0], w * size[1], 3))
-    for idx, image in enumerate(images):
-        i = idx % size[1]
-        j = idx // size[1]
-        img[j*h:j*h+h, i*w:i*w+w, :] = image
 
-    return img
 
+
+
+
+
+
+
+
+
+
+
+
+# pp = pprint.PrettyPrinter()
+
+# get_stddev = lambda x, k_h, k_w: 1/math.sqrt(k_w*k_h*x.get_shape()[-1])
+
+# def get_image(image_path, image_size, is_crop=True, resize_w=64, is_grayscale = False):
+#     return transform(imread(image_path, is_grayscale), image_size, is_crop, resize_w)
+
+
+
+
+# def transform(image, npx=64, is_crop=True, resize_w=64):
+#     # npx : # of pixels width/height of image
+#     if is_crop:
+#         cropped_image = center_crop(image, npx, resize_w=resize_w)
+#     else:
+#         cropped_image = image
+#     return np.array(cropped_image)/127.5 - 1.
+
+
+
+
+
+# def clip_by_value(input_, min=0, max=1):
+#     return np.minimum(max, np.maximum(min, input_))
+
+# def img2cell(images, row_num=10, col_num=10, margin_syn=2):
+#     [num_images, image_size] = images.shape[0:2]
+#     num_cells = int(math.ceil(num_images / (col_num * row_num)))
+#     cell_image = np.zeros((num_cells, row_num * image_size + (row_num-1)*margin_syn,
+#                            col_num * image_size + (col_num-1)*margin_syn, 3))
+#     for i in range(num_images):
+#         cell_id = int(math.floor(i / (col_num * row_num)))
+#         idx = i % (col_num * row_num)
+#         ir = int(math.floor(idx / col_num))
+#         ic = idx % col_num
+#         temp = clip_by_value(np.squeeze(images[i]), -1, 1)
+#         temp = (temp + 1) / 2 * 255
+#         temp = clip_by_value(np.round(temp), min=0, max=255)
+#         gLow = np.min(temp, axis=(0, 1, 2))
+#         gHigh = np.max(temp, axis=(0, 1, 2))
+#         temp = (temp - gLow) / (gHigh - gLow)
+#         cell_image[cell_id, (image_size+margin_syn)*ir:image_size + (image_size+margin_syn)*ir,
+#                     (image_size+margin_syn)*ic:image_size + (image_size+margin_syn)*ic,:] = temp
+#     return cell_image
+
+# def saveSampleResults(sample_results, filename, col_num=10, margin_syn=2):
+#     cell_image = img2cell(sample_results, col_num, col_num, margin_syn)
+#     scipy.misc.imsave(filename, np.squeeze(cell_image))
+
+# def sample_model(self, sample_dir, epoch, idx):
+#     sample_images = self.load_random_samples()
+#     samples, d_loss, g_loss = self.sess.run(
+#         [self.fake_B_sample, self.d_loss, self.g_loss],
+#         feed_dict={self.real_data: sample_images}
+#     )
+#     save_images(samples, [self.batch_size, 1],
+#                 './{}/train_{:02d}_{:04d}.png'.format(sample_dir, epoch, idx))
+#     print("[Sample] d_loss: {:.8f}, g_loss: {:.8f}".format(d_loss, g_loss))
+
+# def save_images(images, size, image_path):
+#     return imsave(inverse_transform(images), size, image_path)
+
+# def imsave(images, size, path):
+#     return scipy.misc.imsave(path, merge(images, size))
+
+
+# def save(self, checkpoint_dir, step):
+#     model_name = "pix2pix.model"
+#     model_dir = "%s_%s_%s" % (self.dataset_name, self.batch_size, self.output_size)
+#     checkpoint_dir = os.path.join(checkpoint_dir, model_dir)
+
+#     if not os.path.exists(checkpoint_dir):
+#         os.makedirs(checkpoint_dir)
+
+#     self.saver.save(self.sess,
+#                     os.path.join(checkpoint_dir, model_name),
+#                     global_step=step)
+
+# def inverse_transform(images):
+#     return (images+1.)/2.
+
+
+# def merge(images, size):
+#     h, w = images.shape[1], images.shape[2]
+#     img = np.zeros((h * size[0], w * size[1], 3))
+#     for idx, image in enumerate(images):
+#         i = idx % size[1]
+#         j = idx // size[1]
+#         img[j*h:j*h+h, i*w:i*w+w, :] = image
+
+#     return img

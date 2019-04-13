@@ -28,13 +28,7 @@ tf.app.flags.DEFINE_string('output_dir', './output', 'output directory')
 tf.app.flags.DEFINE_string('checkpoint_dir', './checkpoint', 'checkpoint directory')
 tf.app.flags.DEFINE_string('log_dir', './log', 'log directory')
 
-
-
 FLAGS = tf.app.flags.FLAGS
-
-
-
-
 
 def main(_):
 	dataset_dir = FLAGS.dataset_dir+"/"+FLAGS.dataset_name
