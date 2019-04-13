@@ -1,6 +1,7 @@
 import tensorflow as tf
 import numpy as np
 import time
+import datetime
 import os
 
 from glob import glob
@@ -157,10 +158,6 @@ class Coop_pix2pix(object):
 
 	def train(self,sess):
 
-		# start learning
-		start_time = time.time()
-		print("time: {:.4f} , Learning start!!! ".format(0))		
-
 		# build model
 		self.build_model()
 
@@ -177,10 +174,12 @@ class Coop_pix2pix(object):
 		# sample_results = np.random.randn(num_batch, self.image_size, self.image_size, 3)
 
 		# counter initialize
-		counter = 0
+		counter = 1
+		counter_end = self.epoch * self.num_batch
 
 		# start training	
-		print("time: {:.4f} , Start training model......".format(time.time()-start_time))
+		start_time = time.time()
+		print("time: {} , Start training model......".format(str(datetime.timedelta(seconds=int(time.time()-start_time)))))
 		
 
 		for epoch in xrange(self.epoch): # how many epochs to train
@@ -221,9 +220,9 @@ class Coop_pix2pix(object):
 				# put picture in sample picture
 				# sample_results[index : (index + 1)] = revised_B
 
-
-				print("Epoch: [{:4d}] [{:4d}/{:4d}] time: {:.4f}, d_loss: {:.4f}, g_loss: {:.4f}, mse_loss: {:.4f}"
-					.format(epoch, index, num_batch, time.time() - start_time, descriptor_loss, generator_loss, mse_loss))
+				print("Epoch: [{:4d}] [{:4d}/{:4d}] time: {}, eta: {}, d_loss: {:.4f}, g_loss: {:.4f}, mse_loss: {:.4f}"
+					.format(epoch, index, num_batch, str(datetime.timedelta(seconds=int(time.time()-start_time))), 
+						str(datetime.timedelta(seconds=int((time.time()-start_time)*(counter_end-counter)/counter)), descriptor_loss, generator_loss, mse_loss))
 
 				# if need calculate time interval
 				# start_time = time.time()

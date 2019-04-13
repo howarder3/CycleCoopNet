@@ -18,4 +18,19 @@ python main.py
 pip freeze > requirements.txt
 pip -r requirements.txt
 
+
+# bash download datasets
+cd D:\
+cd lab_howard/pix2pix-tensorflow-master
+bash ./download_dataset.sh facades
+
+bash ./download_dataset.sh edges2shoes 
+
+[ 99M  ]	cityscapes  
+[ 8.0G ]	edges2handbags 
+[ 2.0G ]	edges2shoes 	 
+[ 29M  ]	facades	 
+[ 239M ]	maps	 
+
+
 '''
