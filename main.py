@@ -7,7 +7,7 @@ from model import Coop_pix2pix
 # parameters setting
 tf.app.flags.DEFINE_integer('epoch',200,'how many epochs to train')
 tf.app.flags.DEFINE_integer('batch_size',1,'how many pic in one group(batch), iteration = picture_amount/batch_size')
-tf.app.flags.DEFINE_integer('picture_amount',99999,'how many pictures to train')
+tf.app.flags.DEFINE_integer('picture_amount',99999999,'how many pictures to train')
 tf.app.flags.DEFINE_integer('image_size',256,'input image size')
 tf.app.flags.DEFINE_integer('output_size',256,'output image size')
 tf.app.flags.DEFINE_integer('input_pic_dim',3,'input picture dimension : colorful = 3, grayscale = 1')
@@ -16,12 +16,12 @@ tf.app.flags.DEFINE_integer('output_pic_dim',3,'output picture dimension : color
 # learning rate
 tf.app.flags.DEFINE_float('descriptor_learning_rate',0.01,'descriptor learning rate') # 0.01 # 0.007 # 1e-6 # 0.01 # 0.001 # 1e-6 # 0.01 # 0.007
 tf.app.flags.DEFINE_float('generator_learning_rate',0.0001,'generator learning rate') # 0.0001 # 1e-5 # 0.0001 # 1e-4 # 0.0001 # 0.0001
-tf.app.flags.DEFINE_integer('langevin_revision_steps',100,'langevin revision steps') # 30 # 10
+tf.app.flags.DEFINE_integer('langevin_revision_steps',100,'langevin revision steps') #100 # 30 # 10
 tf.app.flags.DEFINE_float('langevin_step_size',0.002,'langevin step size') # 0.002
 
 # dataset floder name
 tf.app.flags.DEFINE_string('dataset_dir', './test_datasets', 'dataset directory')
-tf.app.flags.DEFINE_string('dataset_name', 'facades', 'dataset name') # cityscapes # edges2handbags # edges2shoes # facades # maps	
+tf.app.flags.DEFINE_string('dataset_name', 'edges2handbags', 'dataset name') # cityscapes # edges2handbags # edges2shoes # facades # maps	
 
 # folder position
 tf.app.flags.DEFINE_string('output_dir', './output', 'output directory')
