@@ -113,8 +113,6 @@ class Coop_pix2pix(object):
 		# descriptor
 		described_real_data_B = self.descriptor(self.input_real_data_B, reuse=False)
 		described_revised_B = self.descriptor(self.input_revised_B, reuse=True)
-		descripted_generated_B = self.descriptor(self.input_generated_B, reuse=True)
-
 
 		# symbolic langevins
 		self.des_langevin_revision_output = self.des_langevin_revision(self.input_revised_B)
