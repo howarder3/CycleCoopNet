@@ -115,7 +115,7 @@ class Coop_pix2pix(object):
 		described_revised_B = self.descriptor(self.input_revised_B, reuse=True)
 
 		# symbolic langevins
-		self.des_langevin_revision_output = self.des_langevin_revision(self.input_revised_B)
+		self.des_langevin_revision_output, self.pic_list = self.des_langevin_revision(self.input_revised_B)
 
 		t_vars = tf.trainable_variables()
 		self.des_vars = [var for var in t_vars if var.name.startswith('des')]
@@ -207,7 +207,8 @@ class Coop_pix2pix(object):
 				generated_B = sess.run(self.generated_B, feed_dict={self.input_real_data_A: data_A})
 
 				# step D1: descriptor try to revised image:"generated_B"
-				revised_B = sess.run(self.des_langevin_revision_output, feed_dict={self.input_revised_B: generated_B})
+				revised_B, pic_list_output = sess.run(self.des_langevin_revision_output, feed_dict={self.input_revised_B: generated_B})
+				print(pic_list_output.shape)
 
 				# step D2: update descriptor net
 				descriptor_loss , _ = sess.run([self.des_loss, self.des_optim],
@@ -411,14 +412,14 @@ class Coop_pix2pix(object):
 
 			grad = tf.gradients(descripted_input_image, input_image, name='grad_des')[0]
 			input_image = input_image - 0.5 * self.langevin_step_size * self.langevin_step_size * (input_image / self.sigma1 / self.sigma1 - grad) + self.langevin_step_size * noise
-			print("input_image.shape: ",input_image.shape)
+			# print("input_image.shape: ",input_image.shape)
 			pic_list.append(input_image)
 			return tf.add(i, 1), input_image
 
 		with tf.name_scope("des_langevin_revision"):
 			i = tf.constant(0)
 			i, input_image = tf.while_loop(cond, body, [i, input_image_arg])
-			return input_image
+			return input_image,pic_list
 
 
 
