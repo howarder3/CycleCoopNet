@@ -399,6 +399,8 @@ class Coop_pix2pix(object):
 	def des_langevin_revision(self, input_image_arg):
 
 		def cond(i, input_image):
+			save_images(input_image, [self.batch_size, 1],
+				'./{}/langevin_test_{:02d}.png'.format(self.output_dir, i))
 			return tf.less(i, self.langevin_revision_steps)
 
 		def body(i, input_image):
@@ -437,7 +439,7 @@ class Coop_pix2pix(object):
 		checkpoint = tf.train.get_checkpoint_state(checkpoint_dir)
 		if checkpoint and checkpoint.model_checkpoint_path:
 			checkpoint_name = os.path.basename(checkpoint.model_checkpoint_path)
-			print(" [*] Found checkpoint name: {}".format(checkpoint_name))
+			print(" [v] Found checkpoint name: {}".format(checkpoint_name))
 			self.epoch_startpoint = int(checkpoint_name.split("epoch-", 1)[1])+1
 			self.saver.restore(self.sess, os.path.join(checkpoint_dir, checkpoint_name))
 			return True
