@@ -52,8 +52,8 @@ def main(_):
 			tf.gfile.MakeDirs(output_dir)
 
 		if tf.gfile.Exists(checkpoint_dir):
-			user_input = input('\nWarning! Checkpoint directory exists! Enter \'y\' to delete folder!\n')
-			if user_input == 'y':
+			user_input = input('\nWarning! Checkpoint directory already exists! Continue training? (y/n)')
+			if user_input == 'n':
 				tf.gfile.DeleteRecursively(checkpoint_dir)
 				tf.gfile.MakeDirs(checkpoint_dir)
 			else:

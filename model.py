@@ -177,9 +177,9 @@ class Coop_pix2pix(object):
 
 		# load checkpoint
 		if self.load(self.checkpoint_dir):
-			print(" [v] Load checkpoint success!!!")
+			print(" [v] Loading checkpoint success!!!")
 		else:
-			print(" [!] Load checkpoint failed...")
+			print(" [!] Loading checkpoint failed...")
 
 		# start training	
 		start_time = time.time()
@@ -430,7 +430,7 @@ class Coop_pix2pix(object):
 					global_step=step)
 
 	def load(self, checkpoint_dir):
-		print(" [*] Load checkpoint...")
+		print(" [*] Loading checkpoint...")
 
 		model_dir = "{}".format(self.dataset_name)
 		checkpoint_dir = os.path.join(checkpoint_dir, model_dir)
@@ -438,6 +438,7 @@ class Coop_pix2pix(object):
 		checkpoint = tf.train.get_checkpoint_state(checkpoint_dir)
 		if checkpoint and checkpoint.model_checkpoint_path:
 			checkpoint_name = os.path.basename(checkpoint.model_checkpoint_path)
+			print(checkpoint_name)
 			self.saver.restore(self.sess, os.path.join(checkpoint_dir, checkpoint_name))
 			return True
 		else:
