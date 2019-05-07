@@ -407,8 +407,8 @@ class Coop_pix2pix(object):
 
 			grad = tf.gradients(descripted_input_image, input_image, name='grad_des')[0]
 			input_image = input_image - 0.5 * self.langevin_step_size * self.langevin_step_size * (input_image / self.sigma1 / self.sigma1 - grad) + self.langevin_step_size * noise
-			save_images(input_image, [self.batch_size, 1],
-				'./{}/langevin_test.png'.format(self.output_dir))
+			# save_images(input_image, [self.batch_size, 1],
+			# 	'./{}/langevin_test.png'.format(self.output_dir))
 			return tf.add(i, 1), input_image
 
 		with tf.name_scope("des_langevin_revision"):
