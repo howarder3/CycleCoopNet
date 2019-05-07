@@ -228,7 +228,7 @@ class Coop_pix2pix(object):
 				print("Epoch: [{:4d}] [{:4d}/{:4d}] time: {}, eta: {}, d_loss: {:.4f}, g_loss: {:.4f}, mse_loss: {:.4f}"
 					.format(epoch, index, self.num_batch, 
 						str(datetime.timedelta(seconds=int(time.time()-start_time))),
-							str(datetime.timedelta(seconds=int((time.time()-start_time)*(counter_end-counter)/counter))),
+							str(datetime.timedelta(seconds=int((time.time()-start_time)*(counter_end-(self.epoch_startpoint*self.num_batch)-counter)/counter))),
 								 descriptor_loss, generator_loss, mse_loss))
 
 				# if need calculate time interval
@@ -442,7 +442,6 @@ class Coop_pix2pix(object):
 			checkpoint_name = os.path.basename(checkpoint.model_checkpoint_path)
 			print(" [v] Found checkpoint name: {}".format(checkpoint_name))
 			self.epoch_startpoint = int(checkpoint_name.split("epoch-", 1)[1])+1
-			# self.counter = self.epoch_startpoint * self.num_batch
 			self.saver.restore(self.sess, os.path.join(checkpoint_dir, checkpoint_name))
 			return True
 		else:
