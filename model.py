@@ -229,7 +229,7 @@ class Coop_pix2pix(object):
 				# sample_results[index : (index + 1)] = revised_B
 
 				print("Epoch: [{:4d}] [{:4d}/{:4d}] time: {}, eta: {}, d_loss: {:.4f}, g_loss: {:.4f}, mse_loss: {:.4f}"
-					.format(epoch, index, num_batch, 
+					.format(epoch, index, self.num_batch, 
 						str(datetime.timedelta(seconds=int(time.time()-start_time))),
 							str(datetime.timedelta(seconds=int((time.time()-start_time)*(counter_end-self.counter)/self.counter))),
 								 descriptor_loss, generator_loss, mse_loss))
