@@ -405,6 +405,7 @@ class Coop_pix2pix(object):
 			return tf.less(i, self.langevin_revision_steps)
 
 		def body(i, input_image):
+			global pic_list
 			# print("input_image.shape: ",input_image.shape)
 			# save_images(input_image, [self.batch_size, 1],
 			# 	'./{}/test.png'.format(self.output_dir))
