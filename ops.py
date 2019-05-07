@@ -65,7 +65,7 @@ def gen_decode_conv2d(input_image, output_dim, name="gen_decode_conv2d"):
 		
 		decode_conv_output = tf.reshape(decode_conv_result_add_bias, decode_conv_result.get_shape())
 
-		print("{} shape: {}".format(name, decode_conv_output.shape))
+		# print("{} shape: {}".format(name, decode_conv_output.shape))
 
 		return decode_conv_output
 
@@ -92,7 +92,7 @@ def des_conv2d(input_image, output_dim, name="des_conv2d"):
 
 		descriptor_conv_output = tf.reshape(descriptor_conv_result_add_bias, descriptor_conv_result.get_shape())
 
-		print("{} shape: {}".format(name, descriptor_conv_output.shape))
+		# print("{} shape: {}".format(name, descriptor_conv_output.shape))
 
 		return descriptor_conv_output
 
@@ -120,7 +120,7 @@ def des_fully_connected(input_image, output_dim, name="des_fully_connected"):
 
 		fully_connected_conv_output = tf.reshape(fully_connected_conv_result_add_bias, fully_connected_conv_result.get_shape())
 
-		print("{} shape: {}".format(name, fully_connected_conv_output.shape))
+		# print("{} shape: {}".format(name, fully_connected_conv_output.shape))
 
 		return fully_connected_conv_output
 
