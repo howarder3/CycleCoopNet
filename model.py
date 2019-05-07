@@ -121,18 +121,18 @@ class Coop_pix2pix(object):
 		self.des_vars = [var for var in t_vars if var.name.startswith('des')]
 		self.gen_vars = [var for var in t_vars if var.name.startswith('gen')]
 
-		# descriptor variables
-		print("\n------  self.des_vars  ------\n")
-		for var in self.des_vars:
-			print(var)
+		# # descriptor variables
+		# print("\n------  self.des_vars  ------\n")
+		# for var in self.des_vars:
+		# 	print(var)
 
 
-		# # generator variables
-		print("\n------  self.gen_vars  ------\n")
-		for var in self.gen_vars:
-			print(var)
+		# # # generator variables
+		# print("\n------  self.gen_vars  ------\n")
+		# for var in self.gen_vars:
+		# 	print(var)
 
-		print("")
+		# print("")
 		
 
 		# descriptor loss functions
@@ -439,7 +439,7 @@ class Coop_pix2pix(object):
 		if checkpoint and checkpoint.model_checkpoint_path:
 			checkpoint_name = os.path.basename(checkpoint.model_checkpoint_path)
 			self.epoch_startpoint = checkpoint_name.split("epoch-", 1)
-			print(self.epoch_counter)
+			print(self.epoch_startpoint)
 			self.saver.restore(self.sess, os.path.join(checkpoint_dir, checkpoint_name))
 			return True
 		else:
