@@ -265,7 +265,6 @@ class Coop_pix2pix(object):
 	def generator(self, input_image, reuse=False):
 		with tf.variable_scope("gen", reuse=reuse):
 
-			print("\n------  generator layers shape  ------\n")
 			# print("\n------  generator layers shape  ------\n")
 			# print("input_image shape: {}".format(input_image.shape))
 
