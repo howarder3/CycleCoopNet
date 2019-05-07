@@ -400,7 +400,7 @@ class Coop_pix2pix(object):
 
 		def cond(i, input_image):
 			save_images(input_image, [self.batch_size, 1],
-				'./{}/langevin_test_{:02d}.png'.format(self.output_dir, int(i)))
+				'./{}/langevin_test_{}.png'.format(self.output_dir, i))
 			return tf.less(i, self.langevin_revision_steps)
 
 		def body(i, input_image):
