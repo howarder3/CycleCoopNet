@@ -265,8 +265,8 @@ class Coop_pix2pix(object):
 	def generator(self, input_image, reuse=False):
 		with tf.variable_scope("gen", reuse=reuse):
 
-			print("\n------  generator layers shape  ------\n")
-			print("input_image shape: {}".format(input_image.shape))
+			# print("\n------  generator layers shape  ------\n")
+			# print("input_image shape: {}".format(input_image.shape))
 
 
 			num_filter = 64
@@ -363,8 +363,8 @@ class Coop_pix2pix(object):
 	def descriptor(self, input_image, reuse=False):
 		with tf.variable_scope('des', reuse=reuse):
 
-			print("\n------  descriptor layers shape  ------\n")
-			print("input_image shape: {}".format(input_image.shape))
+			# print("\n------  descriptor layers shape  ------\n")
+			# print("input_image shape: {}".format(input_image.shape))
 
 			num_filter = 64
 
@@ -438,7 +438,7 @@ class Coop_pix2pix(object):
 		checkpoint = tf.train.get_checkpoint_state(checkpoint_dir)
 		if checkpoint and checkpoint.model_checkpoint_path:
 			checkpoint_name = os.path.basename(checkpoint.model_checkpoint_path)
-			self.epoch_startpoint = checkpoint_name.split("epoch-", 1)
+			self.epoch_startpoint = int(checkpoint_name.split("epoch-", 1)[1])
 			print(self.epoch_startpoint)
 			self.saver.restore(self.sess, os.path.join(checkpoint_dir, checkpoint_name))
 			return True
