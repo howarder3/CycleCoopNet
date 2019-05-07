@@ -209,7 +209,7 @@ class Coop_pix2pix(object):
 				# step D1: descriptor try to revised image:"generated_B"
 				revised_B = sess.run(self.des_langevin_revision_output, feed_dict={self.input_revised_B: generated_B})
 				
-				print(revised_B.shape)
+				print(len(pic_list))
 
 				# step D2: update descriptor net
 				descriptor_loss , _ = sess.run([self.des_loss, self.des_optim],
@@ -422,7 +422,7 @@ class Coop_pix2pix(object):
 		with tf.name_scope("des_langevin_revision"):
 			i = tf.constant(0)
 			i, input_image = tf.while_loop(cond, body, [i, input_image_arg])
-			return pic_list # input_image
+			return input_image
 
 
 
