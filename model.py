@@ -115,7 +115,7 @@ class Coop_pix2pix(object):
 		described_revised_B = self.descriptor(self.input_revised_B, reuse=True)
 
 		# symbolic langevins
-		self.des_langevin_revision_output, self.pic_list = self.des_langevin_revision(self.input_revised_B)
+		self.des_langevin_revision_output = self.des_langevin_revision(self.input_revised_B)
 
 		t_vars = tf.trainable_variables()
 		self.des_vars = [var for var in t_vars if var.name.startswith('des')]
@@ -207,9 +207,9 @@ class Coop_pix2pix(object):
 				generated_B = sess.run(self.generated_B, feed_dict={self.input_real_data_A: data_A})
 
 				# step D1: descriptor try to revised image:"generated_B"
-				revised_B, pic_list_output = sess.run([self.des_langevin_revision_output, self.pic_list], feed_dict={self.input_revised_B: generated_B})
+				revised_B = sess.run(self.des_langevin_revision_output, feed_dict={self.input_revised_B: generated_B})
 				
-				print(pic_list_output.shape)
+				print(revised_B.shape)
 
 				# step D2: update descriptor net
 				descriptor_loss , _ = sess.run([self.des_loss, self.des_optim],
@@ -420,7 +420,7 @@ class Coop_pix2pix(object):
 		with tf.name_scope("des_langevin_revision"):
 			i = tf.constant(0)
 			i, input_image = tf.while_loop(cond, body, [i, input_image_arg])
-			return input_image,pic_list
+			return pic_list # input_image
 
 
 
@@ -447,7 +447,7 @@ class Coop_pix2pix(object):
 			checkpoint_name = os.path.basename(checkpoint.model_checkpoint_path)
 			print(" [v] Found checkpoint name: {}".format(checkpoint_name))
 			self.epoch_startpoint = int(checkpoint_name.split("epoch-", 1)[1])+1
-			self.counter = (self.epoch_startpoint-1)*self.num_batch
+			self.counter = self.epoch_startpoint * self.num_batch
 			self.saver.restore(self.sess, os.path.join(checkpoint_dir, checkpoint_name))
 			return True
 		else:
