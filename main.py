@@ -7,7 +7,7 @@ from model import Coop_pix2pix
 # parameters setting
 tf.app.flags.DEFINE_integer('epoch',200,'how many epochs to train')
 tf.app.flags.DEFINE_integer('batch_size',1,'how many pic in one group(batch), iteration = picture_amount/batch_size')
-tf.app.flags.DEFINE_integer('picture_amount',9999999,'how many pictures to train')
+tf.app.flags.DEFINE_integer('picture_amount',400,'how many pictures to train')
 tf.app.flags.DEFINE_integer('image_size',256,'input image size')
 tf.app.flags.DEFINE_integer('output_size',256,'output image size')
 tf.app.flags.DEFINE_integer('input_pic_dim',3,'input picture dimension : colorful = 3, grayscale = 1')
@@ -42,28 +42,28 @@ def main(_):
 		else:
 			print("\nError! Dataset not found!\n")
 			return
-
-
-		if tf.gfile.Exists(checkpoint_dir):
-			# user_input = input('\n [!] Warning! Checkpoint exists! Continue training? (y/n) ')
-			user_input = 'y'
-			if user_input == 'n':
-				tf.gfile.DeleteRecursively(checkpoint_dir)
-				tf.gfile.DeleteRecursively(output_dir)
-				tf.gfile.DeleteRecursively(log_dir)
-			else:
-				pass
-		else:
-			tf.gfile.MakeDirs(checkpoint_dir)
-
-		if tf.gfile.Exists(checkpoint_dir):
-			pass
+			
+		if tf.gfile.Exists(output_dir):
+			# user_input = input('\nWarning! Output directory exists! Enter \'y\' to delete folder!\n')
+			# if user_input == 'y':
+			tf.gfile.DeleteRecursively(output_dir)
+			tf.gfile.MakeDirs(output_dir)
 		else:
 			tf.gfile.MakeDirs(output_dir)
 
+		if tf.gfile.Exists(checkpoint_dir):
+			# user_input = input('\nWarning! Checkpoint directory exists! Enter \'y\' to delete folder!\n')
+			# if user_input == 'y':
+			tf.gfile.DeleteRecursively(checkpoint_dir)
+			tf.gfile.MakeDirs(checkpoint_dir)
+		else:
+			tf.gfile.MakeDirs(checkpoint_dir)
 
 		if tf.gfile.Exists(log_dir):
-			pass
+			# user_input = input('\nWarning! Log directory exists! Enter \'y\' to delete folder!\n')
+			# if user_input == 'y':
+			tf.gfile.DeleteRecursively(log_dir)
+			tf.gfile.MakeDirs(log_dir)
 		else:
 			tf.gfile.MakeDirs(log_dir)
 

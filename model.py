@@ -104,7 +104,6 @@ class Coop_pix2pix(object):
 				[self.batch_size, self.image_size, self.image_size, self.input_pic_dim],
 				name='input_real_data_A')
 
-
 	def build_model(self):
 
 		# generator 
@@ -172,7 +171,7 @@ class Coop_pix2pix(object):
 		# sample_results = np.random.randn(num_batch, self.image_size, self.image_size, 3)
 
 		# counter initialize
-		self.counter = 1
+		counter = 1
 		counter_end = self.epoch * self.num_batch  # 200 * num_batch 
 
 		# load checkpoint
@@ -208,8 +207,6 @@ class Coop_pix2pix(object):
 
 				# step D1: descriptor try to revised image:"generated_B"
 				revised_B = sess.run(self.des_langevin_revision_output, feed_dict={self.input_revised_B: generated_B})
-				
-				print(len(pic_list))
 
 				# step D2: update descriptor net
 				descriptor_loss , _ = sess.run([self.des_loss, self.des_optim],
@@ -231,7 +228,7 @@ class Coop_pix2pix(object):
 				print("Epoch: [{:4d}] [{:4d}/{:4d}] time: {}, eta: {}, d_loss: {:.4f}, g_loss: {:.4f}, mse_loss: {:.4f}"
 					.format(epoch, index, self.num_batch, 
 						str(datetime.timedelta(seconds=int(time.time()-start_time))),
-							str(datetime.timedelta(seconds=int((time.time()-start_time)*(counter_end-self.counter)/self.counter))),
+							str(datetime.timedelta(seconds=int((time.time()-start_time)*(counter_end-counter)/counter))),
 								 descriptor_loss, generator_loss, mse_loss))
 
 				# if need calculate time interval
@@ -243,7 +240,7 @@ class Coop_pix2pix(object):
 				# print("data_B shape = {}".format(self.data_B.shape)) # data_B shape = (1, 256, 256, 3)
 
 
-				if np.mod(self.counter, 10) == 1:
+				if np.mod(counter, 10) == 1:
 					save_images(data_A, [self.batch_size, 1],
 						'./{}/ep{:02d}_{:04d}_01_input_data_A.png'.format(self.output_dir, epoch, index))
 					save_images(generated_B, [self.batch_size, 1],
@@ -253,7 +250,7 @@ class Coop_pix2pix(object):
 					save_images(data_B, [self.batch_size, 1],
 						'./{}/ep{:02d}_{:04d}_04_input_data_B.png'.format(self.output_dir, epoch, index))
 
-				self.counter += 1
+				counter += 1
 
 			self.save(self.checkpoint_dir, epoch)
 
@@ -397,11 +394,9 @@ class Coop_pix2pix(object):
 
 			return des_layer_4_fully_connected 
 
-	pic_list = []
 	def des_langevin_revision(self, input_image_arg):
 		# print("input_image_arg.shape: ",input_image_arg.shape)
-		global pic_list
-		# pic_list = []
+		# self.pic_list = []
 		def cond(i, input_image):
 			return tf.less(i, self.langevin_revision_steps)
 
@@ -415,7 +410,6 @@ class Coop_pix2pix(object):
 			grad = tf.gradients(descripted_input_image, input_image, name='grad_des')[0]
 			input_image = input_image - 0.5 * self.langevin_step_size * self.langevin_step_size * (input_image / self.sigma1 / self.sigma1 - grad) + self.langevin_step_size * noise
 			# print("input_image.shape: ",input_image.shape)
-			pic_list.append(input_image)
 			return tf.add(i, 1), input_image
 
 		with tf.name_scope("des_langevin_revision"):
@@ -448,7 +442,7 @@ class Coop_pix2pix(object):
 			checkpoint_name = os.path.basename(checkpoint.model_checkpoint_path)
 			print(" [v] Found checkpoint name: {}".format(checkpoint_name))
 			self.epoch_startpoint = int(checkpoint_name.split("epoch-", 1)[1])+1
-			self.counter = self.epoch_startpoint * self.num_batch
+			# self.counter = self.epoch_startpoint * self.num_batch
 			self.saver.restore(self.sess, os.path.join(checkpoint_dir, checkpoint_name))
 			return True
 		else:
