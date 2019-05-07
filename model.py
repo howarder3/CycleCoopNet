@@ -65,7 +65,7 @@ class Coop_pix2pix(object):
 		self.output_dir = output_dir
 		self.checkpoint_dir = checkpoint_dir
 		self.log_dir = log_dir
-
+		self.epoch_startpoint = 0
 
 		self.gen_encode_layer2_batchnorm = batch_norm(name='gen_encode_layer_2_batchnorm')
 		self.gen_encode_layer3_batchnorm = batch_norm(name='gen_encode_layer_3_batchnorm')
@@ -188,7 +188,7 @@ class Coop_pix2pix(object):
 
 
 
-		for epoch in xrange(self.epoch): # how many epochs to train
+		for epoch in xrange(self.epoch_startpoint, self.epoch): # how many epochs to train
 
 			for index in xrange(num_batch): # num_batch
 				# find picture list index*self.batch_size to (index+1)*self.batch_size (one batch)
@@ -438,7 +438,8 @@ class Coop_pix2pix(object):
 		checkpoint = tf.train.get_checkpoint_state(checkpoint_dir)
 		if checkpoint and checkpoint.model_checkpoint_path:
 			checkpoint_name = os.path.basename(checkpoint.model_checkpoint_path)
-			print(checkpoint_name)
+			self.epoch_startpoint = checkpoint_name.split("epoch-", 1)
+			print(self.epoch_counter)
 			self.saver.restore(self.sess, os.path.join(checkpoint_dir, checkpoint_name))
 			return True
 		else:

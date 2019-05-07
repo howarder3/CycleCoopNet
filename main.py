@@ -42,30 +42,27 @@ def main(_):
 		else:
 			print("\nError! Dataset not found!\n")
 			return
-			
-		if tf.gfile.Exists(output_dir):
-			# user_input = input('\nWarning! Output directory exists! Enter \'y\' to delete folder!\n')
-			# if user_input == 'y':
-			tf.gfile.DeleteRecursively(output_dir)
-			tf.gfile.MakeDirs(output_dir)
-		else:
-			tf.gfile.MakeDirs(output_dir)
+
 
 		if tf.gfile.Exists(checkpoint_dir):
-			user_input = input('\nWarning! Checkpoint directory already exists! Continue training? (y/n)')
+			user_input = input('\n [!] Warning! Checkpoint exists! Continue training? (y/n) ')
 			if user_input == 'n':
 				tf.gfile.DeleteRecursively(checkpoint_dir)
-				tf.gfile.MakeDirs(checkpoint_dir)
+				tf.gfile.DeleteRecursively(output_dir)
+				tf.gfile.DeleteRecursively(log_dir)
 			else:
 				pass
 		else:
 			tf.gfile.MakeDirs(checkpoint_dir)
 
+		if tf.gfile.Exists(checkpoint_dir):
+			pass
+		else:
+			tf.gfile.MakeDirs(output_dir)
+
+
 		if tf.gfile.Exists(log_dir):
-			# user_input = input('\nWarning! Log directory exists! Enter \'y\' to delete folder!\n')
-			# if user_input == 'y':
-			tf.gfile.DeleteRecursively(log_dir)
-			tf.gfile.MakeDirs(log_dir)
+			pass
 		else:
 			tf.gfile.MakeDirs(log_dir)
 
