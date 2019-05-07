@@ -205,8 +205,8 @@ class Coop_pix2pix(object):
 				batch_images = np.array(batch).astype(np.float32)
 
 				# data domain A and data domain B
-				data_B = batch_images[:, :, :, : self.input_pic_dim] 
-				data_A = batch_images[:, :, :, self.input_pic_dim:self.input_pic_dim+self.output_pic_dim] 
+				data_A = batch_images[:, :, :, : self.input_pic_dim] 
+				data_B = batch_images[:, :, :, self.input_pic_dim:self.input_pic_dim+self.output_pic_dim] 
 
 				# step G1: try to generate B domain(target domain) picture
 				generated_B = sess.run(self.generated_B, feed_dict={self.input_real_data_A: data_A})
