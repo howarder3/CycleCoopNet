@@ -397,10 +397,11 @@ class Coop_pix2pix(object):
 
 			return des_layer_4_fully_connected 
 
-
+	pic_list = []
 	def des_langevin_revision(self, input_image_arg):
 		# print("input_image_arg.shape: ",input_image_arg.shape)
-		pic_list= []
+		global pic_list
+		pic_list = []
 		def cond(i, input_image):
 			return tf.less(i, self.langevin_revision_steps)
 
