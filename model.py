@@ -186,7 +186,7 @@ class Coop_pix2pix(object):
 		print("time: {} , Start training model......".format(str(datetime.timedelta(seconds=int(time.time()-start_time)))))
 		
 
-		print("self.counter = ",self.counter)
+		# print("self.counter = ",self.counter)
 
 		for epoch in xrange(self.epoch_startpoint, self.epoch): # how many epochs to train
 
@@ -400,8 +400,8 @@ class Coop_pix2pix(object):
 	pic_list = []
 	def des_langevin_revision(self, input_image_arg):
 		# print("input_image_arg.shape: ",input_image_arg.shape)
-		global pic_list
-		pic_list = []
+		# global pic_list
+		# pic_list = []
 		def cond(i, input_image):
 			return tf.less(i, self.langevin_revision_steps)
 
