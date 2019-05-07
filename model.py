@@ -397,11 +397,12 @@ class Coop_pix2pix(object):
 
 
 	def des_langevin_revision(self, input_image_arg):
-		
+		print("input_image_arg.shape: ",input_image_arg.shape)
 		def cond(i, input_image):
 			return tf.less(i, self.langevin_revision_steps)
 
 		def body(i, input_image):
+			print("input_image.shape: ",input_image.shape)
 			noise = tf.random_normal(shape=[1, self.image_size, self.image_size, 3], name='noise')
 			descripted_input_image = self.descriptor(input_image, reuse=True)
 
