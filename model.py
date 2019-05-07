@@ -175,10 +175,18 @@ class Coop_pix2pix(object):
 		counter = 1
 		counter_end = self.epoch * num_batch  # 200 * num_batch 
 
+		# load checkpoint
+		if self.load(self.checkpoint_dir):
+			print(" [v] Load checkpoint success!!!")
+		else:
+			print(" [!] Load checkpoint failed...")
+
 		# start training	
 		start_time = time.time()
 		print("time: {} , Start training model......".format(str(datetime.timedelta(seconds=int(time.time()-start_time)))))
 		
+
+
 
 		for epoch in xrange(self.epoch): # how many epochs to train
 
@@ -410,6 +418,7 @@ class Coop_pix2pix(object):
 
 	def save(self, checkpoint_dir, step):
 		saver_name = "epoch"
+
 		model_dir = "{}".format(self.dataset_name)
 		checkpoint_dir = os.path.join(checkpoint_dir, model_dir)
 
@@ -420,6 +429,19 @@ class Coop_pix2pix(object):
 					os.path.join(checkpoint_dir, saver_name),
 					global_step=step)
 
+	def load(self, checkpoint_dir):
+		print(" [*] Load checkpoint...")
+
+		model_dir = "{}".format(self.dataset_name)
+		checkpoint_dir = os.path.join(checkpoint_dir, model_dir)
+
+		checkpoint = tf.train.get_checkpoint_state(checkpoint_dir)
+		if checkpoint and checkpoint.model_checkpoint_path:
+			checkpoint_name = os.path.basename(checkpoint.model_checkpoint_path)
+			self.saver.restore(self.sess, os.path.join(checkpoint_dir, checkpoint_name))
+			return True
+		else:
+			return False
 
 
 
