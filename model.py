@@ -177,7 +177,7 @@ class Coop_pix2pix(object):
 
 		# load checkpoint
 		if self.load(self.checkpoint_dir):
-			print(" [*] Loading checkpoint success!!!")
+			print(" [v] Loading checkpoint success!!!")
 		else:
 			print(" [!] Loading checkpoint failed...")
 

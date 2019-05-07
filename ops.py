@@ -34,7 +34,7 @@ def gen_encode_conv2d(input_image, output_dim, name="gen_encode_conv2d"):
 
 		encode_conv_output = tf.reshape(encode_conv_result_add_bias, encode_conv_result.get_shape())
 
-		print("{} shape: {}".format(name, encode_conv_output.shape))
+		# print("{} shape: {}".format(name, encode_conv_output.shape))
 
 		return encode_conv_output
 
