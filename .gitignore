@@ -1,5 +1,4 @@
 # Byte-compiled / optimized / DLL files
-__pycache__/
 *.py[cod]
 *$py.class
 
@@ -8,11 +7,12 @@ __pycache__/
 
 # Data
 
+__pycache__/
+
 datasets/
 log/
 output/
 checkpoint/
-
 output_reference/
 
 # Distribution / packaging
