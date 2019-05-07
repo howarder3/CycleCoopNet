@@ -45,7 +45,8 @@ def main(_):
 
 
 		if tf.gfile.Exists(checkpoint_dir):
-			user_input = input('\n [!] Warning! Checkpoint exists! Continue training? (y/n) ')
+			# user_input = input('\n [!] Warning! Checkpoint exists! Continue training? (y/n) ')
+			user_input = 'y'
 			if user_input == 'n':
 				tf.gfile.DeleteRecursively(checkpoint_dir)
 				tf.gfile.DeleteRecursively(output_dir)
