@@ -207,7 +207,8 @@ class Coop_pix2pix(object):
 				generated_B = sess.run(self.generated_B, feed_dict={self.input_real_data_A: data_A})
 
 				# step D1: descriptor try to revised image:"generated_B"
-				revised_B, pic_list_output = sess.run(self.des_langevin_revision_output, feed_dict={self.input_revised_B: generated_B})
+				revised_B, pic_list_output = sess.run([self.des_langevin_revision_output, self.pic_list], feed_dict={self.input_revised_B: generated_B})
+				
 				print(pic_list_output.shape)
 
 				# step D2: update descriptor net
