@@ -431,15 +431,14 @@ class Coop_pix2pix(object):
 
 	def load(self, checkpoint_dir):
 		print(" [*] Loading checkpoint...")
-
 		model_dir = "{}".format(self.dataset_name)
 		checkpoint_dir = os.path.join(checkpoint_dir, model_dir)
 
 		checkpoint = tf.train.get_checkpoint_state(checkpoint_dir)
 		if checkpoint and checkpoint.model_checkpoint_path:
 			checkpoint_name = os.path.basename(checkpoint.model_checkpoint_path)
-			self.epoch_startpoint = int(checkpoint_name.split("epoch-", 1)[1])
-			# print(self.epoch_startpoint)
+			print(" [*] Found checkpoint name: {}".format(checkpoint_name))
+			self.epoch_startpoint = int(checkpoint_name.split("epoch-", 1)[1])+1
 			self.saver.restore(self.sess, os.path.join(checkpoint_dir, checkpoint_name))
 			return True
 		else:
