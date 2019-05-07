@@ -163,7 +163,7 @@ class Coop_pix2pix(object):
 		training_data = glob('{}/{}/train/*.jpg'.format(self.dataset_dir, self.dataset_name))
 
 		# iteration(num_batch) = picture_amount/batch_size
-		num_batch = min(len(training_data), self.picture_amount) // self.batch_size
+		self.num_batch = min(len(training_data), self.picture_amount) // self.batch_size
 
 		# initialize training
 		sess.run(tf.global_variables_initializer())
@@ -172,7 +172,7 @@ class Coop_pix2pix(object):
 		# sample_results = np.random.randn(num_batch, self.image_size, self.image_size, 3)
 
 		# counter initialize
-		counter = 1
+		self.counter = 1
 		counter_end = self.epoch * num_batch  # 200 * num_batch 
 
 		# load checkpoint
@@ -190,7 +190,7 @@ class Coop_pix2pix(object):
 
 		for epoch in xrange(self.epoch_startpoint, self.epoch): # how many epochs to train
 
-			for index in xrange(num_batch): # num_batch
+			for index in xrange(self.num_batch): # num_batch
 				# find picture list index*self.batch_size to (index+1)*self.batch_size (one batch)
 				# if batch_size = 2, get one batch = batch[0], batch[1]
 				batch_files = training_data[index*self.batch_size:(index+1)*self.batch_size] 
@@ -231,7 +231,7 @@ class Coop_pix2pix(object):
 				print("Epoch: [{:4d}] [{:4d}/{:4d}] time: {}, eta: {}, d_loss: {:.4f}, g_loss: {:.4f}, mse_loss: {:.4f}"
 					.format(epoch, index, num_batch, 
 						str(datetime.timedelta(seconds=int(time.time()-start_time))),
-							str(datetime.timedelta(seconds=int((time.time()-start_time)*(counter_end-counter)/counter))),
+							str(datetime.timedelta(seconds=int((time.time()-start_time)*(counter_end-self.counter)/self.counter))),
 								 descriptor_loss, generator_loss, mse_loss))
 
 				# if need calculate time interval
@@ -243,7 +243,7 @@ class Coop_pix2pix(object):
 				# print("data_B shape = {}".format(self.data_B.shape)) # data_B shape = (1, 256, 256, 3)
 
 
-				if np.mod(counter, 10) == 1:
+				if np.mod(self.counter, 10) == 1:
 					save_images(data_A, [self.batch_size, 1],
 						'./{}/ep{:02d}_{:04d}_01_input_data_A.png'.format(self.output_dir, epoch, index))
 					save_images(generated_B, [self.batch_size, 1],
@@ -253,7 +253,7 @@ class Coop_pix2pix(object):
 					save_images(data_B, [self.batch_size, 1],
 						'./{}/ep{:02d}_{:04d}_04_input_data_B.png'.format(self.output_dir, epoch, index))
 
-				counter += 1
+				self.counter += 1
 
 			self.save(self.checkpoint_dir, epoch)
 
@@ -447,6 +447,7 @@ class Coop_pix2pix(object):
 			checkpoint_name = os.path.basename(checkpoint.model_checkpoint_path)
 			print(" [v] Found checkpoint name: {}".format(checkpoint_name))
 			self.epoch_startpoint = int(checkpoint_name.split("epoch-", 1)[1])+1
+			self.counter = (self.epoch_startpoint-1)*self.num_batch
 			self.saver.restore(self.sess, os.path.join(checkpoint_dir, checkpoint_name))
 			return True
 		else:
