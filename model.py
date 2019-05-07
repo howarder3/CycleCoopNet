@@ -173,7 +173,7 @@ class Coop_pix2pix(object):
 
 		# counter initialize
 		self.counter = 1
-		counter_end = self.epoch * num_batch  # 200 * num_batch 
+		counter_end = self.epoch * self.num_batch  # 200 * num_batch 
 
 		# load checkpoint
 		if self.load(self.checkpoint_dir):
@@ -186,7 +186,7 @@ class Coop_pix2pix(object):
 		print("time: {} , Start training model......".format(str(datetime.timedelta(seconds=int(time.time()-start_time)))))
 		
 
-
+		print("self.counter = ",self.counter)
 
 		for epoch in xrange(self.epoch_startpoint, self.epoch): # how many epochs to train
 
