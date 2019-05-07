@@ -214,14 +214,6 @@ class Coop_pix2pix(object):
 				# step D1: descriptor try to revised image:"generated_B"
 				revised_B = sess.run(self.des_langevin_revision_output, feed_dict={self.input_revised_B: generated_B})
 				
-				lang_1_output = sess.run(self.lang_1_output, feed_dict={self.input_revised_B: generated_B})
-				lang_10_output = sess.run(self.lang_10_output, feed_dict={self.input_revised_B: generated_B})
-				lang_30_output = sess.run(self.lang_30_output, feed_dict={self.input_revised_B: generated_B})
-				lang_50_output = sess.run(self.lang_50_output, feed_dict={self.input_revised_B: generated_B})
-				lang_100_output = sess.run(self.lang_100_output, feed_dict={self.input_revised_B: generated_B})
-				lang_200_output = sess.run(self.lang_200_output, feed_dict={self.input_revised_B: generated_B})
-
-
 				# step D2: update descriptor net
 				descriptor_loss , _ = sess.run([self.des_loss, self.des_optim],
                                   		feed_dict={self.input_real_data_B: data_B, self.input_revised_B: revised_B})
@@ -254,7 +246,14 @@ class Coop_pix2pix(object):
 				# print("data_B shape = {}".format(self.data_B.shape)) # data_B shape = (1, 256, 256, 3)
 
 
-				if np.mod(counter, 10) == 1:
+				if np.mod(counter, 100) == 1:
+					lang_1_output = sess.run(self.lang_1_output, feed_dict={self.input_revised_B: generated_B})
+					lang_10_output = sess.run(self.lang_10_output, feed_dict={self.input_revised_B: generated_B})
+					lang_30_output = sess.run(self.lang_30_output, feed_dict={self.input_revised_B: generated_B})
+					lang_50_output = sess.run(self.lang_50_output, feed_dict={self.input_revised_B: generated_B})
+					lang_100_output = sess.run(self.lang_100_output, feed_dict={self.input_revised_B: generated_B})
+					lang_200_output = sess.run(self.lang_200_output, feed_dict={self.input_revised_B: generated_B})
+
 					save_images(data_A, [self.batch_size, 1],
 						'./{}/ep{:02d}_{:04d}_01_input_data_A.png'.format(self.output_dir, epoch, index))
 					save_images(data_B, [self.batch_size, 1],
