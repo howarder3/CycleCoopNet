@@ -439,7 +439,7 @@ class Coop_pix2pix(object):
 		if checkpoint and checkpoint.model_checkpoint_path:
 			checkpoint_name = os.path.basename(checkpoint.model_checkpoint_path)
 			self.epoch_startpoint = int(checkpoint_name.split("epoch-", 1)[1])
-			print(self.epoch_startpoint)
+			# print(self.epoch_startpoint)
 			self.saver.restore(self.sess, os.path.join(checkpoint_dir, checkpoint_name))
 			return True
 		else:
