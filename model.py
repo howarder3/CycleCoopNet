@@ -184,7 +184,8 @@ class Coop_pix2pix(object):
 
 
 		# recover loss functions
-		self.rec_loss = tf.reduce_sum(tf.subtract(tf.reduce_mean(self.recovered_A, axis=0), tf.reduce_mean(self.input_real_data_A, axis=0)))
+		self.rec_loss = tf.reduce_mean(
+            tf.pow(tf.subtract(tf.reduce_mean(self.recovered_A, axis=0), tf.reduce_mean(self.input_real_data_A, axis=0)), 2))
 
 		self.rec_optim = tf.train.AdamOptimizer(self.recover_learning_rate, beta1=self.beta1).minimize(self.rec_loss, var_list=self.rec_vars)
 
@@ -290,7 +291,7 @@ class Coop_pix2pix(object):
 				# print("data_B shape = {}".format(self.data_B.shape)) # data_B shape = (1, 256, 256, 3)
 
 
-				if np.mod(counter, 100) == 1:
+				if np.mod(counter, 10) == 1:
 					lang_1_output = sess.run(self.lang_1_output, feed_dict={self.input_revised_B: generated_B})
 					lang_10_output = sess.run(self.lang_10_output, feed_dict={self.input_revised_B: generated_B})
 					lang_30_output = sess.run(self.lang_30_output, feed_dict={self.input_revised_B: generated_B})
