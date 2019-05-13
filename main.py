@@ -21,7 +21,7 @@ tf.app.flags.DEFINE_float('langevin_step_size',0.002,'langevin step size') # 0.0
 
 # dataset floder name
 tf.app.flags.DEFINE_string('dataset_dir', './test_datasets', 'dataset directory')
-tf.app.flags.DEFINE_string('dataset_name', 'edges2handbags', 'dataset name') # cityscapes # edges2handbags # edges2shoes # facades # maps	
+tf.app.flags.DEFINE_string('dataset_name', 'facades', 'dataset name') # cityscapes # edges2handbags # edges2shoes # facades # maps	
 
 # folder position
 tf.app.flags.DEFINE_string('output_dir', './output', 'output directory')
