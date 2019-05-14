@@ -25,7 +25,7 @@ class Coop_pix2pix(object):
 				langevin_step_size = 0.002,
 				descriptor_learning_rate = 0.01,
 				generator_learning_rate = 0.0001,
-				recover_learning_rate = 0.0001,
+				recover_learning_rate = 0.01,
 				dataset_name='facades', dataset_dir ='./test_datasets', 
 				output_dir='./output_dir', checkpoint_dir='./checkpoint_dir', log_dir='./log_dir'):
 		"""
@@ -172,24 +172,20 @@ class Coop_pix2pix(object):
 		self.des_optim = tf.train.AdamOptimizer(self.descriptor_learning_rate, beta1=self.beta1).minimize(self.des_loss, var_list=self.des_vars)
 
 
-		# generator loss functions
-		self.gen_loss = tf.reduce_sum(tf.reduce_mean(1.0 / (2 * self.sigma2 * self.sigma2) * tf.square(self.input_revised_B - self.generated_B), axis=0))
-		
-		self.gen_optim = tf.train.AdamOptimizer(self.generator_learning_rate, beta1=self.beta1).minimize(self.gen_loss, var_list=self.gen_vars)
-
-
 		# Compute Mean square error(MSE) for generated data and real data
 		self.mse_loss = tf.reduce_mean(
             tf.pow(tf.subtract(tf.reduce_mean(self.input_generated_B, axis=0), tf.reduce_mean(self.input_revised_B, axis=0)), 2))
 
 
 		# recover loss functions
-		self.rec_loss = tf.reduce_mean(
-            tf.pow(tf.subtract(tf.reduce_mean(self.recovered_A, axis=0), tf.reduce_mean(self.input_real_data_A, axis=0)), 2))
+		self.rec_loss = tf.reduce_sum(tf.reduce_mean(1.0 / (2 * self.sigma2 * self.sigma2) * tf.square(self.recovered_A - self.input_real_data_A), axis=0))
 
 		self.rec_optim = tf.train.AdamOptimizer(self.recover_learning_rate, beta1=self.beta1).minimize(self.rec_loss, var_list=self.rec_vars)
 
-
+		# generator loss functions
+		self.gen_loss = tf.reduce_sum(tf.reduce_mean(1.0 / (2 * self.sigma2 * self.sigma2) * tf.square(self.input_revised_B - self.generated_B), axis=0))
+		
+		self.gen_optim = tf.train.AdamOptimizer(self.generator_learning_rate, beta1=self.beta1).minimize(self.gen_loss, var_list=self.gen_vars)
 
 		self.saver = tf.train.Saver(max_to_keep=50)
 
@@ -239,8 +235,8 @@ class Coop_pix2pix(object):
 				batch_images = np.array(batch).astype(np.float32)
 
 				# data domain A and data domain B
-				data_B = batch_images[:, :, :, : self.input_pic_dim] 
-				data_A = batch_images[:, :, :, self.input_pic_dim:self.input_pic_dim+self.output_pic_dim] 
+				data_A = batch_images[:, :, :, : self.input_pic_dim] 
+				data_B = batch_images[:, :, :, self.input_pic_dim:self.input_pic_dim+self.output_pic_dim] 
 
 				# step G1: try to generate B domain(target domain) picture
 				generated_B = sess.run(self.generated_B, feed_dict={self.input_real_data_A: data_A})
@@ -260,13 +256,15 @@ class Coop_pix2pix(object):
 
 				# print(descriptor_loss)
 
-				# step G2: update generator net
-				generator_loss , _ = sess.run([self.gen_loss, self.gen_optim],
-                                  		feed_dict={self.input_revised_B: revised_B, self.input_real_data_A: data_A})	
-
 				# step R2: update recover net
 				recover_loss , _ = sess.run([self.rec_loss, self.rec_optim],
                                   		feed_dict={self.input_generated_B: generated_B, self.input_real_data_A: data_A})
+
+				# step G2: update generator net
+				generator_loss , _ = sess.run([self.gen_loss, self.gen_optim],
+                                  		feed_dict={self.input_generated_B: generated_B, self.input_real_data_A: data_A}) # self.input_revised_B: revised_B,
+
+
 
 
 				# Compute Mean square error(MSE) for generated data and revised data
