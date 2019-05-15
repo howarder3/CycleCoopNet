@@ -195,10 +195,10 @@ class Coop_pix2pix(object):
 		self.build_model()
 
 		# prepare training data
-		training_data = glob('{}/{}/train/*.jpg'.format(self.dataset_dir, self.dataset_name))
+		# training_data = glob('{}/{}/train/*.jpg'.format(self.dataset_dir, self.dataset_name))
 
 		# iteration(num_batch) = picture_amount/batch_size
-		self.num_batch = min(len(training_data), self.picture_amount) // self.batch_size
+		# self.num_batch = min(len(training_data), self.picture_amount) // self.batch_size
 
 		# initialize training
 		sess.run(tf.global_variables_initializer())
@@ -224,19 +224,33 @@ class Coop_pix2pix(object):
 		# print("self.counter = ",self.counter)
 
 		for epoch in xrange(self.epoch_startpoint, self.epoch): # how many epochs to train
+			# prepare training data
+			dataA = glob('./datasets/{}/*.*'.format(self.dataset_dir + '/trainA'))
+			dataB = glob('./datasets/{}/*.*'.format(self.dataset_dir + '/trainB'))
+			np.random.shuffle(dataA)
+			np.random.shuffle(dataB)
+			self.num_batch = min(min(len(dataA), len(dataB)), args.train_size) // self.batch_size
 
 			for index in xrange(self.num_batch): # num_batch
-				# find picture list index*self.batch_size to (index+1)*self.batch_size (one batch)
-				# if batch_size = 2, get one batch = batch[0], batch[1]
-				batch_files = training_data[index*self.batch_size:(index+1)*self.batch_size] 
 
-				# load data : list format, amount = one batch
-				batch = [load_data(batch_file) for batch_file in batch_files]
-				batch_images = np.array(batch).astype(np.float32)
+				batch_files = list(zip(dataA[idx * self.batch_size:(idx + 1) * self.batch_size],
+                                       dataB[idx * self.batch_size:(idx + 1) * self.batch_size]))
+                batch_images = [load_train_data(batch_file, args.load_size, args.fine_size) for batch_file in batch_files]
+                batch_images = np.array(batch_images).astype(np.float32)
 
-				# data domain A and data domain B
-				data_A = batch_images[:, :, :, : self.input_pic_dim] 
-				data_B = batch_images[:, :, :, self.input_pic_dim:self.input_pic_dim+self.output_pic_dim] 
+
+				# # find picture list index*self.batch_size to (index+1)*self.batch_size (one batch)
+				# # if batch_size = 2, get one batch = batch[0], batch[1]
+				# batch_files = training_data[index*self.batch_size:(index+1)*self.batch_size] 
+
+				# # load data : list format, amount = one batch
+				# batch = [load_data(batch_file) for batch_file in batch_files]
+				# batch_images = np.array(batch).astype(np.float32)
+
+				# # data domain A and data domain B
+				# data_A = batch_images[:, :, :, : self.input_pic_dim] 
+				# data_B = batch_images[:, :, :, self.input_pic_dim:self.input_pic_dim+self.output_pic_dim] 
+				
 
 				# step G1: try to generate B domain(target domain) picture
 				generated_B = sess.run(self.generated_B, feed_dict={self.input_real_data_A: data_A})
