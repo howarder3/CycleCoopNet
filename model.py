@@ -225,12 +225,14 @@ class Coop_pix2pix(object):
 		for epoch in xrange(self.epoch_startpoint, self.epoch): # how many epochs to train
 
 			# prepare training data
-			data_A = glob('./datasets/{}/*.*'.format(self.dataset_dir + '/trainA'))
-			data_B = glob('./datasets/{}/*.*'.format(self.dataset_dir + '/trainB'))
+			data_A = glob('{}/{}/trainA/*.jpg'.format(self.dataset_dir, self.dataset_name))
+			data_B = glob('{}/{}/trainB/*.jpg'.format(self.dataset_dir, self.dataset_name))
 
-			
+			# training_data = glob('{}/{}/trainA/*.jpg'.format(self.dataset_dir, self.dataset_name))
+
 			print("data_A.shape: ", len(data_A))
 			print("data_B.shape: ", len(data_B))
+			
 			np.random.shuffle(data_A)
 			np.random.shuffle(data_B)
 			self.num_batch = min(min(len(data_A), len(data_B)), self.picture_amount) // self.batch_size
