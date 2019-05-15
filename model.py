@@ -262,8 +262,9 @@ class Coop_pix2pix(object):
 
 				# step G2: update generator net
 				generator_loss , _ = sess.run([self.gen_loss, self.gen_optim],
-                                  		feed_dict={self.input_generated_B: generated_B, self.input_real_data_A: data_A}) # self.input_revised_B: revised_B,
+                                  		feed_dict={self.input_real_data_A: data_A, self.input_revised_B: revised_B}) # self.input_revised_B: revised_B,
 
+				# self.input_generated_B: generated_B,
 
 
 
