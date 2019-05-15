@@ -242,17 +242,12 @@ class Coop_pix2pix(object):
 
 			for index in xrange(self.num_batch): # num_batch
 
-				batch_files = list(zip(data_A[idx * self.batch_size:(idx + 1) * self.batch_size],
-										data_B[idx * self.batch_size:(idx + 1) * self.batch_size]))
-				print(batch_files.shape)
+				batch_files = list(zip(data_A[index * self.batch_size:(index + 1) * self.batch_size],
+										data_B[index * self.batch_size:(index + 1) * self.batch_size]))
 				batch_images = [load_train_data(batch_file, 286, 256) for batch_file in batch_files]
-				print(batch_images.shape)
 				batch_images = np.array(batch_images).astype(np.float32)
+
 				print(batch_images.shape)
-
-				print("data_A.shape: ", data_A.shape)
-				print("data_B.shape: ", data_B.shape)
-
 
 
 				# # find picture list index*self.batch_size to (index+1)*self.batch_size (one batch)
