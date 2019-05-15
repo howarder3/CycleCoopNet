@@ -25,7 +25,6 @@ class Coop_pix2pix(object):
 				langevin_step_size = 0.002,
 				descriptor_learning_rate = 0.01,
 				generator_learning_rate = 0.01,
-				recover_learning_rate = 0.01,
 				dataset_name='facades', dataset_dir ='./test_datasets', 
 				output_dir='./output_dir', checkpoint_dir='./checkpoint_dir', log_dir='./log_dir'):
 		"""
@@ -148,7 +147,9 @@ class Coop_pix2pix(object):
 		self.generated_A = self.A2B_generator(self.input_real_data_A, reuse = False)
 
 		# A descriptor
-		described_data_A = self.A2B_descriptor(self.input_real_data_A, reuse=False)
+		# A2B des : learning B features
+		described_data_B = self.A2B_descriptor(self.input_real_data_B, reuse=False)
+
 		described_revised_A = self.A2B_descriptor(self.input_revised_A, reuse=True)
 		described_generated_A = self.A2B_descriptor(self.input_generated_A, reuse=True)
 
@@ -156,7 +157,9 @@ class Coop_pix2pix(object):
 		self.generated_B = self.B2A_generator(self.input_real_data_B, reuse = False)
 
 		# B descriptor
-		described_data_B = self.B2A_descriptor(self.input_real_data_B, reuse=False)
+		# B2A des : learning A features
+		described_data_A = self.B2A_descriptor(self.input_real_data_A, reuse=False)
+
 		described_revised_B = self.B2A_descriptor(self.input_revised_B, reuse=True)
 		described_generated_B = self.B2A_descriptor(self.input_generated_B, reuse=True)
 
