@@ -112,7 +112,7 @@ class Coop_pix2pix(object):
 		self.sigma1 = 0.016
 		self.sigma2 = 0.3
 		self.beta1 = 0.5
-		self.cycle_loss_var = 10000
+		self.cycle_loss_var = 100000
 
 		self.input_real_data_A = tf.placeholder(tf.float32,
 				[self.batch_size, self.image_size, self.image_size, self.input_pic_dim],
@@ -203,6 +203,18 @@ class Coop_pix2pix(object):
 
 		self.B2A_des_optim = tf.train.AdamOptimizer(self.descriptor_learning_rate, beta1=self.beta1).minimize(self.B2A_des_loss, var_list=self.B2A_des_vars)
 
+
+
+		# A2B cycle loss
+		self.A2B_cycle_loss = tf.reduce_mean(
+			tf.pow(tf.subtract(tf.reduce_mean(self.input_recovered_A, axis=0), tf.reduce_mean(self.input_real_data_A, axis=0)), 2))
+
+		# B2A cycle loss
+		self.B2A_cycle_loss = tf.reduce_mean(
+			tf.pow(tf.subtract(tf.reduce_mean(self.input_recovered_B, axis=0), tf.reduce_mean(self.input_real_data_B, axis=0)), 2))
+
+
+
 		# A2B generator loss functions
 		self.A2B_gen_loss = self.cycle_loss_var * self.A2B_cycle_loss + tf.reduce_sum(tf.reduce_mean(1.0 / (2 * self.sigma2 * self.sigma2) * tf.square(self.input_revised_A - self.generated_A), axis=0))
 		
@@ -217,15 +229,6 @@ class Coop_pix2pix(object):
 		# Compute Mean square error(MSE) for generated data and real data
 		# self.mse_loss = tf.reduce_mean(
   #           tf.pow(tf.subtract(tf.reduce_mean(self.input_generated_B, axis=0), tf.reduce_mean(self.input_revised_B, axis=0)), 2))
-
-
-		# A2B cycle loss
-		self.A2B_cycle_loss = tf.reduce_mean(
-			tf.pow(tf.subtract(tf.reduce_mean(self.input_recovered_A, axis=0), tf.reduce_mean(self.input_real_data_A, axis=0)), 2))
-
-		# B2A cycle loss
-		self.B2A_cycle_loss = tf.reduce_mean(
-			tf.pow(tf.subtract(tf.reduce_mean(self.input_recovered_B, axis=0), tf.reduce_mean(self.input_real_data_B, axis=0)), 2))
 
 		# self.rec_optim = tf.train.AdamOptimizer(self.recover_learning_rate, beta1=self.beta1).minimize(self.rec_loss, var_list=self.rec_vars)
 
@@ -356,7 +359,7 @@ class Coop_pix2pix(object):
 
 				# step G2: update B2A generator net
 				B2A_generator_loss , _ = sess.run([self.B2A_gen_loss, self.B2A_gen_optim],
-                                  		feed_dict={self.input_real_data_B: data_B, self.input_revised_B: revised_B, self.input_recovered_A: recovered_B}) # self.input_revised_B: revised_B,
+                                  		feed_dict={self.input_real_data_B: data_B, self.input_revised_B: revised_B, self.input_recovered_B: recovered_B}) # self.input_revised_B: revised_B,
 
 
 				# step R2: A2B cycle loss
@@ -377,7 +380,7 @@ class Coop_pix2pix(object):
 				# put picture in sample picture
 				# sample_results[index : (index + 1)] = revised_B
 
-				print("Epoch: [{:4d}] [{:4d}/{:4d}] time: {}, eta: {}, \nA2B_d_loss: {:.4f}, A2B_g_loss: {:.4f}, A2B_cycle_loss: {:.4f}, \nB2A_d_loss: {:.4f}, B2A_g_loss: {:.4f}, B2A_cycle_loss: {:.4f},"
+				print("Epoch: [{:4d}] [{:4d}/{:4d}],   time: {},   eta: {}, \n A2B_d_loss: {:>15.4f}, A2B_g_loss: {:>12.4f}, A2B_cycle_loss: {:>8.4f}, \n B2A_d_loss: {:>15.4f}, B2A_g_loss: {:>12.4f}, B2A_cycle_loss: {:>8.4f}"
 					.format(epoch, index, self.num_batch, 
 						str(datetime.timedelta(seconds=int(time.time()-start_time))),
 							str(datetime.timedelta(seconds=int((time.time()-start_time)*(counter_end-(self.epoch_startpoint*self.num_batch)-counter)/counter))),
