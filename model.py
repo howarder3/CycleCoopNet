@@ -225,29 +225,32 @@ class Coop_pix2pix(object):
 		for epoch in xrange(self.epoch_startpoint, self.epoch): # how many epochs to train
 
 			# prepare training data
-			data_A = glob('{}/{}/trainA/*.jpg'.format(self.dataset_dir, self.dataset_name))
-			data_B = glob('{}/{}/trainB/*.jpg'.format(self.dataset_dir, self.dataset_name))
+			training_dataset_A = glob('{}/{}/trainA/*.jpg'.format(self.dataset_dir, self.dataset_name))
+			training_dataset_B = glob('{}/{}/trainB/*.jpg'.format(self.dataset_dir, self.dataset_name))
 
 			# training_data = glob('{}/{}/trainA/*.jpg'.format(self.dataset_dir, self.dataset_name))
 
-			print("data_A.shape: ", len(data_A))
-			print("data_B.shape: ", len(data_B))
+			print("training_dataset_A: {} pictures.".format(len(training_dataset_A)))
+			print("training_dataset_B: {} pictures.".format(len(training_dataset_B)))
 			
-			np.random.shuffle(data_A)
-			np.random.shuffle(data_B)
-			self.num_batch = min(min(len(data_A), len(data_B)), self.picture_amount) // self.batch_size
-			print(self.num_batch)
+			np.random.shuffle(training_dataset_A)
+			np.random.shuffle(training_dataset_B)
+			self.num_batch = min(min(len(training_dataset_A), len(training_dataset_B)), self.picture_amount) // self.batch_size
+			print("num_batch: {} pictures.".format(self.num_batch))
 
 			counter_end = self.epoch * self.num_batch  # 200 * num_batch 
 
 			for index in xrange(self.num_batch): # num_batch
 
-				batch_files = list(zip(data_A[index * self.batch_size:(index + 1) * self.batch_size],
-										data_B[index * self.batch_size:(index + 1) * self.batch_size]))
+				batch_files = list(zip(training_dataset_A[index * self.batch_size:(index + 1) * self.batch_size],
+										training_dataset_B[index * self.batch_size:(index + 1) * self.batch_size]))
 				batch_images = [load_train_data(batch_file, 286, 256) for batch_file in batch_files]
 				batch_images = np.array(batch_images).astype(np.float32)
 
 				print(batch_images.shape)
+
+				data_A = batch_images[:, :, :, : self.input_pic_dim] 
+				data_B = batch_images[:, :, :, self.input_pic_dim:self.input_pic_dim+self.output_pic_dim] 
 
 
 				# # find picture list index*self.batch_size to (index+1)*self.batch_size (one batch)
