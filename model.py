@@ -24,7 +24,7 @@ class Coop_pix2pix(object):
 				langevin_revision_steps = 1, 
 				langevin_step_size = 0.002,
 				descriptor_learning_rate = 0.01,
-				generator_learning_rate = 0.0001,
+				generator_learning_rate = 0.01,
 				recover_learning_rate = 0.01,
 				dataset_name='facades', dataset_dir ='./test_datasets', 
 				output_dir='./output_dir', checkpoint_dir='./checkpoint_dir', log_dir='./log_dir'):
@@ -355,15 +355,15 @@ class Coop_pix2pix(object):
 
 				# step G2: update B2A generator net
 				B2A_generator_loss , _ = sess.run([self.B2A_gen_loss, self.B2A_gen_optim],
-                                  		feed_dict={self.input_real_data_B: data_B, self.input_revised_A: revised_B}) # self.input_revised_B: revised_B,
+                                  		feed_dict={self.input_real_data_B: data_B, self.input_revised_B: revised_B}) # self.input_revised_B: revised_B,
 
 
 				# step R2: A2B cycle loss
 				A2B_cycle_loss = sess.run(self.A2B_cycle_loss, 
-									feed_dict={self.input_real_data_A: data_A, input_recovered_A: recovered_A})
+									feed_dict={self.input_real_data_A: data_A, self.input_recovered_A: recovered_A})
 
 				B2A_cycle_loss = sess.run(self.B2A_cycle_loss, 
-									feed_dict={self.input_real_data_B: data_B, input_recovered_B: recovered_B})
+									feed_dict={self.input_real_data_B: data_B, self.input_recovered_B: recovered_B})
 
 				# self.input_generated_B: generated_B,
 
