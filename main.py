@@ -7,7 +7,7 @@ from model import Coop_pix2pix
 # parameters setting
 tf.app.flags.DEFINE_integer('epoch',200,'how many epochs to train')
 tf.app.flags.DEFINE_integer('batch_size',1,'how many pic in one group(batch), iteration = picture_amount/batch_size')
-tf.app.flags.DEFINE_integer('picture_amount',1000,'how many pictures to train')
+tf.app.flags.DEFINE_integer('picture_amount',400,'how many pictures to train')
 tf.app.flags.DEFINE_integer('image_size',256,'input image size')
 tf.app.flags.DEFINE_integer('output_size',256,'output image size')
 tf.app.flags.DEFINE_integer('input_pic_dim',3,'input picture dimension : colorful = 3, grayscale = 1')
@@ -21,7 +21,7 @@ tf.app.flags.DEFINE_float('langevin_step_size',0.002,'langevin step size') # 0.0
 
 # dataset floder name
 tf.app.flags.DEFINE_string('dataset_dir', './test_datasets', 'dataset directory')
-tf.app.flags.DEFINE_string('dataset_name', 'facades', 'dataset name') # cityscapes # edges2handbags # edges2shoes # facades # maps	
+tf.app.flags.DEFINE_string('dataset_name', 'vangogh2photo', 'dataset name') # cityscapes # edges2handbags # edges2shoes # facades # maps	
 
 # folder position
 tf.app.flags.DEFINE_string('output_dir', './output', 'output directory')

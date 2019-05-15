@@ -208,7 +208,6 @@ class Coop_pix2pix(object):
 
 		# counter initialize
 		counter = 1
-		counter_end = self.epoch * self.num_batch  # 200 * num_batch 
 
 		# load checkpoint
 		if self.load(self.checkpoint_dir):
@@ -225,18 +224,24 @@ class Coop_pix2pix(object):
 
 		for epoch in xrange(self.epoch_startpoint, self.epoch): # how many epochs to train
 			# prepare training data
-			dataA = glob('./datasets/{}/*.*'.format(self.dataset_dir + '/trainA'))
-			dataB = glob('./datasets/{}/*.*'.format(self.dataset_dir + '/trainB'))
-			np.random.shuffle(dataA)
-			np.random.shuffle(dataB)
-			self.num_batch = min(min(len(dataA), len(dataB)), args.train_size) // self.batch_size
+			data_A = glob('./datasets/{}/*.*'.format(self.dataset_dir + '/trainA'))
+			data_B = glob('./datasets/{}/*.*'.format(self.dataset_dir + '/trainB'))
+			np.random.shuffle(data_A)
+			np.random.shuffle(data_B)
+			self.num_batch = min(min(len(data_A), len(data_B)), self.picture_amount) // self.batch_size
+
+			counter_end = self.epoch * self.num_batch  # 200 * num_batch 
 
 			for index in xrange(self.num_batch): # num_batch
 
-				batch_files = list(zip(dataA[idx * self.batch_size:(idx + 1) * self.batch_size],
-                                       dataB[idx * self.batch_size:(idx + 1) * self.batch_size]))
-                batch_images = [load_train_data(batch_file, args.load_size, args.fine_size) for batch_file in batch_files]
-                batch_images = np.array(batch_images).astype(np.float32)
+				batch_files = list(zip(data_A[idx * self.batch_size:(idx + 1) * self.batch_size],
+										data_B[idx * self.batch_size:(idx + 1) * self.batch_size]))
+				print(batch_files.shape)
+				batch_images = [load_train_data(batch_file, args.load_size, args.fine_size) for batch_file in batch_files]
+				batch_images = np.array(batch_images).astype(np.float32)
+
+				print("data_A.shape: ", data_A.shape)
+				print("data_B.shape: ", data_B.shape)
 
 
 				# # find picture list index*self.batch_size to (index+1)*self.batch_size (one batch)
