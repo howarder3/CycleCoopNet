@@ -223,12 +223,18 @@ class Coop_pix2pix(object):
 		# print("self.counter = ",self.counter)
 
 		for epoch in xrange(self.epoch_startpoint, self.epoch): # how many epochs to train
+
 			# prepare training data
 			data_A = glob('./datasets/{}/*.*'.format(self.dataset_dir + '/trainA'))
 			data_B = glob('./datasets/{}/*.*'.format(self.dataset_dir + '/trainB'))
+
+			
+			print("data_A.shape: ", len(data_A))
+			print("data_B.shape: ", len(data_B))
 			np.random.shuffle(data_A)
 			np.random.shuffle(data_B)
 			self.num_batch = min(min(len(data_A), len(data_B)), self.picture_amount) // self.batch_size
+			print(self.num_batch)
 
 			counter_end = self.epoch * self.num_batch  # 200 * num_batch 
 
@@ -241,8 +247,10 @@ class Coop_pix2pix(object):
 				print(batch_images.shape)
 				batch_images = np.array(batch_images).astype(np.float32)
 				print(batch_images.shape)
+
 				print("data_A.shape: ", data_A.shape)
 				print("data_B.shape: ", data_B.shape)
+
 
 
 				# # find picture list index*self.batch_size to (index+1)*self.batch_size (one batch)
