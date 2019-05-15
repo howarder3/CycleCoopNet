@@ -230,13 +230,13 @@ class Coop_pix2pix(object):
 
 			# training_data = glob('{}/{}/trainA/*.jpg'.format(self.dataset_dir, self.dataset_name))
 
-			print("training_dataset_A: {} pictures.".format(len(training_dataset_A)))
-			print("training_dataset_B: {} pictures.".format(len(training_dataset_B)))
+			# print("training_dataset_A: {} pictures.".format(len(training_dataset_A)))
+			# print("training_dataset_B: {} pictures.".format(len(training_dataset_B)))
 			
 			np.random.shuffle(training_dataset_A)
 			np.random.shuffle(training_dataset_B)
 			self.num_batch = min(min(len(training_dataset_A), len(training_dataset_B)), self.picture_amount) // self.batch_size
-			print("num_batch: {} pictures.".format(self.num_batch))
+			# print("num_batch: {} pictures.".format(self.num_batch))
 
 			counter_end = self.epoch * self.num_batch  # 200 * num_batch 
 
@@ -247,11 +247,13 @@ class Coop_pix2pix(object):
 				batch_images = [load_train_data(batch_file, 286, 256) for batch_file in batch_files]
 				batch_images = np.array(batch_images).astype(np.float32)
 
-				print(batch_images.shape)
+				# print(batch_images.shape)
 
-				data_A = batch_images[:, :, :, : self.input_pic_dim] 
-				data_B = batch_images[:, :, :, self.input_pic_dim:self.input_pic_dim+self.output_pic_dim] 
+				data_B = batch_images[:, :, :, : self.input_pic_dim] 
+				data_A = batch_images[:, :, :, self.input_pic_dim:self.input_pic_dim+self.output_pic_dim] 
 
+				# print("data_A.shape: {} ".format(data_A.shape))
+				# print("data_B.shape: {} ".format(data_B.shape))
 
 				# # find picture list index*self.batch_size to (index+1)*self.batch_size (one batch)
 				# # if batch_size = 2, get one batch = batch[0], batch[1]
