@@ -5,7 +5,7 @@ from model import Coop_pix2pix
 
 
 # parameters setting
-tf.app.flags.DEFINE_integer('epoch',200,'how many epochs to train')
+tf.app.flags.DEFINE_integer('epoch',1000,'how many epochs to train')
 tf.app.flags.DEFINE_integer('batch_size',1,'how many pic in one group(batch), iteration = picture_amount/batch_size')
 tf.app.flags.DEFINE_integer('picture_amount',400,'how many pictures to train')
 tf.app.flags.DEFINE_integer('image_size',256,'input image size')
@@ -16,8 +16,10 @@ tf.app.flags.DEFINE_integer('output_pic_dim',3,'output picture dimension : color
 # learning rate
 tf.app.flags.DEFINE_float('descriptor_learning_rate',0.01,'descriptor learning rate') # 0.01 # 0.007 # 1e-6 # 0.01 # 0.001 # 1e-6 # 0.01 # 0.007
 tf.app.flags.DEFINE_float('generator_learning_rate',0.0001,'generator learning rate') # 0.0001 # 1e-5 # 0.0001 # 1e-4 # 0.0001 # 0.0001
+tf.app.flags.DEFINE_float('cycle_learning_rate',0.01,'cycle_learning_rate') 
 tf.app.flags.DEFINE_integer('langevin_revision_steps',1,'langevin revision steps') #100 # 30 # 10
 tf.app.flags.DEFINE_float('langevin_step_size',0.002,'langevin step size') # 0.002
+
 
 # dataset floder name
 tf.app.flags.DEFINE_string('dataset_dir', './test_datasets', 'dataset directory')
@@ -80,6 +82,7 @@ def main(_):
 				langevin_step_size = FLAGS.langevin_step_size,
 				descriptor_learning_rate = FLAGS.descriptor_learning_rate,
 				generator_learning_rate = FLAGS.generator_learning_rate,
+				cycle_learning_rate = FLAGS.cycle_learning_rate,
 				dataset_name=FLAGS.dataset_name, dataset_dir =FLAGS.dataset_dir, 
 				output_dir=FLAGS.output_dir, checkpoint_dir=FLAGS.checkpoint_dir, log_dir=FLAGS.log_dir)
 

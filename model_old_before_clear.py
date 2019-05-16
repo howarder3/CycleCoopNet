@@ -25,48 +25,6 @@ class Coop_pix2pix(object):
 				langevin_step_size = 0.002,
 				descriptor_learning_rate = 0.01,
 				generator_learning_rate = 0.0001,
-				cycle_consistency_loss_var = 10000,
-				dataset_name='facades', dataset_dir ='./test_datasets', 
-				output_dir='./output_dir', checkpoint_dir='./checkpoint_dir', log_dir='./log_dir'):
-		"""
-		args:
-			sess: tensorflow session
-			batch_size: how many pic in one group(batch), iteration(num_batch) = picture_amount/batch_size
-			input_pic_dim: input picture dimension : colorful = 3, grayscale = 1
-			output_pic_dim: output picture dimension : colorful = 3, grayscale = 1 
-			langevin_revision_steps = langevin revision steps
-			descriptor_learning_rate = descriptor learning rate
-			generator_learning_rate = generator learning rate
-
-		"""
-import tensorflow as tf
-import numpy as np
-import time
-import datetime
-import os
-
-from glob import glob
-from six.moves import xrange
-
-# --------- self define function ---------
-# ops: layers structure
-from ops import *
-
-# utils: for loading data, model
-from utils import *
-
-class Coop_pix2pix(object):
-	def __init__(self, sess, 
-				epoch = 1000, 
-				batch_size = 1,
-				picture_amount = 99999,
-				image_size = 256, output_size = 256,
-				input_pic_dim = 3, output_pic_dim = 3,	
-				langevin_revision_steps = 1, 
-				langevin_step_size = 0.002,
-				descriptor_learning_rate = 0.01,
-				generator_learning_rate = 0.0001,
-				cycle_learning_rate = 0.01,
 				dataset_name='facades', dataset_dir ='./test_datasets', 
 				output_dir='./output_dir', checkpoint_dir='./checkpoint_dir', log_dir='./log_dir'):
 		"""
@@ -152,7 +110,7 @@ class Coop_pix2pix(object):
 		self.sigma1 = 0.016
 		self.sigma2 = 0.3
 		self.beta1 = 0.5
-		self.cycle_learning_rate = cycle_learning_rate
+		self.cycle_loss_var = 10000
 
 		self.input_real_data_A = tf.placeholder(tf.float32,
 				[self.batch_size, self.image_size, self.image_size, self.input_pic_dim],
@@ -206,8 +164,8 @@ class Coop_pix2pix(object):
 
 
 		# symbolic langevins
-		self.revised_A = self.A2B_des_langevin_revision(self.input_generated_A)
-		self.revised_B = self.B2A_des_langevin_revision(self.input_generated_B)
+		self.A2B_des_langevin_revision = self.A2B_des_langevin_revision(self.input_generated_A)
+		self.B2A_des_langevin_revision = self.B2A_des_langevin_revision(self.input_generated_B)
 
 		# self.lang_1_output = self.lang_1(self.input_revised_B)
 		# self.lang_10_output = self.lang_10(self.input_revised_B)
@@ -248,36 +206,29 @@ class Coop_pix2pix(object):
 		self.B2A_des_optim = tf.train.AdamOptimizer(self.descriptor_learning_rate, beta1=self.beta1).minimize(self.B2A_des_loss, var_list=self.B2A_des_vars)
 
 
+
+		# A2B cycle loss
+		self.A2B_cycle_loss = tf.reduce_mean(
+			tf.pow(tf.subtract(tf.reduce_mean(self.input_recovered_A, axis=0), tf.reduce_mean(self.input_real_data_A, axis=0)), 2))
+
+		# B2A cycle loss
+		self.B2A_cycle_loss = tf.reduce_mean(
+			tf.pow(tf.subtract(tf.reduce_mean(self.input_recovered_B, axis=0), tf.reduce_mean(self.input_real_data_B, axis=0)), 2))
+
+
+		self.cycle_loss = (self.A2B_cycle_loss + self.B2A_cycle_loss)/2
+
+
+
 		# A2B generator loss functions
-		self.A2B_gen_loss =  tf.reduce_sum(tf.reduce_mean(1.0 / (2 * self.sigma2 * self.sigma2) * tf.square(self.input_revised_A - self.generated_A), axis=0)) # + self.cycle_consistency_loss_var * self.cycle_loss 
+		self.A2B_gen_loss = self.cycle_loss_var * self.cycle_loss + tf.reduce_sum(tf.reduce_mean(1.0 / (2 * self.sigma2 * self.sigma2) * tf.square(self.input_revised_A - self.generated_A), axis=0))
 		
 		self.A2B_gen_optim = tf.train.AdamOptimizer(self.generator_learning_rate, beta1=self.beta1).minimize(self.A2B_gen_loss, var_list=self.A2B_gen_vars)
 
     	# B2A generator loss functions
-		self.B2A_gen_loss = tf.reduce_sum(tf.reduce_mean(1.0 / (2 * self.sigma2 * self.sigma2) * tf.square(self.input_revised_B - self.generated_B), axis=0)) # + self.cycle_consistency_loss_var * self.cycle_loss 
+		self.B2A_gen_loss = self.cycle_loss_var * self.cycle_loss + tf.reduce_sum(tf.reduce_mean(1.0 / (2 * self.sigma2 * self.sigma2) * tf.square(self.input_revised_B - self.generated_B), axis=0))
 
 		self.B2A_gen_optim = tf.train.AdamOptimizer(self.generator_learning_rate, beta1=self.beta1).minimize(self.B2A_gen_loss, var_list=self.B2A_gen_vars)
-
-
-		# A2B cycle loss (A2 B2A recover part)
-		self.A2B_cycle_loss = tf.reduce_mean(tf.abs(self.generated_B - self.input_real_data_A))
-
-		self.A2B_cycle_optim = tf.train.AdamOptimizer(self.cycle_learning_rate, beta1=self.beta1).minimize(self.A2B_cycle_loss, var_list=self.B2A_gen_vars)
-
-		#tf.reduce_mean(
-			# tf.pow(tf.subtract(tf.reduce_mean(self.input_recovered_A, axis=0), tf.reduce_mean(self.input_real_data_A, axis=0)), 2))
-
-		# B2A cycle loss (B2 A2B recover part)
-		self.B2A_cycle_loss = tf.reduce_mean(tf.abs(self.generated_A - self.input_real_data_B))
-
-		self.B2A_cycle_optim = tf.train.AdamOptimizer(self.cycle_learning_rate, beta1=self.beta1).minimize(self.B2A_cycle_loss, var_list=self.A2B_gen_vars)
-
-		# tf.reduce_mean(
-			# tf.pow(tf.subtract(tf.reduce_mean(self.input_recovered_B, axis=0), tf.reduce_mean(self.input_real_data_B, axis=0)), 2))
-
-
-		self.avg_cycle_loss = (self.A2B_cycle_loss + self.B2A_cycle_loss)/2
-
 
 
 		# Compute Mean square error(MSE) for generated data and real data
@@ -372,7 +323,7 @@ class Coop_pix2pix(object):
 				generated_A = sess.run(self.generated_A, feed_dict={self.input_real_data_A: data_A})
 
 				# step D1: descriptor try to revised image:"generated_B"
-				revised_A = sess.run(self.revised_A, feed_dict={self.input_generated_A: generated_A})
+				revised_A = sess.run(self.A2B_des_langevin_revision, feed_dict={self.input_generated_A: generated_A})
 
 				# step R1: recover origin picture
 				recovered_A = sess.run(self.generated_B, feed_dict={self.input_real_data_B: generated_A})
@@ -384,7 +335,7 @@ class Coop_pix2pix(object):
 				generated_B = sess.run(self.generated_B, feed_dict={self.input_real_data_B: data_B})
 
 				# step D1: descriptor try to revised image:"generated_A"
-				revised_B = sess.run(self.revised_B, feed_dict={self.input_generated_B: generated_B})
+				revised_B = sess.run(self.B2A_des_langevin_revision, feed_dict={self.input_generated_B: generated_B})
 
 				# step R1: recover origin picture
 				recovered_B = sess.run(self.generated_A, feed_dict={self.input_real_data_A: generated_B})
@@ -395,11 +346,11 @@ class Coop_pix2pix(object):
 
 				# A2B des : learning B features
 				A2B_descriptor_loss , _ = sess.run([self.A2B_des_loss, self.A2B_des_optim],
-                                  		feed_dict={self.input_revised_A: generated_A, self.input_real_data_B: data_B})
+                                  		feed_dict={self.input_revised_A: revised_A, self.input_real_data_B: data_B})
 
 				# B2A des : learning A features
 				B2A_descriptor_loss , _ = sess.run([self.B2A_des_loss, self.B2A_des_optim],
-                                  		feed_dict={self.input_revised_B: generated_B, self.input_real_data_A: data_A})
+                                  		feed_dict={self.input_revised_B: revised_B, self.input_real_data_A: data_A})
 
 				# print(descriptor_loss)
 
@@ -418,12 +369,12 @@ class Coop_pix2pix(object):
                                   			self.input_revised_B: revised_B, self.input_recovered_A: recovered_A, self.input_recovered_B: recovered_B}) # self.input_revised_B: revised_B,
 
 
-				# step R2: A2B cycle loss (A, gen_A2B), (B, gen_B2A)
-				A2B_cycle_loss , _ = sess.run([self.A2B_cycle_loss, self.A2B_cycle_optim],
-									feed_dict={self.input_real_data_A: data_A, self.input_real_data_B: generated_A})
+				# step R2: A2B cycle loss
+				A2B_cycle_loss = sess.run(self.A2B_cycle_loss, 
+									feed_dict={self.input_real_data_A: data_A, self.input_recovered_A: recovered_A})
 
-				B2A_cycle_loss , _ = sess.run([self.B2A_cycle_loss, self.B2A_cycle_optim],
-									feed_dict={self.input_real_data_B: data_B, self.input_real_data_A: generated_B})
+				B2A_cycle_loss = sess.run(self.B2A_cycle_loss, 
+									feed_dict={self.input_real_data_B: data_B, self.input_recovered_B: recovered_B})
 
 				# self.input_generated_B: generated_B,
 
@@ -1063,5 +1014,7 @@ class Coop_pix2pix(object):
 	# 		i = tf.constant(0)
 	# 		i, input_image = tf.while_loop(cond, body, [i, input_image_arg])
 	# 		return input_image
+
+
 
 
