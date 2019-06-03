@@ -428,8 +428,13 @@ class Coop_pix2pix(object):
                                   		feed_dict={self.input_real_data_A: data_A, self.input_real_data_B: data_B, 
                                   			self.input_revised_B: revised_B, self.input_recovered_A: recovered_A, self.input_recovered_B: recovered_B}) # self.input_revised_B: revised_B,
 
+<<<<<<< HEAD
+=======
+				# step G2: update generator net
+				generator_loss , _ = sess.run([self.gen_loss, self.gen_optim],
+                                  		feed_dict={self.input_generated_B: generated_B, self.input_real_data_A: data_A}) # self.input_revised_B: revised_B,
+>>>>>>> parent of b9b3468... update
 
-				# self.input_generated_B: generated_B,
 
 
 
