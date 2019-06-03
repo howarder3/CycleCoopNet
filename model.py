@@ -407,6 +407,17 @@ class Coop_pix2pix(object):
 				# recover_loss , _ = sess.run([self.rec_loss, self.rec_optim],
     #                               		feed_dict={self.input_generated_B: generated_B, self.input_real_data_A: data_A})
 
+				
+
+				# step R2: A2B cycle loss (A, gen_A2B), (B, gen_B2A)
+				A2B_cycle_loss , _ = sess.run([self.A2B_cycle_loss, self.A2B_cycle_optim],
+									feed_dict={self.input_real_data_A: data_A, self.input_real_data_B: generated_A})
+
+				B2A_cycle_loss , _ = sess.run([self.B2A_cycle_loss, self.B2A_cycle_optim],
+									feed_dict={self.input_real_data_B: data_B, self.input_real_data_A: generated_B})
+				
+
+
 				# step G2: update A2B generator net
 				A2B_generator_loss , _ = sess.run([self.A2B_gen_loss, self.A2B_gen_optim],
                                   		feed_dict={self.input_real_data_A: data_A, self.input_real_data_B: data_B,
@@ -417,13 +428,6 @@ class Coop_pix2pix(object):
                                   		feed_dict={self.input_real_data_A: data_A, self.input_real_data_B: data_B, 
                                   			self.input_revised_B: revised_B, self.input_recovered_A: recovered_A, self.input_recovered_B: recovered_B}) # self.input_revised_B: revised_B,
 
-
-				# step R2: A2B cycle loss (A, gen_A2B), (B, gen_B2A)
-				A2B_cycle_loss , _ = sess.run([self.A2B_cycle_loss, self.A2B_cycle_optim],
-									feed_dict={self.input_real_data_A: data_A, self.input_real_data_B: generated_A})
-
-				B2A_cycle_loss , _ = sess.run([self.B2A_cycle_loss, self.B2A_cycle_optim],
-									feed_dict={self.input_real_data_B: data_B, self.input_real_data_A: generated_B})
 
 				# self.input_generated_B: generated_B,
 

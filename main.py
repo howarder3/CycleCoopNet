@@ -16,7 +16,7 @@ tf.app.flags.DEFINE_integer('output_pic_dim',3,'output picture dimension : color
 # learning rate
 tf.app.flags.DEFINE_float('descriptor_learning_rate',0.01,'descriptor learning rate') # 0.01 # 0.007 # 1e-6 # 0.01 # 0.001 # 1e-6 # 0.01 # 0.007
 tf.app.flags.DEFINE_float('generator_learning_rate',0.0001,'generator learning rate') # 0.0001 # 1e-5 # 0.0001 # 1e-4 # 0.0001 # 0.0001
-tf.app.flags.DEFINE_float('cycle_learning_rate',0.01,'cycle_learning_rate') 
+tf.app.flags.DEFINE_float('cycle_learning_rate',0.0001,'cycle_learning_rate') 
 tf.app.flags.DEFINE_integer('langevin_revision_steps',1,'langevin revision steps') #100 # 30 # 10
 tf.app.flags.DEFINE_float('langevin_step_size',0.002,'langevin step size') # 0.002
 
