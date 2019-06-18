@@ -48,29 +48,32 @@ def main(_):
 			print("\nError! Dataset not found!\n")
 			return
 
+		# user_input = input('\n [!] Warning! Checkpoint exists! Continue training? (y/n) ')
+		user_input = 'n'
 
 		if tf.gfile.Exists(checkpoint_dir):
-			# user_input = input('\n [!] Warning! Checkpoint exists! Continue training? (y/n) ')
-			user_input = 'n'
 			if user_input == 'n':
 				tf.gfile.DeleteRecursively(checkpoint_dir)
-				tf.gfile.DeleteRecursively(output_dir)
-				tf.gfile.DeleteRecursively(sample_dir)
-			else:
-				pass
+				tf.gfile.MakeDirs(checkpoint_dir)
 		else:
 			tf.gfile.MakeDirs(checkpoint_dir)
 
+
 		if tf.gfile.Exists(output_dir):
-			pass
+			if user_input == 'n':
+				tf.gfile.DeleteRecursively(output_dir)
+				tf.gfile.MakeDirs(output_dir)
 		else:
 			tf.gfile.MakeDirs(output_dir)
 
 
 		if tf.gfile.Exists(sample_dir):
-			pass
+			if user_input == 'n':
+				tf.gfile.DeleteRecursively(sample_dir)
+				tf.gfile.MakeDirs(sample_dir)
 		else:
 			tf.gfile.MakeDirs(sample_dir)
+
 
 
 		model = Cycle_CoopNet(sess, 
