@@ -191,6 +191,17 @@ def relu(x, name="relu"):
 	return tf.nn.relu(x)
 
 
+def L1_distance(input_data, target):
+    return tf.reduce_mean(tf.abs(input_data - target))
+
+
+def L2_distance(input_data, target):
+    return tf.reduce_mean((input_data-target)**2)
+
+
+def sce_criterion(logits, labels):
+    return tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(logits=logits, labels=labels))
+
 
 
 

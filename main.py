@@ -1,7 +1,7 @@
 import tensorflow as tf
 import os
 
-from model import Coop_pix2pix
+from model import Cycle_CoopNet
 
 
 # parameters setting
@@ -19,6 +19,7 @@ tf.app.flags.DEFINE_float('generator_learning_rate',0.0001,'generator learning r
 tf.app.flags.DEFINE_float('cycle_learning_rate',0.0001,'cycle_learning_rate') 
 tf.app.flags.DEFINE_integer('langevin_revision_steps',1,'langevin revision steps') #100 # 30 # 10
 tf.app.flags.DEFINE_float('langevin_step_size',0.002,'langevin step size') # 0.002
+tf.app.flags.DEFINE_float('L1_lambda',100.0,'L1_lambda') # 0.002
 
 
 # dataset floder name
@@ -72,7 +73,7 @@ def main(_):
 			tf.gfile.MakeDirs(log_dir)
 
 
-		model = Coop_pix2pix(sess, 
+		model = Cycle_CoopNet(sess, 
 				epoch=FLAGS.epoch, 
 				batch_size=FLAGS.batch_size,
 				picture_amount=FLAGS.picture_amount,
@@ -83,6 +84,7 @@ def main(_):
 				descriptor_learning_rate = FLAGS.descriptor_learning_rate,
 				generator_learning_rate = FLAGS.generator_learning_rate,
 				cycle_learning_rate = FLAGS.cycle_learning_rate,
+				L1_lambda = FLAGS.L1_lambda,
 				dataset_name=FLAGS.dataset_name, dataset_dir =FLAGS.dataset_dir, 
 				output_dir=FLAGS.output_dir, checkpoint_dir=FLAGS.checkpoint_dir, log_dir=FLAGS.log_dir)
 
