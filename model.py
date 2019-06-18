@@ -28,7 +28,7 @@ class Cycle_CoopNet(object):
 				cycle_learning_rate = 0.01,
 				L1_lambda = 10.0,
 				dataset_name='facades', dataset_dir ='./test_datasets', 
-				output_dir='./output_dir', checkpoint_dir='./checkpoint_dir', log_dir='./log_dir'):
+				output_dir='./output_dir', checkpoint_dir='./checkpoint_dir', sample_dir='./sample_dir'):
 		"""
 		args:
 			sess: tensorflow session
@@ -66,7 +66,7 @@ class Cycle_CoopNet(object):
 
 		self.output_dir = output_dir
 		self.checkpoint_dir = checkpoint_dir
-		self.log_dir = log_dir
+		self.sample_dir = sample_dir
 		self.epoch_startpoint = 0
 
 		self.A2B_gen_encode_layer2_batchnorm = batch_norm(name='A2B_gen_encode_layer_2_batchnorm')

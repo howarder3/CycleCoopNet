@@ -31,7 +31,7 @@ tf.app.flags.DEFINE_string('dataset_name', 'vangogh2photo', 'dataset name')
 # folder position
 tf.app.flags.DEFINE_string('output_dir', './output', 'output directory')
 tf.app.flags.DEFINE_string('checkpoint_dir', './checkpoint', 'checkpoint directory')
-tf.app.flags.DEFINE_string('log_dir', './log', 'log directory')
+tf.app.flags.DEFINE_string('sample_dir', './sample', 'sample directory')
 
 FLAGS = tf.app.flags.FLAGS
 
@@ -39,7 +39,7 @@ def main(_):
 	dataset_dir = FLAGS.dataset_dir+"/"+FLAGS.dataset_name
 	output_dir = FLAGS.output_dir # +"_p"+str(FLAGS.picture_amount)
 	checkpoint_dir = FLAGS.checkpoint_dir
-	log_dir = FLAGS.log_dir
+	sample_dir = FLAGS.sample_dir
 
 	with tf.Session() as sess:
 		if tf.gfile.Exists(dataset_dir):
@@ -55,7 +55,7 @@ def main(_):
 			if user_input == 'n':
 				tf.gfile.DeleteRecursively(checkpoint_dir)
 				tf.gfile.DeleteRecursively(output_dir)
-				tf.gfile.DeleteRecursively(log_dir)
+				tf.gfile.DeleteRecursively(sample_dir)
 			else:
 				pass
 		else:
@@ -67,10 +67,10 @@ def main(_):
 			tf.gfile.MakeDirs(output_dir)
 
 
-		if tf.gfile.Exists(log_dir):
+		if tf.gfile.Exists(sample_dir):
 			pass
 		else:
-			tf.gfile.MakeDirs(log_dir)
+			tf.gfile.MakeDirs(sample_dir)
 
 
 		model = Cycle_CoopNet(sess, 
@@ -86,7 +86,7 @@ def main(_):
 				cycle_learning_rate = FLAGS.cycle_learning_rate,
 				L1_lambda = FLAGS.L1_lambda,
 				dataset_name=FLAGS.dataset_name, dataset_dir =FLAGS.dataset_dir, 
-				output_dir=FLAGS.output_dir, checkpoint_dir=FLAGS.checkpoint_dir, log_dir=FLAGS.log_dir)
+				output_dir=FLAGS.output_dir, checkpoint_dir=FLAGS.checkpoint_dir, sample_dir=FLAGS.sample_dir)
 
 
 		model.train(sess)
