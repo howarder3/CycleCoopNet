@@ -11,7 +11,7 @@ cd D:\GitHub\Cycle_CoopNet
 python main.py --dataset_dir datasets
 
 # mac
-cd /Users/howarder3/Documents/GitHub/Coop_pix2pix 
+cd /Users/howarder3/Documents/GitHub/Cycle_CoopNet
 python main.py
 
 # pip packages 

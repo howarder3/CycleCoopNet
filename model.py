@@ -221,41 +221,31 @@ class Cycle_CoopNet(object):
 		self.B2A_des_optim = tf.train.AdamOptimizer(self.descriptor_learning_rate, beta1=self.beta1).minimize(self.B2A_des_loss, var_list=self.B2A_des_vars)
 
 
-		self.A2B_cycle_loss = tf.reduce_mean(tf.abs(self.recovered_A - self.input_real_data_A))
-		self.B2A_cycle_loss = tf.reduce_mean(tf.abs(self.recovered_B - self.input_real_data_B))
+		# self.A2B_cycle_loss = tf.reduce_mean(tf.abs(self.recovered_A - self.input_real_data_A))
+		# self.B2A_cycle_loss = tf.reduce_mean(tf.abs(self.recovered_B - self.input_real_data_B))
 
 		# A2B generator loss functions
 		self.A2B_gen_loss =  tf.reduce_sum(tf.reduce_mean(1.0 / (2 * self.sigma2 * self.sigma2) * tf.square(self.revised_A - self.generated_A), axis=0)) # + self.cycle_consistency_loss_var * self.cycle_loss 
-		self.A2B_gen_loss_sum = self.A2B_gen_loss + self.L1_lambda * self.A2B_cycle_loss + self.L1_lambda * self.B2A_cycle_loss
-		self.A2B_gen_optim = tf.train.AdamOptimizer(self.generator_learning_rate, beta1=self.beta1).minimize(self.A2B_gen_loss_sum, var_list=self.A2B_gen_vars)
+		# self.A2B_gen_loss_sum = self.A2B_gen_loss + self.L1_lambda * self.A2B_cycle_loss + self.L1_lambda * self.B2A_cycle_loss
+		self.A2B_gen_optim = tf.train.AdamOptimizer(self.generator_learning_rate, beta1=self.beta1).minimize(self.A2B_gen_loss, var_list=self.A2B_gen_vars)
 
     	# B2A generator loss functions
 		self.B2A_gen_loss = tf.reduce_sum(tf.reduce_mean(1.0 / (2 * self.sigma2 * self.sigma2) * tf.square(self.revised_B - self.generated_B), axis=0)) # + self.cycle_consistency_loss_var * self.cycle_loss 
-		self.B2A_gen_loss_sum = self.B2A_gen_loss + self.L1_lambda * self.A2B_cycle_loss + self.L1_lambda * self.B2A_cycle_loss
-		self.B2A_gen_optim = tf.train.AdamOptimizer(self.generator_learning_rate, beta1=self.beta1).minimize(self.B2A_gen_loss_sum, var_list=self.B2A_gen_vars)
+		# self.B2A_gen_loss_sum = self.B2A_gen_loss + self.L1_lambda * self.A2B_cycle_loss + self.L1_lambda * self.B2A_cycle_loss
+		self.B2A_gen_optim = tf.train.AdamOptimizer(self.generator_learning_rate, beta1=self.beta1).minimize(self.B2A_gen_loss, var_list=self.B2A_gen_vars)
 
 
 
 
 		# A2B cycle loss (A2 "B2A" recover part)
-		# self.A2B_cycle_loss = tf.reduce_mean(tf.abs(self.recovered_A - self.input_real_data_A))
+		self.A2B_cycle_loss = tf.reduce_mean(tf.abs(self.recovered_A - self.input_real_data_A))
 
-		# self.A2B_cycle_optim = tf.train.AdamOptimizer(self.cycle_learning_rate, beta1=self.beta1).minimize(self.A2B_cycle_loss, var_list=self.B2A_gen_vars)
-
-		#tf.reduce_mean(
-			# tf.pow(tf.subtract(tf.reduce_mean(self.input_recovered_A, axis=0), tf.reduce_mean(self.input_real_data_A, axis=0)), 2))
+		self.A2B_cycle_optim = tf.train.AdamOptimizer(self.cycle_learning_rate, beta1=self.beta1).minimize(self.A2B_cycle_loss, var_list=self.B2A_gen_vars)
 
 		# B2A cycle loss (B2 "A2B" recover part)
-		# self.B2A_cycle_loss = tf.reduce_mean(tf.abs(self.recovered_B - self.input_real_data_B))
+		self.B2A_cycle_loss = tf.reduce_mean(tf.abs(self.recovered_B - self.input_real_data_B))
 
-		# self.B2A_cycle_optim = tf.train.AdamOptimizer(self.cycle_learning_rate, beta1=self.beta1).minimize(self.B2A_cycle_loss, var_list=self.A2B_gen_vars)
-
-		# tf.reduce_mean(
-			# tf.pow(tf.subtract(tf.reduce_mean(self.input_recovered_B, axis=0), tf.reduce_mean(self.input_real_data_B, axis=0)), 2))
-
-
-		# self.avg_cycle_loss = (self.A2B_cycle_loss + self.B2A_cycle_loss)/2
-
+		self.B2A_cycle_optim = tf.train.AdamOptimizer(self.cycle_learning_rate, beta1=self.beta1).minimize(self.B2A_cycle_loss, var_list=self.A2B_gen_vars)
 
 
 		# Compute Mean square error(MSE) for generated data and real data
@@ -292,6 +282,29 @@ class Cycle_CoopNet(object):
 		else:
 			print(" [!] Loading checkpoint failed...")
 
+		# prepare testing data
+		test_dataset_A = glob('./test_datasets/{}/testA/*.jpg'.format(self.dataset_name))
+		test_dataset_B = glob('./test_datasets/{}/testB/*.jpg'.format(self.dataset_name))
+
+		test_data_A_list = []
+		test_data_B_list = []
+
+		for index in xrange(min(len(test_dataset_A), len(test_dataset_B))):
+			test_batch_files = list(zip(test_dataset_A[index : (index + 1)],
+										test_dataset_B[index : (index + 1)]))
+			test_batch_images = [load_train_data(test_batch_file, 256, 256) for test_batch_file in test_batch_files]
+			test_batch_images = np.array(test_batch_images).astype(np.float32)
+
+			# print(batch_images.shape)
+
+			test_data_A_list.append(test_batch_images[:, :, :, : 3])
+			test_data_B_list.append(test_batch_images[:, :, :, 3:6])
+
+			save_images(test_data_A_list[index], [self.batch_size, 1],
+						'./{}/testA_{}.png'.format(self.sample_dir, index))
+			save_images(test_data_B_list[index], [self.batch_size, 1],
+						'./{}/testB_{}.png'.format(self.sample_dir, index))
+
 		# start training	
 		start_time = time.time()
 		print("time: {} , Start training model......".format(str(datetime.timedelta(seconds=int(time.time()-start_time)))))
@@ -326,8 +339,8 @@ class Cycle_CoopNet(object):
 
 				# print(batch_images.shape)
 
-				data_B = batch_images[:, :, :, : self.input_pic_dim] 
-				data_A = batch_images[:, :, :, self.input_pic_dim:self.input_pic_dim+self.output_pic_dim] 
+				data_A = batch_images[:, :, :, : self.input_pic_dim] 
+				data_B = batch_images[:, :, :, self.input_pic_dim:self.input_pic_dim+self.output_pic_dim] 
 
 				# print("data_A.shape: {} ".format(data_A.shape))
 				# print("data_B.shape: {} ".format(data_B.shape))
@@ -396,10 +409,14 @@ class Cycle_CoopNet(object):
                                   		feed_dict={self.input_real_data_A: data_A, self.input_real_data_B: data_B}) 
 
 
-				# step R2: A2B cycle loss (A, gen_A2B), (B, gen_B2A)
-				A2B_cycle_loss = sess.run(self.A2B_cycle_loss, feed_dict={self.input_real_data_A: data_A})
 
-				B2A_cycle_loss = sess.run(self.B2A_cycle_loss, feed_dict={self.input_real_data_B: data_B})
+				# step R2: A2B cycle loss (A, gen_A2B), (B, gen_B2A)
+				A2B_cycle_loss , _ = sess.run([self.A2B_cycle_loss, self.A2B_cycle_optim], 
+										feed_dict={self.input_real_data_A: data_A})
+
+				B2A_cycle_loss , _ = sess.run([self.B2A_cycle_loss, self.B2A_cycle_optim], 
+										feed_dict={self.input_real_data_B: data_B})
+
 		
 				# Compute Mean square error(MSE) for generated data and revised data
 				# mse_loss = sess.run(self.mse_loss, feed_dict={self.input_revised_B: revised_B, self.input_generated_B: generated_B})
@@ -453,6 +470,42 @@ class Cycle_CoopNet(object):
 						'./{}/ep{:02d}_{:04d}_14_B2A_revise_B.png'.format(self.output_dir, epoch, index))
 					save_images(recovered_B, [self.batch_size, 1],
 						'./{}/ep{:02d}_{:04d}_15_B2A_recover_B.png'.format(self.output_dir, epoch, index))
+
+
+
+					for index in xrange(min(len(test_dataset_A), len(test_dataset_B))):
+
+						save_images(test_data_A_list[index], [self.batch_size, 1],
+									'./{}/testA_{}.png'.format(self.sample_dir, index))
+						save_images(test_data_B_list[index], [self.batch_size, 1],
+									'./{}/testB_{}.png'.format(self.sample_dir, index))
+
+						# A2B
+						generated_A = sess.run(self.generated_A, feed_dict={self.input_real_data_A: test_data_A_list[index]}) 
+						revised_A = sess.run(self.revised_A, feed_dict={self.input_real_data_A: test_data_A_list[index]}) 
+						recovered_A = sess.run(self.recovered_A, feed_dict={self.input_real_data_A: test_data_A_list[index]}) 
+
+
+						# B2A
+						generated_B = sess.run(self.generated_B, feed_dict={self.input_real_data_B: test_data_B_list[index]}) 
+						revised_B = sess.run(self.revised_B, feed_dict={self.input_real_data_B: test_data_B_list[index]})
+						recovered_B = sess.run(self.recovered_B, feed_dict={self.input_real_data_B: test_data_B_list[index]}) 
+
+
+						save_images(generated_A, [self.batch_size, 1],
+									'./{}/testA_{:02d}_ep{:02d}_01_gen.png'.format(self.sample_dir, index, epoch))
+						save_images(revised_A, [self.batch_size, 1],
+									'./{}/testA_{:02d}_ep{:02d}_02_revised.png'.format(self.sample_dir, index, epoch))
+						save_images(recovered_A, [self.batch_size, 1],
+									'./{}/testA_{:02d}_ep{:02d}_03_recovered.png'.format(self.sample_dir, index, epoch))
+
+						save_images(generated_B, [self.batch_size, 1],
+									'./{}/testB_{:02d}_ep{:02d}_01_gen.png'.format(self.sample_dir, index, epoch))
+						save_images(revised_B, [self.batch_size, 1],
+									'./{}/testB_{:02d}_ep{:02d}_02_revised.png'.format(self.sample_dir, index, epoch))
+						save_images(recovered_B, [self.batch_size, 1],
+									'./{}/testB_{:02d}_ep{:02d}_03_recovered.png'.format(self.sample_dir, index, epoch))
+
 
 					# save_images(lang_1_output, [self.batch_size, 1],
 					# 	'./{}/ep{:02d}_{:04d}_06_lang_001.png'.format(self.output_dir, epoch, index))
