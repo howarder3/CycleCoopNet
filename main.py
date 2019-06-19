@@ -7,7 +7,7 @@ from model import Cycle_CoopNet
 # parameters setting
 tf.app.flags.DEFINE_integer('epoch',1000,'how many epochs to train')
 tf.app.flags.DEFINE_integer('batch_size',1,'how many pic in one group(batch), iteration = picture_amount/batch_size')
-tf.app.flags.DEFINE_integer('picture_amount',400,'how many pictures to train')
+tf.app.flags.DEFINE_integer('picture_amount',1000,'how many pictures to train')
 tf.app.flags.DEFINE_integer('image_size',256,'input image size')
 tf.app.flags.DEFINE_integer('output_size',256,'output image size')
 tf.app.flags.DEFINE_integer('input_pic_dim',3,'input picture dimension : colorful = 3, grayscale = 1')
@@ -24,7 +24,7 @@ tf.app.flags.DEFINE_float('L1_lambda',100.0,'L1_lambda') # 0.002
 
 # dataset floder name
 tf.app.flags.DEFINE_string('dataset_dir', './test_datasets', 'dataset directory')
-tf.app.flags.DEFINE_string('dataset_name', 'vangogh2photo', 'dataset name') 
+tf.app.flags.DEFINE_string('dataset_name', 'edges2handbags', 'dataset name') 
 # cityscapes # edges2handbags # edges2shoes # facades # maps	
 # vangogh2photo
 

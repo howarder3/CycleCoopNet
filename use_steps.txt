@@ -37,3 +37,5 @@ bash ./download_dataset.sh maps
 
 
 '''
+
+Dir *.png | %{Rename-Item $_ -NewName ("00{0}.jpg" -f $c++)}

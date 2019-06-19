@@ -116,6 +116,9 @@ class Cycle_CoopNet(object):
 		self.input_real_data_A = tf.placeholder(tf.float32,
 				[self.batch_size, self.image_size, self.image_size, self.input_pic_dim],
 				name='input_real_data_A')
+		self.input_generated_A = tf.placeholder(tf.float32,
+				[self.batch_size, self.image_size, self.image_size, self.input_pic_dim],
+				name='input_generated_A')
 		self.input_revised_A = tf.placeholder(tf.float32,
 				[self.batch_size, self.image_size, self.image_size, self.input_pic_dim],
 				name='input_revised_A')
@@ -123,6 +126,9 @@ class Cycle_CoopNet(object):
 		self.input_real_data_B = tf.placeholder(tf.float32,
 				[self.batch_size, self.image_size, self.image_size, self.input_pic_dim],
 				name='input_real_data_B')
+		self.input_generated_B = tf.placeholder(tf.float32,
+				[self.batch_size, self.image_size, self.image_size, self.input_pic_dim],
+				name='input_generated_B')
 		self.input_revised_B = tf.placeholder(tf.float32,
 				[self.batch_size, self.image_size, self.image_size, self.input_pic_dim],
 				name='input_revised_B')
@@ -133,8 +139,8 @@ class Cycle_CoopNet(object):
 		# A2B generator, B2A generator
 		self.generated_A = self.A2B_generator(self.input_real_data_A, reuse = False)
 		self.generated_B = self.B2A_generator(self.input_real_data_B, reuse = False)
-		self.recovered_A = self.B2A_generator(self.generated_A, reuse = True)
-		self.recovered_B = self.A2B_generator(self.generated_B, reuse = True)
+		self.recovered_A = self.B2A_generator(self.input_generated_A, reuse = True)
+		self.recovered_B = self.A2B_generator(self.input_generated_B, reuse = True)
 
 		# A descriptor
 		# A2B des : learning B features
@@ -258,7 +264,7 @@ class Cycle_CoopNet(object):
 				revised_A = sess.run(self.revised_A, feed_dict={self.input_real_data_A: data_A})
 
 				# step R1: recover origin picture
-				recovered_A = sess.run(self.recovered_A, feed_dict={self.input_real_data_A: data_A}) 
+				recovered_A = sess.run(self.recovered_A, feed_dict={self.input_generated_A: generated_A}) 
 				
 
 				# B2A
@@ -269,7 +275,7 @@ class Cycle_CoopNet(object):
 				revised_B = sess.run(self.revised_B, feed_dict={self.input_real_data_B: data_B}) 
 
 				# step R1: recover origin picture
-				recovered_B = sess.run(self.recovered_B, feed_dict={self.input_real_data_B: data_B}) 
+				recovered_B = sess.run(self.recovered_B, feed_dict={self.input_generated_B: generated_B}) 
 
 
 
@@ -292,10 +298,10 @@ class Cycle_CoopNet(object):
 
 				# step R2: A2B cycle loss (A, gen_A2B), (B, gen_B2A)
 				A2B_cycle_loss , _ = sess.run([self.A2B_cycle_loss, self.A2B_cycle_optim], 
-										feed_dict={self.input_real_data_A: data_A})
+										feed_dict={self.input_generated_A: generated_A, self.input_real_data_A: data_A})
 
 				B2A_cycle_loss , _ = sess.run([self.B2A_cycle_loss, self.B2A_cycle_optim], 
-										feed_dict={self.input_real_data_B: data_B})
+										feed_dict={self.input_generated_B: generated_B, self.input_real_data_B: data_B})
 
 				print("Epoch: [{:4d}] [{:4d}/{:4d}],   time: {},   eta: {}, \n A2B_d_loss: {:>15.4f}, A2B_g_loss: {:>12.4f}, A2B_cycle_loss: {:>8.4f}, \n B2A_d_loss: {:>15.4f}, B2A_g_loss: {:>12.4f}, B2A_cycle_loss: {:>8.4f}"
 					.format(epoch, index, self.num_batch, 
@@ -696,125 +702,4 @@ class Cycle_CoopNet(object):
 			return True
 		else:
 			return False
-
-	# def langevin_revision_controller(self, input_image_arg, langevin_steps):
-	# 	def cond(i, input_image):
-	# 		return tf.less(i, langevin_steps)
-
-	# 	def body(i, input_image):
-	# 		noise = tf.random_normal(shape=[1, self.image_size, self.image_size, 3], name='noise')
-	# 		descripted_input_image = self.descriptor(input_image, reuse=True)
-
-	# 		grad = tf.gradients(descripted_input_image, input_image, name='grad_des')[0]
-	# 		input_image = input_image - 0.5 * self.langevin_step_size * self.langevin_step_size * (input_image / self.sigma1 / self.sigma1 - grad) + self.langevin_step_size * noise
-	# 		return tf.add(i, 1), input_image
-
-	# 	with tf.name_scope("des_langevin_revision"):
-	# 		i = tf.constant(0)
-	# 		i, input_image = tf.while_loop(cond, body, [i, input_image_arg])
-	# 		return input_image
-
-	# def lang_1(self, input_image_arg):
-	# 	def cond(i, input_image):
-	# 		return tf.less(i, 1)
-
-	# 	def body(i, input_image):
-	# 		noise = tf.random_normal(shape=[1, self.image_size, self.image_size, 3], name='noise')
-	# 		descripted_input_image = self.descriptor(input_image, reuse=True)
-
-	# 		grad = tf.gradients(descripted_input_image, input_image, name='grad_des')[0]
-	# 		input_image = input_image - 0.5 * self.langevin_step_size * self.langevin_step_size * (input_image / self.sigma1 / self.sigma1 - grad) + self.langevin_step_size * noise
-	# 		return tf.add(i, 1), input_image
-
-	# 	with tf.name_scope("des_langevin_revision"):
-	# 		i = tf.constant(0)
-	# 		i, input_image = tf.while_loop(cond, body, [i, input_image_arg])
-	# 		return input_image
-
-	# def lang_10(self, input_image_arg):
-	# 	def cond(i, input_image):
-	# 		return tf.less(i, 10)
-
-	# 	def body(i, input_image):
-	# 		noise = tf.random_normal(shape=[1, self.image_size, self.image_size, 3], name='noise')
-	# 		descripted_input_image = self.descriptor(input_image, reuse=True)
-
-	# 		grad = tf.gradients(descripted_input_image, input_image, name='grad_des')[0]
-	# 		input_image = input_image - 0.5 * self.langevin_step_size * self.langevin_step_size * (input_image / self.sigma1 / self.sigma1 - grad) + self.langevin_step_size * noise
-	# 		return tf.add(i, 1), input_image
-
-	# 	with tf.name_scope("des_langevin_revision"):
-	# 		i = tf.constant(0)
-	# 		i, input_image = tf.while_loop(cond, body, [i, input_image_arg])
-	# 		return input_image
-
-	# def lang_30(self, input_image_arg):
-	# 	def cond(i, input_image):
-	# 		return tf.less(i, 30)
-
-	# 	def body(i, input_image):
-	# 		noise = tf.random_normal(shape=[1, self.image_size, self.image_size, 3], name='noise')
-	# 		descripted_input_image = self.descriptor(input_image, reuse=True)
-
-	# 		grad = tf.gradients(descripted_input_image, input_image, name='grad_des')[0]
-	# 		input_image = input_image - 0.5 * self.langevin_step_size * self.langevin_step_size * (input_image / self.sigma1 / self.sigma1 - grad) + self.langevin_step_size * noise
-	# 		return tf.add(i, 1), input_image
-
-	# 	with tf.name_scope("des_langevin_revision"):
-	# 		i = tf.constant(0)
-	# 		i, input_image = tf.while_loop(cond, body, [i, input_image_arg])
-	# 		return input_image
-
-	# def lang_50(self, input_image_arg):
-	# 	def cond(i, input_image):
-	# 		return tf.less(i, 50)
-
-	# 	def body(i, input_image):
-	# 		noise = tf.random_normal(shape=[1, self.image_size, self.image_size, 3], name='noise')
-	# 		descripted_input_image = self.descriptor(input_image, reuse=True)
-
-	# 		grad = tf.gradients(descripted_input_image, input_image, name='grad_des')[0]
-	# 		input_image = input_image - 0.5 * self.langevin_step_size * self.langevin_step_size * (input_image / self.sigma1 / self.sigma1 - grad) + self.langevin_step_size * noise
-	# 		return tf.add(i, 1), input_image
-
-	# 	with tf.name_scope("des_langevin_revision"):
-	# 		i = tf.constant(0)
-	# 		i, input_image = tf.while_loop(cond, body, [i, input_image_arg])
-	# 		return input_image
-
-	# def lang_100(self, input_image_arg):
-	# 	def cond(i, input_image):
-	# 		return tf.less(i, 100)
-
-	# 	def body(i, input_image):
-	# 		noise = tf.random_normal(shape=[1, self.image_size, self.image_size, 3], name='noise')
-	# 		descripted_input_image = self.descriptor(input_image, reuse=True)
-
-	# 		grad = tf.gradients(descripted_input_image, input_image, name='grad_des')[0]
-	# 		input_image = input_image - 0.5 * self.langevin_step_size * self.langevin_step_size * (input_image / self.sigma1 / self.sigma1 - grad) + self.langevin_step_size * noise
-	# 		return tf.add(i, 1), input_image
-
-	# 	with tf.name_scope("des_langevin_revision"):
-	# 		i = tf.constant(0)
-	# 		i, input_image = tf.while_loop(cond, body, [i, input_image_arg])
-	# 		return input_image
-
-
-	# def lang_200(self, input_image_arg):
-	# 	def cond(i, input_image):
-	# 		return tf.less(i, 200)
-
-	# 	def body(i, input_image):
-	# 		noise = tf.random_normal(shape=[1, self.image_size, self.image_size, 3], name='noise')
-	# 		descripted_input_image = self.descriptor(input_image, reuse=True)
-
-	# 		grad = tf.gradients(descripted_input_image, input_image, name='grad_des')[0]
-	# 		input_image = input_image - 0.5 * self.langevin_step_size * self.langevin_step_size * (input_image / self.sigma1 / self.sigma1 - grad) + self.langevin_step_size * noise
-	# 		return tf.add(i, 1), input_image
-
-	# 	with tf.name_scope("des_langevin_revision"):
-	# 		i = tf.constant(0)
-	# 		i, input_image = tf.while_loop(cond, body, [i, input_image_arg])
-	# 		return input_image
-
-
+			
