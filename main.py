@@ -12,21 +12,21 @@ tf.app.flags.DEFINE_integer('image_size',256,'input image size')
 tf.app.flags.DEFINE_integer('output_size',256,'output image size')
 tf.app.flags.DEFINE_integer('input_pic_dim',3,'input picture dimension : colorful = 3, grayscale = 1')
 tf.app.flags.DEFINE_integer('output_pic_dim',3,'output picture dimension : colorful = 3, grayscale = 1')
-tf.app.flags.DEFINE_integer('output_descriptor_dim',100,'output descriptor dimension')
+tf.app.flags.DEFINE_integer('output_descriptor_dim',200,'output descriptor dimension')
 
 
 # learning rate
 tf.app.flags.DEFINE_float('descriptor_learning_rate',0.01,'descriptor learning rate') # 0.01 # 0.007 # 1e-6 # 0.01 # 0.001 # 1e-6 # 0.01 # 0.007
 tf.app.flags.DEFINE_float('generator_learning_rate',0.0001,'generator learning rate') # 0.0001 # 1e-5 # 0.0001 # 1e-4 # 0.0001 # 0.0001
 tf.app.flags.DEFINE_float('cycle_learning_rate',0.0001,'cycle_learning_rate') 
-tf.app.flags.DEFINE_integer('langevin_revision_steps',30,'langevin revision steps') #100 # 30 # 10
+tf.app.flags.DEFINE_integer('langevin_revision_steps',10,'langevin revision steps') #100 # 30 # 10
 tf.app.flags.DEFINE_float('langevin_step_size',0.002,'langevin step size') # 0.002
 tf.app.flags.DEFINE_float('L1_lambda',100.0,'L1_lambda') # 0.002
 
 
 # dataset floder name
 tf.app.flags.DEFINE_string('dataset_dir', './test_datasets', 'dataset directory')
-tf.app.flags.DEFINE_string('dataset_name', 'vangogh2photo', 'dataset name') 
+tf.app.flags.DEFINE_string('dataset_name', 'edges2handbags', 'dataset name') 
 # cityscapes # edges2handbags # edges2shoes # facades # maps	
 # vangogh2photo
 
