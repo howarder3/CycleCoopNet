@@ -28,7 +28,7 @@ class Cycle_CoopNet(object):
 				generator_learning_rate = 0.0001,
 				cycle_learning_rate = 0.01,
 				L1_lambda = 10.0,
-				dataset_name='facades', dataset_dir ='./test_datasets', 
+				dataset_name='facades', dataset_dir ='./test_datasets', log_dir='./log_dir',
 				output_dir='./output_dir', checkpoint_dir='./checkpoint_dir', sample_dir='./sample_dir'):
 		"""
 		args:
@@ -67,6 +67,7 @@ class Cycle_CoopNet(object):
 		self.output_dir = output_dir
 		self.checkpoint_dir = checkpoint_dir
 		self.sample_dir = sample_dir
+		self.log_dir = log_dir
 		self.epoch_startpoint = 0
 
 		self.A2B_gen_encode_layer2_batchnorm = batch_norm(name='A2B_gen_encode_layer_2_batchnorm')
@@ -194,6 +195,19 @@ class Cycle_CoopNet(object):
 
 		self.saver = tf.train.Saver(max_to_keep=10)
 
+		with tf.variable_scope('A2B_loss'):
+			tf.summary.scalar('A2B_des_loss', self.A2B_des_loss)
+			tf.summary.scalar('A2B_gen_loss', self.A2B_gen_loss)
+			tf.summary.scalar('A2B_cycle_loss', self.A2B_cycle_loss)
+
+		with tf.variable_scope('B2A_loss'):
+			tf.summary.scalar('B2A_des_loss', self.B2A_des_loss)
+			tf.summary.scalar('B2A_gen_loss', self.B2A_gen_loss)
+			tf.summary.scalar('B2A_cycle_loss', self.B2A_cycle_loss)	
+
+		self.summary_op = tf.summary.merge_all()
+
+
 	def train(self,sess):
 
 		# build model
@@ -232,11 +246,45 @@ class Cycle_CoopNet(object):
 			save_images(test_data_B_list[sample_index], [self.batch_size, 1],
 						'./{}/testB_{:02d}_00_input_sample.png'.format(self.sample_dir, sample_index))
 
+
+
+        # make graph immutable
+        tf.get_default_graph().finalize()
+
+        # store graph in protobuf
+        with open(self.checkpoint_dir + '/graph.proto', 'w') as f:
+            f.write(str(tf.get_default_graph().as_graph_def()))
+
+
+		A2B_des_loss_vis = Visualizer(title='A2B_des_loss_vis', ylabel='normalized negative log-likelihood', ylim=(-200, 200),
+		                          save_figpath=self.log_dir + '/A2B_des_loss_vis.png', avg_period = self.batch_size)
+
+		A2B_gen_loss_vis = Visualizer(title='A2B_gen_loss_vis', ylabel='reconstruction error',
+		                          save_figpath=self.log_dir + '/A2B_gen_loss_vis.png', avg_period = self.batch_size)
+
+		A2B_cycle_loss_vis = Visualizer(title='A2B_cycle_loss_vis', ylabel='L1 distance', ylim=(-200, 200),
+		                  		  save_figpath=self.log_dir + '/A2B_cycle_loss_vis.png', avg_period = self.batch_size)
+
+
+		B2A_des_loss_vis = Visualizer(title='B2A_des_loss_vis', ylabel='normalized negative log-likelihood', ylim=(-200, 200),
+		                          save_figpath=self.log_dir + '/B2A_des_loss_vis.png', avg_period = self.batch_size)
+
+		B2A_gen_loss_vis = Visualizer(title='B2A_gen_loss_vis', ylabel='reconstruction error',
+		                          save_figpath=self.log_dir + '/B2A_gen_loss_vis.png', avg_period = self.batch_size)
+
+		B2A_cycle_loss_vis = Visualizer(title='B2A_cycle_loss_vis', ylabel='L1 distance', ylim=(-200, 200),
+		                  		  save_figpath=self.log_dir + '/B2A_cycle_loss_vis.png', avg_period = self.batch_size)
+
+
+
 		# start training	
 		start_time = time.time()
 		print("time: {} , Start training model......".format(str(datetime.timedelta(seconds=int(time.time()-start_time)))))
 		
 		for epoch in xrange(self.epoch_startpoint, self.epoch): # how many epochs to train
+
+			A2B_des_loss_avg, A2B_gen_loss_avg, A2B_cycle_loss_avg = [], [], [] 
+			B2A_des_loss_avg, B2A_gen_loss_avg, B2A_cycle_loss_avg = [], [], [] 
 
 			# prepare training data
 			training_dataset_A = glob('{}/{}/trainA/*.jpg'.format(self.dataset_dir, self.dataset_name))
@@ -305,12 +353,30 @@ class Cycle_CoopNet(object):
 				B2A_cycle_loss , _ = sess.run([self.B2A_cycle_loss, self.B2A_cycle_optim], 
 										feed_dict={self.input_generated_B: generated_B, self.input_real_data_B: data_B})
 
+
+				A2B_des_loss_avg.append(A2B_descriptor_loss)
+				A2B_gen_loss_avg.append(A2B_generator_loss)
+				A2B_cycle_loss_avg.append(A2B_cycle_loss)
+				B2A_des_loss_avg.append(B2A_descriptor_loss)
+				B2A_gen_loss_avg.append(B2A_generator_loss)
+				B2A_cycle_loss_avg.append(B2A_cycle_loss)
+
+				A2B_des_loss_vis.add_loss_val(epoch*self.num_batch + index, A2B_descriptor_loss / float(self.image_size * self.image_size * 3))
+				A2B_gen_loss_vis.add_loss_val(epoch*self.num_batch + index, A2B_generator_loss)
+				A2B_cycle_loss_vis.add_loss_val(epoch*self.num_batch + index, A2B_cycle_loss)
+				B2A_des_loss_vis.add_loss_val(epoch*self.num_batch + index, B2A_descriptor_loss / float(self.image_size * self.image_size * 3))
+				B2A_gen_loss_vis.add_loss_val(epoch*self.num_batch + index, B2A_generator_loss)
+				B2A_cycle_loss_vis.add_loss_val(epoch*self.num_batch + index, B2A_cycle_loss)
+
+
 				print("Epoch: [{:4d}] [{:4d}/{:4d}],   time: {},   eta: {}, \n A2B_d_loss: {:>15.4f}, A2B_g_loss: {:>12.4f}, A2B_cycle_loss: {:>8.4f}, \n B2A_d_loss: {:>15.4f}, B2A_g_loss: {:>12.4f}, B2A_cycle_loss: {:>8.4f}"
 					.format(epoch, index, self.num_batch, 
 						str(datetime.timedelta(seconds=int(time.time()-start_time))),
 							str(datetime.timedelta(seconds=int((time.time()-start_time)*(counter_end-(self.epoch_startpoint*self.num_batch)-counter)/counter))),
 								 A2B_descriptor_loss, A2B_generator_loss, A2B_cycle_loss, 
 								 	B2A_descriptor_loss, B2A_generator_loss, B2A_cycle_loss))
+
+
 				
 				if np.mod(counter, 10) == 0:
 
@@ -340,6 +406,14 @@ class Cycle_CoopNet(object):
 						'./{}/ep{:02d}_{:04d}_14_B2A_revise_B.png'.format(self.output_dir, epoch, index))
 					save_images(recovered_B, [self.batch_size, 1],
 						'./{}/ep{:02d}_{:04d}_15_B2A_recover_B.png'.format(self.output_dir, epoch, index))
+
+					
+					A2B_des_loss_vis.draw_figure()
+					A2B_gen_loss_vis.draw_figure()
+					A2B_cycle_loss_vis.draw_figure()
+					B2A_des_loss_vis.draw_figure()
+					B2A_gen_loss_vis.draw_figure()
+					B2A_cycle_loss_vis.draw_figure()
 
 				counter += 1
 
