@@ -11,6 +11,7 @@ __pycache__/
 
 datasets/
 sample/
+log/
 output/
 checkpoint/
 output_reference/
