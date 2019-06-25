@@ -20,7 +20,8 @@ class Cycle_CoopNet(object):
 				batch_size = 1,
 				picture_amount = 99999,
 				image_size = 256, output_size = 256,
-				input_pic_dim = 3, output_pic_dim = 3,	
+				input_pic_dim = 3, output_pic_dim = 3, 
+				output_descriptor_dim = 100,	
 				langevin_revision_steps = 1, 
 				langevin_step_size = 0.002,
 				descriptor_learning_rate = 0.01,
@@ -50,6 +51,7 @@ class Cycle_CoopNet(object):
 		self.output_size = output_size
 		self.input_pic_dim = input_pic_dim
 		self.output_pic_dim = output_pic_dim
+		self.output_descriptor_dim = output_descriptor_dim
 
 		# descriptor langevin steps
 		self.langevin_revision_steps = langevin_revision_steps
@@ -309,28 +311,35 @@ class Cycle_CoopNet(object):
 							str(datetime.timedelta(seconds=int((time.time()-start_time)*(counter_end-(self.epoch_startpoint*self.num_batch)-counter)/counter))),
 								 A2B_descriptor_loss, A2B_generator_loss, A2B_cycle_loss, 
 								 	B2A_descriptor_loss, B2A_generator_loss, B2A_cycle_loss))
-	
+				
+				if np.mod(counter, 10) == 0:
+
+					save_images(data_B, [self.batch_size, 1],
+						'./{}/ep{:02d}_{:04d}_02_A2B_real_B.png'.format(self.output_dir, epoch, index+1))
+					
+					save_images(data_A, [self.batch_size, 1],
+						'./{}/ep{:02d}_{:04d}_12_B2A_real_A.png'.format(self.output_dir, epoch, index+1))
 
 				if np.mod(counter, 10) == 1:
 
 					save_images(data_A, [self.batch_size, 1],
 						'./{}/ep{:02d}_{:04d}_01_A2B_real_A.png'.format(self.output_dir, epoch, index))
 					save_images(generated_A, [self.batch_size, 1],
-						'./{}/ep{:02d}_{:04d}_02_A2B_gen_A.png'.format(self.output_dir, epoch, index))
+						'./{}/ep{:02d}_{:04d}_03_A2B_gen_A.png'.format(self.output_dir, epoch, index))
 					save_images(revised_A, [self.batch_size, 1],
-						'./{}/ep{:02d}_{:04d}_03_A2B_revise_A.png'.format(self.output_dir, epoch, index))
+						'./{}/ep{:02d}_{:04d}_04_A2B_revise_A.png'.format(self.output_dir, epoch, index))
 					save_images(recovered_A, [self.batch_size, 1],
-						'./{}/ep{:02d}_{:04d}_04_A2B_recover_A.png'.format(self.output_dir, epoch, index))
+						'./{}/ep{:02d}_{:04d}_05_A2B_recover_A.png'.format(self.output_dir, epoch, index))
 
 					
 					save_images(data_B, [self.batch_size, 1],
 						'./{}/ep{:02d}_{:04d}_11_B2A_real_B.png'.format(self.output_dir, epoch, index))
 					save_images(generated_B, [self.batch_size, 1],
-						'./{}/ep{:02d}_{:04d}_12_B2A_gen_B.png'.format(self.output_dir, epoch, index))
+						'./{}/ep{:02d}_{:04d}_13_B2A_gen_B.png'.format(self.output_dir, epoch, index))
 					save_images(revised_B, [self.batch_size, 1],
-						'./{}/ep{:02d}_{:04d}_13_B2A_revise_B.png'.format(self.output_dir, epoch, index))
+						'./{}/ep{:02d}_{:04d}_14_B2A_revise_B.png'.format(self.output_dir, epoch, index))
 					save_images(recovered_B, [self.batch_size, 1],
-						'./{}/ep{:02d}_{:04d}_14_B2A_recover_B.png'.format(self.output_dir, epoch, index))
+						'./{}/ep{:02d}_{:04d}_15_B2A_recover_B.png'.format(self.output_dir, epoch, index))
 
 				counter += 1
 
@@ -588,7 +597,7 @@ class Cycle_CoopNet(object):
 			# # print(layer_3_batchnorm.shape) # (1, 16, 16, 512)
 			# # print(layer_3_reshape.shape) # (1, 131072)
 
-			layer_4_fully_connected = des_fully_connected(leaky_relu(layer_3_batchnorm), 100, name="layer_4_fully_connected")
+			layer_4_fully_connected = des_fully_connected(leaky_relu(layer_3_batchnorm), self.output_descriptor_dim, name="layer_4_fully_connected")
 
 			return layer_4_fully_connected 
 
@@ -702,4 +711,3 @@ class Cycle_CoopNet(object):
 			return True
 		else:
 			return False
-			
