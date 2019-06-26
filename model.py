@@ -242,10 +242,10 @@ class Cycle_CoopNet(object):
 			test_data_A_list.append(test_batch_images[:, :, :, : 3])
 			test_data_B_list.append(test_batch_images[:, :, :, 3:6])
 
-			save_images(test_data_A_list[sample_index], [self.batch_size, 1],
-						'./{}/testA_{:02d}_00_input_sample.png'.format(self.sample_dir, sample_index))
-			save_images(test_data_B_list[sample_index], [self.batch_size, 1],
-						'./{}/testB_{:02d}_00_input_sample.png'.format(self.sample_dir, sample_index))
+			# save_images(test_data_A_list[sample_index], [self.batch_size, 1],
+			# 			'./{}/testA_{:02d}_00_input_sample.png'.format(self.sample_dir, sample_index))
+			# save_images(test_data_B_list[sample_index], [self.batch_size, 1],
+			# 			'./{}/testB_{:02d}_00_input_sample.png'.format(self.sample_dir, sample_index))
 
 
 
@@ -270,18 +270,31 @@ class Cycle_CoopNet(object):
 		step_B2A_cycle_loss_vis = Visualizer(title='step_B2A_cycle_loss_vis', xlabel='training steps', ylabel='step_B2A_cycle_loss_vis', 
 		                  		  save_figpath=self.log_dir + '/step_B2A_cycle_loss_vis.png', avg_period = self.batch_size)
 
-		epoch_A2B_des_loss_vis = Visualizer(title='epoch_A2B_des_loss_vis', xlabel='training epochs', ylabel='epoch_A2B_des_loss_vis',
-		                          save_figpath=self.log_dir + '/epoch_A2B_des_loss_vis.png', avg_period = self.batch_size)
-		epoch_A2B_gen_loss_vis = Visualizer(title='epoch_A2B_gen_loss_vis', xlabel='training epochs', ylabel='epoch_A2B_gen_loss_vis',
-		                          save_figpath=self.log_dir + '/epoch_A2B_gen_loss_vis.png', avg_period = self.batch_size)
-		epoch_A2B_cycle_loss_vis = Visualizer(title='epoch_A2B_cycle_loss_vis', xlabel='training epochs', ylabel='epoch_A2B_cycle_loss_vis', 
-		                  		  save_figpath=self.log_dir + '/epoch_A2B_cycle_loss_vis.png', avg_period = self.batch_size)
-		epoch_B2A_des_loss_vis = Visualizer(title='epoch_B2A_des_loss_vis', xlabel='training epochs', ylabel='epoch_B2A_des_loss_vis', 
-		                          save_figpath=self.log_dir + '/epoch_B2A_des_loss_vis.png', avg_period = self.batch_size)
-		epoch_B2A_gen_loss_vis = Visualizer(title='epoch_B2A_gen_loss_vis', xlabel='training epochs', ylabel='epoch_B2A_gen_loss_vis',
-		                          save_figpath=self.log_dir + '/epoch_B2A_gen_loss_vis.png', avg_period = self.batch_size)
-		epoch_B2A_cycle_loss_vis = Visualizer(title='epoch_B2A_cycle_loss_vis', xlabel='training epochs', ylabel='epoch_B2A_cycle_loss_vis', 
-		                  		  save_figpath=self.log_dir + '/epoch_B2A_cycle_loss_vis.png', avg_period = self.batch_size)
+		epoch_avg_A2B_des_loss_vis = Visualizer(title='epoch_avg_A2B_des_loss_vis', xlabel='training epoch_avgs', ylabel='epoch_avg_A2B_des_loss_vis',
+		                          save_figpath=self.log_dir + '/epoch_avg_A2B_des_loss_vis.png', avg_period = self.batch_size)
+		epoch_avg_A2B_gen_loss_vis = Visualizer(title='epoch_avg_A2B_gen_loss_vis', xlabel='training epoch_avgs', ylabel='epoch_avg_A2B_gen_loss_vis',
+		                          save_figpath=self.log_dir + '/epoch_avg_A2B_gen_loss_vis.png', avg_period = self.batch_size)
+		epoch_avg_A2B_cycle_loss_vis = Visualizer(title='epoch_avg_A2B_cycle_loss_vis', xlabel='training epoch_avgs', ylabel='epoch_avg_A2B_cycle_loss_vis', 
+		                  		  save_figpath=self.log_dir + '/epoch_avg_A2B_cycle_loss_vis.png', avg_period = self.batch_size)
+		epoch_avg_B2A_des_loss_vis = Visualizer(title='epoch_avg_B2A_des_loss_vis', xlabel='training epoch_avgs', ylabel='epoch_avg_B2A_des_loss_vis', 
+		                          save_figpath=self.log_dir + '/epoch_avg_B2A_des_loss_vis.png', avg_period = self.batch_size)
+		epoch_avg_B2A_gen_loss_vis = Visualizer(title='epoch_avg_B2A_gen_loss_vis', xlabel='training epoch_avgs', ylabel='epoch_avg_B2A_gen_loss_vis',
+		                          save_figpath=self.log_dir + '/epoch_avg_B2A_gen_loss_vis.png', avg_period = self.batch_size)
+		epoch_avg_B2A_cycle_loss_vis = Visualizer(title='epoch_avg_B2A_cycle_loss_vis', xlabel='training epoch_avgs', ylabel='epoch_avg_B2A_cycle_loss_vis', 
+		                  		  save_figpath=self.log_dir + '/epoch_avg_B2A_cycle_loss_vis.png', avg_period = self.batch_size)
+
+		epoch_test_A2B_des_loss_vis = Visualizer(title='epoch_test_A2B_des_loss_vis', xlabel='training epoch_tests', ylabel='epoch_test_A2B_des_loss_vis',
+		                          save_figpath=self.log_dir + '/epoch_test_A2B_des_loss_vis.png', avg_period = self.batch_size)
+		epoch_test_A2B_gen_loss_vis = Visualizer(title='epoch_test_A2B_gen_loss_vis', xlabel='training epoch_tests', ylabel='epoch_test_A2B_gen_loss_vis',
+		                          save_figpath=self.log_dir + '/epoch_test_A2B_gen_loss_vis.png', avg_period = self.batch_size)
+		epoch_test_A2B_cycle_loss_vis = Visualizer(title='epoch_test_A2B_cycle_loss_vis', xlabel='training epoch_tests', ylabel='epoch_test_A2B_cycle_loss_vis', 
+		                  		  save_figpath=self.log_dir + '/epoch_test_A2B_cycle_loss_vis.png', avg_period = self.batch_size)
+		epoch_test_B2A_des_loss_vis = Visualizer(title='epoch_test_B2A_des_loss_vis', xlabel='training epoch_tests', ylabel='epoch_test_B2A_des_loss_vis', 
+		                          save_figpath=self.log_dir + '/epoch_test_B2A_des_loss_vis.png', avg_period = self.batch_size)
+		epoch_test_B2A_gen_loss_vis = Visualizer(title='epoch_test_B2A_gen_loss_vis', xlabel='training epoch_tests', ylabel='epoch_test_B2A_gen_loss_vis',
+		                          save_figpath=self.log_dir + '/epoch_test_B2A_gen_loss_vis.png', avg_period = self.batch_size)
+		epoch_test_B2A_cycle_loss_vis = Visualizer(title='epoch_test_B2A_cycle_loss_vis', xlabel='training epoch_tests', ylabel='epoch_test_B2A_cycle_loss_vis', 
+		                  		  save_figpath=self.log_dir + '/epoch_test_B2A_cycle_loss_vis.png', avg_period = self.batch_size)
 
 
 
@@ -432,44 +445,123 @@ class Cycle_CoopNet(object):
 			for sample_index in xrange(min(len(test_dataset_A), len(test_dataset_B))):
 				# A2B
 				generated_A = sess.run(self.generated_A, feed_dict={self.input_real_data_A: test_data_A_list[sample_index]}) 
-				# revised_A = sess.run(self.revised_A, feed_dict={self.input_real_data_A: test_data_A_list[sample_index]}) 
-				# recovered_A = sess.run(self.recovered_A, feed_dict={self.input_real_data_A: test_data_A_list[sample_index]}) 
+				revised_A = sess.run(self.revised_A, feed_dict={self.input_real_data_A: test_data_A_list[sample_index]}) 
+				recovered_A = sess.run(self.recovered_A, feed_dict={self.input_generated_A: generated_A}) 
 
 
 				# B2A
 				generated_B = sess.run(self.generated_B, feed_dict={self.input_real_data_B: test_data_B_list[sample_index]}) 
-				# revised_B = sess.run(self.revised_B, feed_dict={self.input_real_data_B: test_data_B_list[sample_index]})
-				# recovered_B = sess.run(self.recovered_B, feed_dict={self.input_real_data_B: test_data_B_list[sample_index]}) 
+				revised_B = sess.run(self.revised_B, feed_dict={self.input_real_data_B: test_data_B_list[sample_index]})
+				recovered_B = sess.run(self.recovered_B, feed_dict={self.input_generated_B: generated_B}) 
 
 
-				save_images(generated_A, [self.batch_size, 1],
-							'./{}/testA_{:02d}_ep{:02d}_01_gen.png'.format(self.sample_dir, sample_index, epoch))
+				# save_images(generated_A, [self.batch_size, 1],
+				# 			'./{}/testA_{:02d}_ep{:02d}_01_gen.png'.format(self.sample_dir, sample_index, epoch))
 				# save_images(revised_A, [self.batch_size, 1],
-				# 			'./{}/testA_{:02d}_ep{:02d}_02_revised.png'.format(self.sample_dir, index, epoch))
+				# 			'./{}/testA_{:02d}_ep{:02d}_02_revised.png'.format(self.sample_dir, sample_index, epoch))
 				# save_images(recovered_A, [self.batch_size, 1],
-				# 			'./{}/testA_{:02d}_ep{:02d}_03_recovered.png'.format(self.sample_dir, index, epoch))
+				# 			'./{}/testA_{:02d}_ep{:02d}_03_recovered.png'.format(self.sample_dir, sample_index, epoch))
 
-				save_images(generated_B, [self.batch_size, 1],
-							'./{}/testB_{:02d}_ep{:02d}_01_gen.png'.format(self.sample_dir, sample_index, epoch))
+				# save_images(generated_B, [self.batch_size, 1],
+				# 			'./{}/testB_{:02d}_ep{:02d}_01_gen.png'.format(self.sample_dir, sample_index, epoch))
 				# save_images(revised_B, [self.batch_size, 1],
-				# 			'./{}/testB_{:02d}_ep{:02d}_02_revised.png'.format(self.sample_dir, index, epoch))
+				# 			'./{}/testB_{:02d}_ep{:02d}_02_revised.png'.format(self.sample_dir, sample_index, epoch))
 				# save_images(recovered_B, [self.batch_size, 1],
-				# 			'./{}/testB_{:02d}_ep{:02d}_03_recovered.png'.format(self.sample_dir, index, epoch))
+				# 			'./{}/testB_{:02d}_ep{:02d}_03_recovered.png'.format(self.sample_dir, sample_index, epoch))
 
 
-			epoch_A2B_des_loss_vis.add_loss_val(epoch, np.mean(A2B_des_loss_avg) / float(self.image_size * self.image_size * 3))
-			epoch_A2B_gen_loss_vis.add_loss_val(epoch, np.mean(A2B_gen_loss_avg))
-			epoch_A2B_cycle_loss_vis.add_loss_val(epoch, np.mean(A2B_cycle_loss_avg))
-			epoch_B2A_des_loss_vis.add_loss_val(epoch, np.mean(B2A_des_loss_avg) / float(self.image_size * self.image_size * 3))
-			epoch_B2A_gen_loss_vis.add_loss_val(epoch, np.mean(B2A_gen_loss_avg))
-			epoch_B2A_cycle_loss_vis.add_loss_val(epoch, np.mean(B2A_cycle_loss_avg))
+				save_images(test_data_A_list[sample_index], [self.batch_size, 1],
+							'./{}/testA_{:02d}_ep{:02d}_01_real_A.png'.format(self.sample_dir, sample_index, epoch))
+				save_images(data_B, [self.batch_size, 1],
+							'./{}/testA_{:02d}_ep{:02d}_02_real_B.png'.format(self.sample_dir, sample_index, epoch))
+				save_images(generated_A, [self.batch_size, 1],
+							'./{}/testA_{:02d}_ep{:02d}_03_gen_A.png'.format(self.sample_dir, sample_index, epoch))
+				save_images(revised_A, [self.batch_size, 1],
+							'./{}/testA_{:02d}_ep{:02d}_04_revised_A.png'.format(self.sample_dir, sample_index, epoch))
+				save_images(recovered_A, [self.batch_size, 1],
+							'./{}/testA_{:02d}_ep{:02d}_05_recovered_A.png'.format(self.sample_dir, sample_index, epoch))
 
-			epoch_A2B_des_loss_vis.draw_figure()
-			epoch_A2B_gen_loss_vis.draw_figure()
-			epoch_A2B_cycle_loss_vis.draw_figure()
-			epoch_B2A_des_loss_vis.draw_figure()
-			epoch_B2A_gen_loss_vis.draw_figure()
-			epoch_B2A_cycle_loss_vis.draw_figure()
+
+				save_images(test_data_B_list[sample_index], [self.batch_size, 1],
+							'./{}/testB_{:02d}_ep{:02d}_11_real_B.png'.format(self.sample_dir, sample_index, epoch))
+				save_images(data_A, [self.batch_size, 1],
+							'./{}/testB_{:02d}_ep{:02d}_12_real_A.png'.format(self.sample_dir, sample_index, epoch))
+				save_images(generated_B, [self.batch_size, 1],
+							'./{}/testB_{:02d}_ep{:02d}_13_gen_B.png'.format(self.sample_dir, sample_index, epoch))
+				save_images(revised_B, [self.batch_size, 1],
+							'./{}/testB_{:02d}_ep{:02d}_14_revised_B.png'.format(self.sample_dir, sample_index, epoch))
+				save_images(recovered_B, [self.batch_size, 1],
+							'./{}/testB_{:02d}_ep{:02d}_15_recovered_B.png'.format(self.sample_dir, sample_index, epoch))
+
+
+				# save_images(data_A, [self.batch_size, 1],
+				# 	'./{}/ep{:02d}_{:04d}_01_A2B_real_A.png'.format(self.sample_dir, epoch, index))
+				# save_images(data_B, [self.batch_size, 1],
+				# 	'./{}/ep{:02d}_{:04d}_02_A2B_real_B.png'.format(self.sample_dir, epoch, index))
+				# save_images(generated_A, [self.batch_size, 1],
+				# 	'./{}/ep{:02d}_{:04d}_03_A2B_gen_A.png'.format(self.sample_dir, epoch, index))
+				# save_images(revised_A, [self.batch_size, 1],
+				# 	'./{}/ep{:02d}_{:04d}_04_A2B_revise_A.png'.format(self.sample_dir, epoch, index))
+				# save_images(recovered_A, [self.batch_size, 1],
+				# 	'./{}/ep{:02d}_{:04d}_05_A2B_recover_A.png'.format(self.sample_dir, epoch, index))
+
+				
+				# save_images(data_B, [self.batch_size, 1],
+				# 	'./{}/ep{:02d}_{:04d}_11_B2A_real_B.png'.format(self.sample_dir, epoch, index))
+				# save_images(data_A, [self.batch_size, 1],
+				# 	'./{}/ep{:02d}_{:04d}_12_B2A_real_A.png'.format(self.sample_dir, epoch, index))
+				# save_images(generated_B, [self.batch_size, 1],
+				# 	'./{}/ep{:02d}_{:04d}_13_B2A_gen_B.png'.format(self.sample_dir, epoch, index))
+				# save_images(revised_B, [self.batch_size, 1],
+				# 	'./{}/ep{:02d}_{:04d}_14_B2A_revise_B.png'.format(self.sample_dir, epoch, index))
+				# save_images(recovered_B, [self.batch_size, 1],
+				# 	'./{}/ep{:02d}_{:04d}_15_B2A_recover_B.png'.format(self.sample_dir, epoch, index))
+
+
+				if sample_index == 0:
+					# step D2: update descriptor net
+					# A2B des : learning B features
+					A2B_descriptor_loss = sess.run(self.A2B_des_loss, feed_dict={self.input_revised_A: revised_A, self.input_real_data_B: data_B})
+					B2A_descriptor_loss = sess.run(self.B2A_des_loss, feed_dict={self.input_revised_B: revised_B, self.input_real_data_A: data_A})
+
+					# step G2: update A2B generator net
+					A2B_generator_loss = sess.run(self.A2B_gen_loss, feed_dict={self.input_real_data_A: data_A, self.input_real_data_B: data_B})
+					B2A_generator_loss = sess.run(self.B2A_gen_loss, feed_dict={self.input_real_data_A: data_A, self.input_real_data_B: data_B}) 
+
+					# step R2: A2B cycle loss (A, gen_A2B), (B, gen_B2A)
+					A2B_cycle_loss = sess.run(self.A2B_cycle_loss, feed_dict={self.input_generated_A: generated_A, self.input_real_data_A: data_A})
+					B2A_cycle_loss = sess.run(self.B2A_cycle_loss, feed_dict={self.input_generated_B: generated_B, self.input_real_data_B: data_B})
+
+
+					epoch_test_A2B_des_loss_vis.add_loss_val(epoch, A2B_descriptor_loss / float(self.image_size * self.image_size * 3))
+					epoch_test_A2B_gen_loss_vis.add_loss_val(epoch, A2B_generator_loss)
+					epoch_test_A2B_cycle_loss_vis.add_loss_val(epoch, A2B_cycle_loss)
+					epoch_test_B2A_des_loss_vis.add_loss_val(epoch, B2A_descriptor_loss / float(self.image_size * self.image_size * 3))
+					epoch_test_B2A_gen_loss_vis.add_loss_val(epoch, B2A_generator_loss)
+					epoch_test_B2A_cycle_loss_vis.add_loss_val(epoch, B2A_cycle_loss)
+
+					epoch_test_A2B_des_loss_vis.draw_figure()
+					epoch_test_A2B_gen_loss_vis.draw_figure()
+					epoch_test_A2B_cycle_loss_vis.draw_figure()
+					epoch_test_B2A_des_loss_vis.draw_figure()
+					epoch_test_B2A_gen_loss_vis.draw_figure()
+					epoch_test_B2A_cycle_loss_vis.draw_figure()
+
+
+
+			epoch_avg_A2B_des_loss_vis.add_loss_val(epoch, np.mean(A2B_des_loss_avg) / float(self.image_size * self.image_size * 3))
+			epoch_avg_A2B_gen_loss_vis.add_loss_val(epoch, np.mean(A2B_gen_loss_avg))
+			epoch_avg_A2B_cycle_loss_vis.add_loss_val(epoch, np.mean(A2B_cycle_loss_avg))
+			epoch_avg_B2A_des_loss_vis.add_loss_val(epoch, np.mean(B2A_des_loss_avg) / float(self.image_size * self.image_size * 3))
+			epoch_avg_B2A_gen_loss_vis.add_loss_val(epoch, np.mean(B2A_gen_loss_avg))
+			epoch_avg_B2A_cycle_loss_vis.add_loss_val(epoch, np.mean(B2A_cycle_loss_avg))
+
+			epoch_avg_A2B_des_loss_vis.draw_figure()
+			epoch_avg_A2B_gen_loss_vis.draw_figure()
+			epoch_avg_A2B_cycle_loss_vis.draw_figure()
+			epoch_avg_B2A_des_loss_vis.draw_figure()
+			epoch_avg_B2A_gen_loss_vis.draw_figure()
+			epoch_avg_B2A_cycle_loss_vis.draw_figure()
 					
 			self.save(self.checkpoint_dir, epoch)
 

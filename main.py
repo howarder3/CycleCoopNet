@@ -53,7 +53,7 @@ def main(_):
 			return
 
 		# user_input = input('\n [!] Warning! Checkpoint exists! Continue training? (y/n) ')
-		user_input = 'y'
+		user_input = 'n'
 
 		if tf.gfile.Exists(checkpoint_dir):
 			if user_input == 'n':
