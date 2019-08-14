@@ -257,18 +257,18 @@ class Cycle_CoopNet(object):
 			f.write(str(tf.get_default_graph().as_graph_def()))
 
 
-		step_A2B_des_loss_vis = Visualizer(title='step_A2B_des_loss_vis', xlabel='training steps', ylabel='step_A2B_des_loss_vis',
-		                          save_figpath=self.log_dir + '/step_A2B_des_loss_vis.png', avg_period = self.batch_size)
-		step_A2B_gen_loss_vis = Visualizer(title='step_A2B_gen_loss_vis', xlabel='training steps', ylabel='step_A2B_gen_loss_vis',
-		                          save_figpath=self.log_dir + '/step_A2B_gen_loss_vis.png', avg_period = self.batch_size)
-		step_A2B_cycle_loss_vis = Visualizer(title='step_A2B_cycle_loss_vis', xlabel='training steps', ylabel='step_A2B_cycle_loss_vis', 
-		                  		  save_figpath=self.log_dir + '/step_A2B_cycle_loss_vis.png', avg_period = self.batch_size)
-		step_B2A_des_loss_vis = Visualizer(title='step_B2A_des_loss_vis', xlabel='training steps', ylabel='step_B2A_des_loss_vis', 
-		                          save_figpath=self.log_dir + '/step_B2A_des_loss_vis.png', avg_period = self.batch_size)
-		step_B2A_gen_loss_vis = Visualizer(title='step_B2A_gen_loss_vis', xlabel='training steps', ylabel='step_B2A_gen_loss_vis',
-		                          save_figpath=self.log_dir + '/step_B2A_gen_loss_vis.png', avg_period = self.batch_size)
-		step_B2A_cycle_loss_vis = Visualizer(title='step_B2A_cycle_loss_vis', xlabel='training steps', ylabel='step_B2A_cycle_loss_vis', 
-		                  		  save_figpath=self.log_dir + '/step_B2A_cycle_loss_vis.png', avg_period = self.batch_size)
+		# step_A2B_des_loss_vis = Visualizer(title='step_A2B_des_loss_vis', xlabel='training steps', ylabel='step_A2B_des_loss_vis',
+		#                           save_figpath=self.log_dir + '/step_A2B_des_loss_vis.png', avg_period = self.batch_size)
+		# step_A2B_gen_loss_vis = Visualizer(title='step_A2B_gen_loss_vis', xlabel='training steps', ylabel='step_A2B_gen_loss_vis',
+		#                           save_figpath=self.log_dir + '/step_A2B_gen_loss_vis.png', avg_period = self.batch_size)
+		# step_A2B_cycle_loss_vis = Visualizer(title='step_A2B_cycle_loss_vis', xlabel='training steps', ylabel='step_A2B_cycle_loss_vis', 
+		#                   		  save_figpath=self.log_dir + '/step_A2B_cycle_loss_vis.png', avg_period = self.batch_size)
+		# step_B2A_des_loss_vis = Visualizer(title='step_B2A_des_loss_vis', xlabel='training steps', ylabel='step_B2A_des_loss_vis', 
+		#                           save_figpath=self.log_dir + '/step_B2A_des_loss_vis.png', avg_period = self.batch_size)
+		# step_B2A_gen_loss_vis = Visualizer(title='step_B2A_gen_loss_vis', xlabel='training steps', ylabel='step_B2A_gen_loss_vis',
+		#                           save_figpath=self.log_dir + '/step_B2A_gen_loss_vis.png', avg_period = self.batch_size)
+		# step_B2A_cycle_loss_vis = Visualizer(title='step_B2A_cycle_loss_vis', xlabel='training steps', ylabel='step_B2A_cycle_loss_vis', 
+		#                   		  save_figpath=self.log_dir + '/step_B2A_cycle_loss_vis.png', avg_period = self.batch_size)
 
 		epoch_avg_A2B_des_loss_vis = Visualizer(title='epoch_avg_A2B_des_loss_vis', xlabel='training epoch_avgs', ylabel='epoch_avg_A2B_des_loss_vis',
 		                          save_figpath=self.log_dir + '/epoch_avg_A2B_des_loss_vis.png', avg_period = self.batch_size)
@@ -283,18 +283,18 @@ class Cycle_CoopNet(object):
 		epoch_avg_B2A_cycle_loss_vis = Visualizer(title='epoch_avg_B2A_cycle_loss_vis', xlabel='training epoch_avgs', ylabel='epoch_avg_B2A_cycle_loss_vis', 
 		                  		  save_figpath=self.log_dir + '/epoch_avg_B2A_cycle_loss_vis.png', avg_period = self.batch_size)
 
-		epoch_test_A2B_des_loss_vis = Visualizer(title='epoch_test_A2B_des_loss_vis', xlabel='training epoch_tests', ylabel='epoch_test_A2B_des_loss_vis',
-		                          save_figpath=self.log_dir + '/epoch_test_A2B_des_loss_vis.png', avg_period = self.batch_size)
-		epoch_test_A2B_gen_loss_vis = Visualizer(title='epoch_test_A2B_gen_loss_vis', xlabel='training epoch_tests', ylabel='epoch_test_A2B_gen_loss_vis',
-		                          save_figpath=self.log_dir + '/epoch_test_A2B_gen_loss_vis.png', avg_period = self.batch_size)
-		epoch_test_A2B_cycle_loss_vis = Visualizer(title='epoch_test_A2B_cycle_loss_vis', xlabel='training epoch_tests', ylabel='epoch_test_A2B_cycle_loss_vis', 
-		                  		  save_figpath=self.log_dir + '/epoch_test_A2B_cycle_loss_vis.png', avg_period = self.batch_size)
-		epoch_test_B2A_des_loss_vis = Visualizer(title='epoch_test_B2A_des_loss_vis', xlabel='training epoch_tests', ylabel='epoch_test_B2A_des_loss_vis', 
-		                          save_figpath=self.log_dir + '/epoch_test_B2A_des_loss_vis.png', avg_period = self.batch_size)
-		epoch_test_B2A_gen_loss_vis = Visualizer(title='epoch_test_B2A_gen_loss_vis', xlabel='training epoch_tests', ylabel='epoch_test_B2A_gen_loss_vis',
-		                          save_figpath=self.log_dir + '/epoch_test_B2A_gen_loss_vis.png', avg_period = self.batch_size)
-		epoch_test_B2A_cycle_loss_vis = Visualizer(title='epoch_test_B2A_cycle_loss_vis', xlabel='training epoch_tests', ylabel='epoch_test_B2A_cycle_loss_vis', 
-		                  		  save_figpath=self.log_dir + '/epoch_test_B2A_cycle_loss_vis.png', avg_period = self.batch_size)
+		# epoch_test_A2B_des_loss_vis = Visualizer(title='epoch_test_A2B_des_loss_vis', xlabel='training epoch_tests', ylabel='epoch_test_A2B_des_loss_vis',
+		#                           save_figpath=self.log_dir + '/epoch_test_A2B_des_loss_vis.png', avg_period = self.batch_size)
+		# epoch_test_A2B_gen_loss_vis = Visualizer(title='epoch_test_A2B_gen_loss_vis', xlabel='training epoch_tests', ylabel='epoch_test_A2B_gen_loss_vis',
+		#                           save_figpath=self.log_dir + '/epoch_test_A2B_gen_loss_vis.png', avg_period = self.batch_size)
+		# epoch_test_A2B_cycle_loss_vis = Visualizer(title='epoch_test_A2B_cycle_loss_vis', xlabel='training epoch_tests', ylabel='epoch_test_A2B_cycle_loss_vis', 
+		#                   		  save_figpath=self.log_dir + '/epoch_test_A2B_cycle_loss_vis.png', avg_period = self.batch_size)
+		# epoch_test_B2A_des_loss_vis = Visualizer(title='epoch_test_B2A_des_loss_vis', xlabel='training epoch_tests', ylabel='epoch_test_B2A_des_loss_vis', 
+		#                           save_figpath=self.log_dir + '/epoch_test_B2A_des_loss_vis.png', avg_period = self.batch_size)
+		# epoch_test_B2A_gen_loss_vis = Visualizer(title='epoch_test_B2A_gen_loss_vis', xlabel='training epoch_tests', ylabel='epoch_test_B2A_gen_loss_vis',
+		#                           save_figpath=self.log_dir + '/epoch_test_B2A_gen_loss_vis.png', avg_period = self.batch_size)
+		# epoch_test_B2A_cycle_loss_vis = Visualizer(title='epoch_test_B2A_cycle_loss_vis', xlabel='training epoch_tests', ylabel='epoch_test_B2A_cycle_loss_vis', 
+		#                   		  save_figpath=self.log_dir + '/epoch_test_B2A_cycle_loss_vis.png', avg_period = self.batch_size)
 
 
 
@@ -382,12 +382,12 @@ class Cycle_CoopNet(object):
 				B2A_gen_loss_avg.append(B2A_generator_loss)
 				B2A_cycle_loss_avg.append(B2A_cycle_loss)
 
-				step_A2B_des_loss_vis.add_loss_val(epoch*self.num_batch + index, A2B_descriptor_loss / float(self.image_size * self.image_size * 3))
-				step_A2B_gen_loss_vis.add_loss_val(epoch*self.num_batch + index, A2B_generator_loss)
-				step_A2B_cycle_loss_vis.add_loss_val(epoch*self.num_batch + index, A2B_cycle_loss)
-				step_B2A_des_loss_vis.add_loss_val(epoch*self.num_batch + index, B2A_descriptor_loss / float(self.image_size * self.image_size * 3))
-				step_B2A_gen_loss_vis.add_loss_val(epoch*self.num_batch + index, B2A_generator_loss)
-				step_B2A_cycle_loss_vis.add_loss_val(epoch*self.num_batch + index, B2A_cycle_loss)
+				# step_A2B_des_loss_vis.add_loss_val(epoch*self.num_batch + index, A2B_descriptor_loss / float(self.image_size * self.image_size * 3))
+				# step_A2B_gen_loss_vis.add_loss_val(epoch*self.num_batch + index, A2B_generator_loss)
+				# step_A2B_cycle_loss_vis.add_loss_val(epoch*self.num_batch + index, A2B_cycle_loss)
+				# step_B2A_des_loss_vis.add_loss_val(epoch*self.num_batch + index, B2A_descriptor_loss / float(self.image_size * self.image_size * 3))
+				# step_B2A_gen_loss_vis.add_loss_val(epoch*self.num_batch + index, B2A_generator_loss)
+				# step_B2A_cycle_loss_vis.add_loss_val(epoch*self.num_batch + index, B2A_cycle_loss)
 
 				print("Epoch: [{:4d}] [{:4d}/{:4d}],   time: {},   eta: {}, \n A2B_d_loss: {:>15.4f}, A2B_g_loss: {:>12.4f}, A2B_cycle_loss: {:>8.4f}, \n B2A_d_loss: {:>15.4f}, B2A_g_loss: {:>12.4f}, B2A_cycle_loss: {:>8.4f}"
 					.format(epoch, index, self.num_batch, 
@@ -406,39 +406,39 @@ class Cycle_CoopNet(object):
 				# 	save_images(data_A, [self.batch_size, 1],
 				# 		'./{}/ep{:02d}_{:04d}_12_B2A_real_A.png'.format(self.output_dir, epoch, index+1))
 
-				if np.mod(counter, 1) == 0:
+				# if np.mod(counter, 1) == 0:
 
-					save_images(data_B, [self.batch_size, 1],
-						'./{}/ep{:02d}_{:04d}_02_A2B_real_B.png'.format(self.output_dir, epoch, index))
-					save_images(data_A, [self.batch_size, 1],
-						'./{}/ep{:02d}_{:04d}_12_B2A_real_A.png'.format(self.output_dir, epoch, index))
+				# 	save_images(data_B, [self.batch_size, 1],
+				# 		'./{}/ep{:02d}_{:04d}_02_A2B_real_B.png'.format(self.output_dir, epoch, index))
+				# 	save_images(data_A, [self.batch_size, 1],
+				# 		'./{}/ep{:02d}_{:04d}_12_B2A_real_A.png'.format(self.output_dir, epoch, index))
 
-					save_images(data_A, [self.batch_size, 1],
-						'./{}/ep{:02d}_{:04d}_01_A2B_real_A.png'.format(self.output_dir, epoch, index))
-					save_images(generated_A, [self.batch_size, 1],
-						'./{}/ep{:02d}_{:04d}_03_A2B_gen_A.png'.format(self.output_dir, epoch, index))
-					save_images(revised_A, [self.batch_size, 1],
-						'./{}/ep{:02d}_{:04d}_04_A2B_revise_A.png'.format(self.output_dir, epoch, index))
-					save_images(recovered_A, [self.batch_size, 1],
-						'./{}/ep{:02d}_{:04d}_05_A2B_recover_A.png'.format(self.output_dir, epoch, index))
+				# 	save_images(data_A, [self.batch_size, 1],
+				# 		'./{}/ep{:02d}_{:04d}_01_A2B_real_A.png'.format(self.output_dir, epoch, index))
+				# 	save_images(generated_A, [self.batch_size, 1],
+				# 		'./{}/ep{:02d}_{:04d}_03_A2B_gen_A.png'.format(self.output_dir, epoch, index))
+				# 	save_images(revised_A, [self.batch_size, 1],
+				# 		'./{}/ep{:02d}_{:04d}_04_A2B_revise_A.png'.format(self.output_dir, epoch, index))
+				# 	save_images(recovered_A, [self.batch_size, 1],
+				# 		'./{}/ep{:02d}_{:04d}_05_A2B_recover_A.png'.format(self.output_dir, epoch, index))
 
 					
-					save_images(data_B, [self.batch_size, 1],
-						'./{}/ep{:02d}_{:04d}_11_B2A_real_B.png'.format(self.output_dir, epoch, index))
-					save_images(generated_B, [self.batch_size, 1],
-						'./{}/ep{:02d}_{:04d}_13_B2A_gen_B.png'.format(self.output_dir, epoch, index))
-					save_images(revised_B, [self.batch_size, 1],
-						'./{}/ep{:02d}_{:04d}_14_B2A_revise_B.png'.format(self.output_dir, epoch, index))
-					save_images(recovered_B, [self.batch_size, 1],
-						'./{}/ep{:02d}_{:04d}_15_B2A_recover_B.png'.format(self.output_dir, epoch, index))
+				# 	save_images(data_B, [self.batch_size, 1],
+				# 		'./{}/ep{:02d}_{:04d}_11_B2A_real_B.png'.format(self.output_dir, epoch, index))
+				# 	save_images(generated_B, [self.batch_size, 1],
+				# 		'./{}/ep{:02d}_{:04d}_13_B2A_gen_B.png'.format(self.output_dir, epoch, index))
+				# 	save_images(revised_B, [self.batch_size, 1],
+				# 		'./{}/ep{:02d}_{:04d}_14_B2A_revise_B.png'.format(self.output_dir, epoch, index))
+				# 	save_images(recovered_B, [self.batch_size, 1],
+				# 		'./{}/ep{:02d}_{:04d}_15_B2A_recover_B.png'.format(self.output_dir, epoch, index))
 
-				if np.mod(counter, 10) == 0:
-					step_A2B_des_loss_vis.draw_figure()
-					step_A2B_gen_loss_vis.draw_figure()
-					step_A2B_cycle_loss_vis.draw_figure()
-					step_B2A_des_loss_vis.draw_figure()
-					step_B2A_gen_loss_vis.draw_figure()
-					step_B2A_cycle_loss_vis.draw_figure()
+				# if np.mod(counter, 10) == 0:
+				# 	step_A2B_des_loss_vis.draw_figure()
+				# 	step_A2B_gen_loss_vis.draw_figure()
+				# 	step_A2B_cycle_loss_vis.draw_figure()
+				# 	step_B2A_des_loss_vis.draw_figure()
+				# 	step_B2A_gen_loss_vis.draw_figure()
+				# 	step_B2A_cycle_loss_vis.draw_figure()
 
 				counter += 1
 
@@ -533,19 +533,19 @@ class Cycle_CoopNet(object):
 					B2A_cycle_loss = sess.run(self.B2A_cycle_loss, feed_dict={self.input_generated_B: generated_B, self.input_real_data_B: data_B})
 
 
-					epoch_test_A2B_des_loss_vis.add_loss_val(epoch, A2B_descriptor_loss / float(self.image_size * self.image_size * 3))
-					epoch_test_A2B_gen_loss_vis.add_loss_val(epoch, A2B_generator_loss)
-					epoch_test_A2B_cycle_loss_vis.add_loss_val(epoch, A2B_cycle_loss)
-					epoch_test_B2A_des_loss_vis.add_loss_val(epoch, B2A_descriptor_loss / float(self.image_size * self.image_size * 3))
-					epoch_test_B2A_gen_loss_vis.add_loss_val(epoch, B2A_generator_loss)
-					epoch_test_B2A_cycle_loss_vis.add_loss_val(epoch, B2A_cycle_loss)
+					# epoch_test_A2B_des_loss_vis.add_loss_val(epoch, A2B_descriptor_loss / float(self.image_size * self.image_size * 3))
+					# epoch_test_A2B_gen_loss_vis.add_loss_val(epoch, A2B_generator_loss)
+					# epoch_test_A2B_cycle_loss_vis.add_loss_val(epoch, A2B_cycle_loss)
+					# epoch_test_B2A_des_loss_vis.add_loss_val(epoch, B2A_descriptor_loss / float(self.image_size * self.image_size * 3))
+					# epoch_test_B2A_gen_loss_vis.add_loss_val(epoch, B2A_generator_loss)
+					# epoch_test_B2A_cycle_loss_vis.add_loss_val(epoch, B2A_cycle_loss)
 
-					epoch_test_A2B_des_loss_vis.draw_figure()
-					epoch_test_A2B_gen_loss_vis.draw_figure()
-					epoch_test_A2B_cycle_loss_vis.draw_figure()
-					epoch_test_B2A_des_loss_vis.draw_figure()
-					epoch_test_B2A_gen_loss_vis.draw_figure()
-					epoch_test_B2A_cycle_loss_vis.draw_figure()
+					# epoch_test_A2B_des_loss_vis.draw_figure()
+					# epoch_test_A2B_gen_loss_vis.draw_figure()
+					# epoch_test_A2B_cycle_loss_vis.draw_figure()
+					# epoch_test_B2A_des_loss_vis.draw_figure()
+					# epoch_test_B2A_gen_loss_vis.draw_figure()
+					# epoch_test_B2A_cycle_loss_vis.draw_figure()
 
 
 
