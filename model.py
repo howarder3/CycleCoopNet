@@ -194,7 +194,7 @@ class Cycle_CoopNet(object):
 		self.B2A_cycle_loss = tf.reduce_mean(tf.abs(self.recovered_B - self.input_real_data_B))
 		self.B2A_cycle_optim = tf.train.AdamOptimizer(self.cycle_learning_rate, beta1=self.beta1).minimize(self.B2A_cycle_loss, var_list=self.A2B_gen_vars)
 
-		self.saver = tf.train.Saver(max_to_keep=10)
+		self.saver = tf.train.Saver()
 
 		with tf.variable_scope('A2B_loss'):
 			tf.summary.scalar('A2B_des_loss', self.A2B_des_loss)
@@ -236,7 +236,7 @@ class Cycle_CoopNet(object):
 		for sample_index in xrange(min(len(test_dataset_A), len(test_dataset_B))):
 			test_batch_files = list(zip(test_dataset_A[sample_index : (sample_index + 1)],
 										test_dataset_B[sample_index : (sample_index + 1)]))
-			test_batch_images = [load_train_data(test_batch_file, 286, 256) for test_batch_file in test_batch_files]
+			test_batch_images = [load_train_data(test_batch_file, 286, 256, is_testing=True) for test_batch_file in test_batch_files]
 			test_batch_images = np.array(test_batch_images).astype(np.float32)
 
 			test_data_A_list.append(test_batch_images[:, :, :, : 3])
@@ -518,19 +518,19 @@ class Cycle_CoopNet(object):
 				# 	'./{}/ep{:02d}_{:04d}_15_B2A_recover_B.png'.format(self.sample_dir, epoch, index))
 
 
-				if sample_index == 0:
-					# step D2: update descriptor net
-					# A2B des : learning B features
-					A2B_descriptor_loss = sess.run(self.A2B_des_loss, feed_dict={self.input_revised_A: revised_A, self.input_real_data_B: data_B})
-					B2A_descriptor_loss = sess.run(self.B2A_des_loss, feed_dict={self.input_revised_B: revised_B, self.input_real_data_A: data_A})
+				# if sample_index == 0:
+				# 	# step D2: update descriptor net
+				# 	# A2B des : learning B features
+				# 	A2B_descriptor_loss = sess.run(self.A2B_des_loss, feed_dict={self.input_revised_A: revised_A, self.input_real_data_B: data_B})
+				# 	B2A_descriptor_loss = sess.run(self.B2A_des_loss, feed_dict={self.input_revised_B: revised_B, self.input_real_data_A: data_A})
 
-					# step G2: update A2B generator net
-					A2B_generator_loss = sess.run(self.A2B_gen_loss, feed_dict={self.input_real_data_A: data_A, self.input_real_data_B: data_B})
-					B2A_generator_loss = sess.run(self.B2A_gen_loss, feed_dict={self.input_real_data_A: data_A, self.input_real_data_B: data_B}) 
+				# 	# step G2: update A2B generator net
+				# 	A2B_generator_loss = sess.run(self.A2B_gen_loss, feed_dict={self.input_real_data_A: data_A, self.input_real_data_B: data_B})
+				# 	B2A_generator_loss = sess.run(self.B2A_gen_loss, feed_dict={self.input_real_data_A: data_A, self.input_real_data_B: data_B}) 
 
-					# step R2: A2B cycle loss (A, gen_A2B), (B, gen_B2A)
-					A2B_cycle_loss = sess.run(self.A2B_cycle_loss, feed_dict={self.input_generated_A: generated_A, self.input_real_data_A: data_A})
-					B2A_cycle_loss = sess.run(self.B2A_cycle_loss, feed_dict={self.input_generated_B: generated_B, self.input_real_data_B: data_B})
+				# 	# step R2: A2B cycle loss (A, gen_A2B), (B, gen_B2A)
+				# 	A2B_cycle_loss = sess.run(self.A2B_cycle_loss, feed_dict={self.input_generated_A: generated_A, self.input_real_data_A: data_A})
+				# 	B2A_cycle_loss = sess.run(self.B2A_cycle_loss, feed_dict={self.input_generated_B: generated_B, self.input_real_data_B: data_B})
 
 
 					# epoch_test_A2B_des_loss_vis.add_loss_val(epoch, A2B_descriptor_loss / float(self.image_size * self.image_size * 3))

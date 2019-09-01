@@ -5,7 +5,7 @@ from model import Cycle_CoopNet
 
 
 # parameters setting
-tf.app.flags.DEFINE_integer('epoch',1000,'how many epochs to train')
+tf.app.flags.DEFINE_integer('epoch',300,'how many epochs to train')
 tf.app.flags.DEFINE_integer('batch_size',1,'how many pic in one group(batch), iteration = picture_amount/batch_size')
 tf.app.flags.DEFINE_integer('picture_amount',400,'how many pictures to train')
 tf.app.flags.DEFINE_integer('image_size',256,'input image size')
