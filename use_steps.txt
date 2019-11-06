@@ -8,7 +8,7 @@ python main.py
 # lab
 D:
 cd D:\GitHub\Cycle_CoopNet
-python main.py --dataset_dir datasets
+python main.py 
 
 # mac
 cd /Users/howarder3/Documents/GitHub/Cycle_CoopNet

@@ -472,8 +472,8 @@ class Cycle_CoopNet(object):
 
 				save_images(test_data_A_list[sample_index], [self.batch_size, 1],
 							'./{}/testA_{:02d}_ep{:02d}_01_real_A.png'.format(self.sample_dir, sample_index, epoch))
-				save_images(data_B, [self.batch_size, 1],
-							'./{}/testA_{:02d}_ep{:02d}_02_real_B.png'.format(self.sample_dir, sample_index, epoch))
+				# save_images(data_B, [self.batch_size, 1],
+				# 			'./{}/testA_{:02d}_ep{:02d}_02_real_B.png'.format(self.sample_dir, sample_index, epoch))
 				save_images(generated_A, [self.batch_size, 1],
 							'./{}/testA_{:02d}_ep{:02d}_03_gen_A.png'.format(self.sample_dir, sample_index, epoch))
 				save_images(revised_A, [self.batch_size, 1],
@@ -484,8 +484,8 @@ class Cycle_CoopNet(object):
 
 				save_images(test_data_B_list[sample_index], [self.batch_size, 1],
 							'./{}/testB_{:02d}_ep{:02d}_11_real_B.png'.format(self.sample_dir, sample_index, epoch))
-				save_images(data_A, [self.batch_size, 1],
-							'./{}/testB_{:02d}_ep{:02d}_12_real_A.png'.format(self.sample_dir, sample_index, epoch))
+				# save_images(data_A, [self.batch_size, 1],
+				# 			'./{}/testB_{:02d}_ep{:02d}_12_real_A.png'.format(self.sample_dir, sample_index, epoch))
 				save_images(generated_B, [self.batch_size, 1],
 							'./{}/testB_{:02d}_ep{:02d}_13_gen_B.png'.format(self.sample_dir, sample_index, epoch))
 				save_images(revised_B, [self.batch_size, 1],

@@ -25,8 +25,8 @@ tf.app.flags.DEFINE_float('L1_lambda',100.0,'L1_lambda') # 0.002
 
 
 # dataset floder name
-tf.app.flags.DEFINE_string('dataset_dir', './test_datasets', 'dataset directory')
-tf.app.flags.DEFINE_string('dataset_name', 'edges2handbags', 'dataset name') 
+tf.app.flags.DEFINE_string('dataset_dir', './datasets', 'dataset directory')
+tf.app.flags.DEFINE_string('dataset_name', 'vangogh2photo', 'dataset name') 
 # cityscapes # edges2handbags # edges2shoes # facades # maps	
 # vangogh2photo
 
