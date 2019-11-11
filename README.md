@@ -85,42 +85,56 @@ The results of our works:
 - Sketches -> Bags <br>
 
 sketch:
-![alt text](https://github.com/howarder3/CycleCoopNet/blob/master/test_bag_1.jpg?raw=true)
-
+![alt text](https://github.com/howarder3/CycleCoopNet/blob/master/sample_results/test_bag_1.jpg?raw=true)
 
 
 Our result:
-![alt text](https://github.com/howarder3/CycleCoopNet/blob/master/result_bag_1.jpg?raw=true)
+![alt text](https://github.com/howarder3/CycleCoopNet/blob/master/sample_results/result_bag_1.jpg?raw=true)
+
 
 sketch:
-![alt text](https://github.com/howarder3/CycleCoopNet/blob/master/test_bag_2.jpg?raw=true)
+![alt text](https://github.com/howarder3/CycleCoopNet/blob/master/sample_results/test_bag_2.jpg?raw=true)
 
 
 Our result:
-![alt text](https://github.com/howarder3/CycleCoopNet/blob/master/result_bag_2.jpg?raw=true)
+![alt text](https://github.com/howarder3/CycleCoopNet/blob/master/sample_results/result_bag_2.jpg?raw=true)
 
 - Photos -> VanGogh-style picture <br>
 
 Photos:
-![alt text](https://github.com/howarder3/CycleCoopNet/blob/master/test_photo_1.jpg?raw=true)
+![alt text](https://github.com/howarder3/CycleCoopNet/blob/master/sample_results/test_photo_1.jpg?raw=true)
 
 
 Our result:
-![alt text](https://github.com/howarder3/CycleCoopNet/blob/master/result_photo_1.jpg?raw=true)
+![alt text](https://github.com/howarder3/CycleCoopNet/blob/master/sample_results/result_photo_1.png?raw=true)
+
 
 
 Photos:
-![alt text](https://github.com/howarder3/CycleCoopNet/blob/master/test_photo_2.jpg?raw=true)
+![alt text](https://github.com/howarder3/CycleCoopNet/blob/master/sample_results/test_photo_2.jpg?raw=true)
 
 
 Our result:
-![alt text](https://github.com/howarder3/CycleCoopNet/blob/master/result_photo_2.jpg?raw=true)
+![alt text](https://github.com/howarder3/CycleCoopNet/blob/master/sample_results/result_photo_2.png?raw=true)
+
+
+- VanGogh picture -> real style <br>
+
+VanGogh picture:
+![alt text](https://github.com/howarder3/CycleCoopNet/blob/master/sample_results/test_vangogh_1.png?raw=true)
+
+
+Our result:
+![alt text](https://github.com/howarder3/CycleCoopNet/blob/master/sample_results/result_vangogh_1.png?raw=true)
 
 
 
+VanGogh picture:
+![alt text](https://github.com/howarder3/CycleCoopNet/blob/master/sample_results/test_vangogh_2.png?raw=true)
 
 
-
+Our result:
+![alt text](https://github.com/howarder3/CycleCoopNet/blob/master/sample_results/result_vangogh_2.png?raw=true)
 
 
 
