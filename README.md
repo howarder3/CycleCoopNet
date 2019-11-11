@@ -128,7 +128,7 @@ Websites:
 
 - Win10 安裝 TensorFlow-gpu & Keras
 https://medium.com/@WhoYoung99/2018最新win10安裝tensorflow-gpu-keras-8b3f8652509a
-- Tensorflow-gpu在windows10上的安裝（anaconda)
+- Tensorflow-gpu在windows10上的安裝(anaconda)
 https://hk.saowen.com/a/b18554aeda7d3f5a43d7dafdbd9b0a9f1bda2b9b0406d3317c6be836ce717fc3
 - python程式
 https://github.com/zilongzheng/CoopNets
