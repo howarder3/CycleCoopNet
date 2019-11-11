@@ -90,14 +90,14 @@ sketch:
 
 
 Our result:
-![alt text](https://github.com/howarder3/CycleCoopNet/blob/master/result_bag_1.jpg?raw=true)
+![alt text](https://github.com/howarder3/CycleCoopNet/blob/master/result_bag_2.jpg?raw=true)
 
 sketch:
 ![alt text](https://github.com/howarder3/CycleCoopNet/blob/master/test_bag_2.jpg?raw=true)
 
 
 Our result:
-![alt text](https://github.com/howarder3/CycleCoopNet/blob/master/result_bag_2.jpg?raw=true)
+![alt text](https://github.com/howarder3/CycleCoopNet/blob/master/result_bag_1.jpg?raw=true)
 
 - Photos -> VanGogh-style picture <br>
 
