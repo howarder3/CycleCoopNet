@@ -83,10 +83,26 @@ python main.py --dataset_name=edges2handbags
 The results of our works:
 
 - Sketches -> Bags <br>
+
+sketch:
+![alt text](https://github.com/howarder3/CycleCoopNet/blob/master/test_bag_1.jpg?raw=true)
+
+
+
+Our result:
+![alt text](https://github.com/howarder3/CycleCoopNet/blob/master/result_bag_2.jpg?raw=true)
+
+sketch:
+![alt text](https://github.com/howarder3/CycleCoopNet/blob/master/test_bag_2.jpg?raw=true)
+
+
+Our result:
+![alt text](https://github.com/howarder3/CycleCoopNet/blob/master/result_bag_1.jpg?raw=true)
+
 - Photos -> VanGogh-style picture <br>
 
-
-
+![alt text](http://url/to/img.png)
+![alt text](http://url/to/img.png)
 
 
 
@@ -112,7 +128,7 @@ Websites:
 
 - Win10 安裝 TensorFlow-gpu & Keras
 https://medium.com/@WhoYoung99/2018最新win10安裝tensorflow-gpu-keras-8b3f8652509a
-- Tensorflow-gpu在windows10上的安裝（anaconda)
+- Tensorflow-gpu在windows10上的安裝(anaconda)
 https://hk.saowen.com/a/b18554aeda7d3f5a43d7dafdbd9b0a9f1bda2b9b0406d3317c6be836ce717fc3
 - python程式
 https://github.com/zilongzheng/CoopNets
