@@ -15,6 +15,9 @@ CycleCoopNet method is proposed by Chien-Hao Weng in
 
 For NVIDIA GPU users, we install CUDA 9.0 for GPU device driver. Your can find it on CUDA Toolkit downloads website. 
 
+- Download link:
+https://developer.nvidia.com/cuda-90-download-archive
+
 > We are NOT sure the newest version of CUDA can work. 
  
 ### install cuDNN 7.0
@@ -40,6 +43,9 @@ Use Anaconda to create a new python environment, and install all python packages
 conda create -n [your-environment-name] python=3.6.3
 conda activate [your-environment-name]
 ```
+
+> Or you can use Anaconda GUI to create your own python environment
+> ![alt text](https://github.com/howarder3/CycleCoopNet/blob/master/anaconda_GUI.png?raw=true)
 
 ### install python Packages
 - tensorflow-gpu 1.13.1
