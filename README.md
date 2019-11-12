@@ -44,7 +44,8 @@ conda create -n [your-environment-name] python=3.6.3
 conda activate [your-environment-name]
 ```
 
-> Or you can use Anaconda GUI to create your own python environment
+> Or you can use Anaconda GUI to create your own python environment:
+> 
 > ![alt text](https://github.com/howarder3/CycleCoopNet/blob/master/anaconda_GUI.png?raw=true)
 
 ### install python Packages
@@ -85,8 +86,16 @@ Training a model: (e.g. edges2handbags datasets)
 python main.py --dataset_name=edges2handbags
 ```
 
-## Experiment Results 
-The results of our works:
+## Testing
+
+Put the picture your want to test in the "test_datasets" folder, you can find these results in the "sample" folder.
+(After you start the training, this folder will auto create.)
+
+> The testing pictures will NOT affect the model training, that is, these pictures will NOT change the parameters of the model.
+
+
+
+## Experiment Results Sample
 
 - Sketches -> Bags <br>
 
