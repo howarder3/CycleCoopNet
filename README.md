@@ -89,7 +89,7 @@ python main.py --dataset_name=edges2handbags
 ## Testing
 
 Put the picture your want to test in the "test_datasets" folder, you can find these results in the "sample" folder.
-(After you start the training, this folder will auto create.)
+(After you start the training, this folder will auto create by our program.)
 
 > The testing pictures will NOT affect the model training, that is, these pictures will NOT change the parameters of the model.
 
