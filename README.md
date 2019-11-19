@@ -158,11 +158,11 @@ Our result:
 ## Reference
 Github:
 
-- The torch implementation of CycleGAN 
+- The torch implementation of CycleGAN, 
 https://github.com/junyanz/CycleGAN
-- The tensorflow implementation of CycleGAN 
+- The tensorflow implementation of CycleGAN, 
 https://github.com/xhujoy/CycleGAN-tensorflow
-- The tensorflow implementation of pix2pix 
+- The tensorflow implementation of pix2pix, 
 https://github.com/yenchenlin/pix2pix-tensorflow
 
 Websites:
