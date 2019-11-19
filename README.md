@@ -156,13 +156,13 @@ Our result:
 ## Some of our analysis tools
 
 - Generating loss chart of pix2pix, https://github.com/howarder3/analysis_pix2pix_by_yenchenlin
--- Original work: https://github.com/howarder3/analysis_pix2pix_by_yenchenlin
+> Original work: https://github.com/howarder3/analysis_pix2pix_by_yenchenlin
 
 - Generating loss chart of CycleGAN, https://github.com/howarder3/analysis_CycleGAN_by_xhujoy
--- Original work: https://github.com/xhujoy/CycleGAN-tensorflow
+> Original work: https://github.com/xhujoy/CycleGAN-tensorflow
 
 - Analysing of generated pictures, https://github.com/howarder3/analysis_generated_pictures
--- Original work: 
+> Original work: 
 
 
 ## Reference
