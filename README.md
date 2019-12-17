@@ -162,7 +162,6 @@ Our result:
 > Original work: https://github.com/xhujoy/CycleGAN-tensorflow
 
 - Analysing of generated pictures, https://github.com/howarder3/analysis_generated_pictures
-> Original work: 
 
 
 ## Reference
