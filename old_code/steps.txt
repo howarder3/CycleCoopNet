@@ -1,0 +1,14 @@
+D:
+cd D:\lab_howard>cd pix2pix-tensorflow-master
+conda activate mlenv
+python main.py --phase train
+
+python main.py --phase test
+
+
+
+
+
+
+
+python main.py --category alp --data_dir ./data/scene --output_dir ./output --num_epochs 300 --batch_size 100 --d_lr 0.01 --g_lr 0.0001
