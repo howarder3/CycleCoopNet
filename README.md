@@ -153,16 +153,26 @@ Our result:
 
 
 
+## Some of our analysis tools
+
+- Generating loss chart of pix2pix, https://github.com/howarder3/analysis_pix2pix_by_yenchenlin
+> Original work: https://github.com/howarder3/analysis_pix2pix_by_yenchenlin
+
+- Generating loss chart of CycleGAN, https://github.com/howarder3/analysis_CycleGAN_by_xhujoy
+> Original work: https://github.com/xhujoy/CycleGAN-tensorflow
+
+- Analysing of generated pictures, https://github.com/howarder3/analysis_generated_pictures
+> Original work: 
 
 
 ## Reference
 Github:
 
-- The torch implementation of CycleGAN 
+- The torch implementation of CycleGAN, 
 https://github.com/junyanz/CycleGAN
-- The tensorflow implementation of CycleGAN 
+- The tensorflow implementation of CycleGAN, 
 https://github.com/xhujoy/CycleGAN-tensorflow
-- The tensorflow implementation of pix2pix 
+- The tensorflow implementation of pix2pix, 
 https://github.com/yenchenlin/pix2pix-tensorflow
 
 Websites:
