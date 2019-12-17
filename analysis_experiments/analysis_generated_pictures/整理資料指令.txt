@@ -1,0 +1,269 @@
+New-Item .\00 -ItemType "directory"
+New-Item .\01 -ItemType "directory"
+New-Item .\02 -ItemType "directory"
+New-Item .\03 -ItemType "directory"
+New-Item .\04 -ItemType "directory"
+New-Item .\05 -ItemType "directory"
+New-Item .\06 -ItemType "directory"
+New-Item .\07 -ItemType "directory"
+New-Item .\08 -ItemType "directory"
+New-Item .\09 -ItemType "directory"
+New-Item .\10 -ItemType "directory"
+
+-----------------------------------------------------
+
+Move-Item .\"testA_00_*.png" -Destination .\00
+Move-Item .\"testB_00_*.png" -Destination .\00
+Move-Item .\"testA_01_*.png" -Destination .\01
+Move-Item .\"testB_01_*.png" -Destination .\01
+Move-Item .\"testA_02_*.png" -Destination .\02
+Move-Item .\"testB_02_*.png" -Destination .\02
+Move-Item .\"testA_03_*.png" -Destination .\03
+Move-Item .\"testB_03_*.png" -Destination .\03
+Move-Item .\"testA_04_*.png" -Destination .\04
+Move-Item .\"testB_04_*.png" -Destination .\04
+Move-Item .\"testA_05_*.png" -Destination .\05
+Move-Item .\"testB_05_*.png" -Destination .\05
+Move-Item .\"testA_06_*.png" -Destination .\06
+Move-Item .\"testB_06_*.png" -Destination .\06
+Move-Item .\"testA_07_*.png" -Destination .\07
+Move-Item .\"testB_07_*.png" -Destination .\07
+Move-Item .\"testA_08_*.png" -Destination .\08
+Move-Item .\"testB_08_*.png" -Destination .\08
+Move-Item .\"testA_09_*.png" -Destination .\09
+Move-Item .\"testB_09_*.png" -Destination .\09
+Move-Item .\"testA_10_*.png" -Destination .\10
+Move-Item .\"testB_10_*.png" -Destination .\10
+
+
+----------------------------------------------------
+
+cd 01
+
+New-Item .\A_real -ItemType "directory"
+New-Item .\A_gen -ItemType "directory"
+New-Item .\A_recover -ItemType "directory"
+New-Item .\A_revised -ItemType "directory"
+New-Item .\B_real -ItemType "directory"
+New-Item .\B_gen -ItemType "directory"
+New-Item .\B_recover -ItemType "directory"
+New-Item .\B_revised -ItemType "directory"
+
+
+Move-Item .\"*real_A*.png" -Destination .\A_real
+Move-Item .\"*gen_A*.png" -Destination .\A_gen
+Move-Item .\"*recovered_A*.png" -Destination .\A_recover
+Move-Item .\"*revised_A*.png" -Destination .\A_revised
+Move-Item .\"*real_B*.png" -Destination .\B_real
+Move-Item .\"*gen_B*.png" -Destination .\B_gen
+Move-Item .\"*recovered_B*.png" -Destination .\B_recover
+Move-Item .\"*revised_B*.png" -Destination .\B_revised
+
+
+cd ..
+
+
+----------------------------------------------------
+
+Copy-Item D:\GitHub\!_results\cyclecoopnet\10_bags\sample\00\B_gen\"*_ep2??_*.png" -Destination .\case00\cyclecoopnet
+Copy-Item D:\GitHub\!_results\cyclecoopnet\10_bags\sample\01\B_gen\"*_ep2??_*.png" -Destination .\case01\cyclecoopnet
+Copy-Item D:\GitHub\!_results\cyclecoopnet\10_bags\sample\02\B_gen\"*_ep2??_*.png" -Destination .\case02\cyclecoopnet
+Copy-Item D:\GitHub\!_results\cyclecoopnet\10_bags\sample\03\B_gen\"*_ep2??_*.png" -Destination .\case03\cyclecoopnet
+Copy-Item D:\GitHub\!_results\cyclecoopnet\10_bags\sample\04\B_gen\"*_ep2??_*.png" -Destination .\case04\cyclecoopnet
+Copy-Item D:\GitHub\!_results\cyclecoopnet\10_bags\sample\05\B_gen\"*_ep2??_*.png" -Destination .\case05\cyclecoopnet
+Copy-Item D:\GitHub\!_results\cyclecoopnet\10_bags\sample\06\B_gen\"*_ep2??_*.png" -Destination .\case06\cyclecoopnet
+Copy-Item D:\GitHub\!_results\cyclecoopnet\10_bags\sample\07\B_gen\"*_ep2??_*.png" -Destination .\case07\cyclecoopnet
+Copy-Item D:\GitHub\!_results\cyclecoopnet\10_bags\sample\08\B_gen\"*_ep2??_*.png" -Destination .\case08\cyclecoopnet
+Copy-Item D:\GitHub\!_results\cyclecoopnet\10_bags\sample\09\B_gen\"*_ep2??_*.png" -Destination .\case09\cyclecoopnet
+Copy-Item D:\GitHub\!_results\cyclecoopnet\10_bags\sample\10\B_gen\"*_ep2??_*.png" -Destination .\case10\cyclecoopnet
+
+
+----------------------------------------------------
+
+
+Copy-Item D:\GitHub\!_results\cyclecoopnet\10_bags\sample\00\B_recover\"*_ep2??_*.png" -Destination .\case00\cyclecoopnet
+Copy-Item D:\GitHub\!_results\cyclecoopnet\10_bags\sample\01\B_recover\"*_ep2??_*.png" -Destination .\case01\cyclecoopnet
+Copy-Item D:\GitHub\!_results\cyclecoopnet\10_bags\sample\02\B_recover\"*_ep2??_*.png" -Destination .\case02\cyclecoopnet
+Copy-Item D:\GitHub\!_results\cyclecoopnet\10_bags\sample\03\B_recover\"*_ep2??_*.png" -Destination .\case03\cyclecoopnet
+Copy-Item D:\GitHub\!_results\cyclecoopnet\10_bags\sample\04\B_recover\"*_ep2??_*.png" -Destination .\case04\cyclecoopnet
+Copy-Item D:\GitHub\!_results\cyclecoopnet\10_bags\sample\05\B_recover\"*_ep2??_*.png" -Destination .\case05\cyclecoopnet
+Copy-Item D:\GitHub\!_results\cyclecoopnet\10_bags\sample\06\B_recover\"*_ep2??_*.png" -Destination .\case06\cyclecoopnet
+Copy-Item D:\GitHub\!_results\cyclecoopnet\10_bags\sample\07\B_recover\"*_ep2??_*.png" -Destination .\case07\cyclecoopnet
+Copy-Item D:\GitHub\!_results\cyclecoopnet\10_bags\sample\08\B_recover\"*_ep2??_*.png" -Destination .\case08\cyclecoopnet
+Copy-Item D:\GitHub\!_results\cyclecoopnet\10_bags\sample\09\B_recover\"*_ep2??_*.png" -Destination .\case09\cyclecoopnet
+Copy-Item D:\GitHub\!_results\cyclecoopnet\10_bags\sample\10\B_recover\"*_ep2??_*.png" -Destination .\case10\cyclecoopnet
+
+
+
+
+----------------------------------------------------
+
+
+Copy-Item D:\GitHub\!_results\cycleGAN\10_bags\sample\00\A_gen\"*_ep2??_*.png" -Destination .\case00\cyclegan
+Copy-Item D:\GitHub\!_results\cycleGAN\10_bags\sample\01\A_gen\"*_ep2??_*.png" -Destination .\case01\cyclegan
+Copy-Item D:\GitHub\!_results\cycleGAN\10_bags\sample\02\A_gen\"*_ep2??_*.png" -Destination .\case02\cyclegan
+Copy-Item D:\GitHub\!_results\cycleGAN\10_bags\sample\03\A_gen\"*_ep2??_*.png" -Destination .\case03\cyclegan
+Copy-Item D:\GitHub\!_results\cycleGAN\10_bags\sample\04\A_gen\"*_ep2??_*.png" -Destination .\case04\cyclegan
+Copy-Item D:\GitHub\!_results\cycleGAN\10_bags\sample\05\A_gen\"*_ep2??_*.png" -Destination .\case05\cyclegan
+Copy-Item D:\GitHub\!_results\cycleGAN\10_bags\sample\06\A_gen\"*_ep2??_*.png" -Destination .\case06\cyclegan
+Copy-Item D:\GitHub\!_results\cycleGAN\10_bags\sample\07\A_gen\"*_ep2??_*.png" -Destination .\case07\cyclegan
+Copy-Item D:\GitHub\!_results\cycleGAN\10_bags\sample\08\A_gen\"*_ep2??_*.png" -Destination .\case08\cyclegan
+Copy-Item D:\GitHub\!_results\cycleGAN\10_bags\sample\09\A_gen\"*_ep2??_*.png" -Destination .\case09\cyclegan
+Copy-Item D:\GitHub\!_results\cycleGAN\10_bags\sample\10\A_gen\"*_ep2??_*.png" -Destination .\case10\cyclegan
+
+
+
+----------------------------------------------------
+
+Copy-Item D:\GitHub\!_results\cycleGAN\10_bags\sample\00\B_gen\"*_ep2??_*.png" -Destination .\case00\cyclegan
+Copy-Item D:\GitHub\!_results\cycleGAN\10_bags\sample\01\B_gen\"*_ep2??_*.png" -Destination .\case01\cyclegan
+Copy-Item D:\GitHub\!_results\cycleGAN\10_bags\sample\02\B_gen\"*_ep2??_*.png" -Destination .\case02\cyclegan
+Copy-Item D:\GitHub\!_results\cycleGAN\10_bags\sample\03\B_gen\"*_ep2??_*.png" -Destination .\case03\cyclegan
+Copy-Item D:\GitHub\!_results\cycleGAN\10_bags\sample\04\B_gen\"*_ep2??_*.png" -Destination .\case04\cyclegan
+Copy-Item D:\GitHub\!_results\cycleGAN\10_bags\sample\05\B_gen\"*_ep2??_*.png" -Destination .\case05\cyclegan
+Copy-Item D:\GitHub\!_results\cycleGAN\10_bags\sample\06\B_gen\"*_ep2??_*.png" -Destination .\case06\cyclegan
+Copy-Item D:\GitHub\!_results\cycleGAN\10_bags\sample\07\B_gen\"*_ep2??_*.png" -Destination .\case07\cyclegan
+Copy-Item D:\GitHub\!_results\cycleGAN\10_bags\sample\08\B_gen\"*_ep2??_*.png" -Destination .\case08\cyclegan
+Copy-Item D:\GitHub\!_results\cycleGAN\10_bags\sample\09\B_gen\"*_ep2??_*.png" -Destination .\case09\cyclegan
+Copy-Item D:\GitHub\!_results\cycleGAN\10_bags\sample\10\B_gen\"*_ep2??_*.png" -Destination .\case10\cyclegan
+
+
+
+
+----------------------------------------------------
+Copy-Item D:\GitHub\!_results\cycleGAN\10_bags\sample\00\B_recover\"*_ep2??_*.png" -Destination .\case00\cyclegan
+Copy-Item D:\GitHub\!_results\cycleGAN\10_bags\sample\01\B_recover\"*_ep2??_*.png" -Destination .\case01\cyclegan
+Copy-Item D:\GitHub\!_results\cycleGAN\10_bags\sample\02\B_recover\"*_ep2??_*.png" -Destination .\case02\cyclegan
+Copy-Item D:\GitHub\!_results\cycleGAN\10_bags\sample\03\B_recover\"*_ep2??_*.png" -Destination .\case03\cyclegan
+Copy-Item D:\GitHub\!_results\cycleGAN\10_bags\sample\04\B_recover\"*_ep2??_*.png" -Destination .\case04\cyclegan
+Copy-Item D:\GitHub\!_results\cycleGAN\10_bags\sample\05\B_recover\"*_ep2??_*.png" -Destination .\case05\cyclegan
+Copy-Item D:\GitHub\!_results\cycleGAN\10_bags\sample\06\B_recover\"*_ep2??_*.png" -Destination .\case06\cyclegan
+Copy-Item D:\GitHub\!_results\cycleGAN\10_bags\sample\07\B_recover\"*_ep2??_*.png" -Destination .\case07\cyclegan
+Copy-Item D:\GitHub\!_results\cycleGAN\10_bags\sample\08\B_recover\"*_ep2??_*.png" -Destination .\case08\cyclegan
+Copy-Item D:\GitHub\!_results\cycleGAN\10_bags\sample\09\B_recover\"*_ep2??_*.png" -Destination .\case09\cyclegan
+Copy-Item D:\GitHub\!_results\cycleGAN\10_bags\sample\10\B_recover\"*_ep2??_*.png" -Destination .\case10\cyclegan
+
+
+
+----------------------------------------------------
+
+Copy-Item D:\GitHub\!_results\cycleGAN\10_bags\sample\00\A_recover\"*_ep2??_*.png" -Destination .\case00\cyclegan
+Copy-Item D:\GitHub\!_results\cycleGAN\10_bags\sample\01\A_recover\"*_ep2??_*.png" -Destination .\case01\cyclegan
+Copy-Item D:\GitHub\!_results\cycleGAN\10_bags\sample\02\A_recover\"*_ep2??_*.png" -Destination .\case02\cyclegan
+Copy-Item D:\GitHub\!_results\cycleGAN\10_bags\sample\03\A_recover\"*_ep2??_*.png" -Destination .\case03\cyclegan
+Copy-Item D:\GitHub\!_results\cycleGAN\10_bags\sample\04\A_recover\"*_ep2??_*.png" -Destination .\case04\cyclegan
+Copy-Item D:\GitHub\!_results\cycleGAN\10_bags\sample\05\A_recover\"*_ep2??_*.png" -Destination .\case05\cyclegan
+Copy-Item D:\GitHub\!_results\cycleGAN\10_bags\sample\06\A_recover\"*_ep2??_*.png" -Destination .\case06\cyclegan
+Copy-Item D:\GitHub\!_results\cycleGAN\10_bags\sample\07\A_recover\"*_ep2??_*.png" -Destination .\case07\cyclegan
+Copy-Item D:\GitHub\!_results\cycleGAN\10_bags\sample\08\A_recover\"*_ep2??_*.png" -Destination .\case08\cyclegan
+Copy-Item D:\GitHub\!_results\cycleGAN\10_bags\sample\09\A_recover\"*_ep2??_*.png" -Destination .\case09\cyclegan
+Copy-Item D:\GitHub\!_results\cycleGAN\10_bags\sample\10\A_recover\"*_ep2??_*.png" -Destination .\case10\cyclegan
+
+
+
+
+----------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Copy-Item D:\GitHub\!_results\pix2pix\10_data_uncolor\sample\00\"*_ep2??_*.png" -Destination .\case00\pix2pix
+Copy-Item D:\GitHub\!_results\pix2pix\10_data_uncolor\sample\01\"*_ep2??_*.png" -Destination .\case01\pix2pix
+Copy-Item D:\GitHub\!_results\pix2pix\10_data_uncolor\sample\02\"*_ep2??_*.png" -Destination .\case02\pix2pix
+Copy-Item D:\GitHub\!_results\pix2pix\10_data_uncolor\sample\03\"*_ep2??_*.png" -Destination .\case03\pix2pix
+Copy-Item D:\GitHub\!_results\pix2pix\10_data_uncolor\sample\04\"*_ep2??_*.png" -Destination .\case04\pix2pix
+Copy-Item D:\GitHub\!_results\pix2pix\10_data_uncolor\sample\05\"*_ep2??_*.png" -Destination .\case05\pix2pix
+Copy-Item D:\GitHub\!_results\pix2pix\10_data_uncolor\sample\06\"*_ep2??_*.png" -Destination .\case06\pix2pix
+Copy-Item D:\GitHub\!_results\pix2pix\10_data_uncolor\sample\07\"*_ep2??_*.png" -Destination .\case07\pix2pix
+Copy-Item D:\GitHub\!_results\pix2pix\10_data_uncolor\sample\08\"*_ep2??_*.png" -Destination .\case08\pix2pix
+Copy-Item D:\GitHub\!_results\pix2pix\10_data_uncolor\sample\09\"*_ep2??_*.png" -Destination .\case09\pix2pix
+Copy-Item D:\GitHub\!_results\pix2pix\10_data_uncolor\sample\10\"*_ep2??_*.png" -Destination .\case10\pix2pix
+
+
+
+
+
+----------------------------------------------------
+
+
+----------------------------------------------------
+
+
+----------------------------------------------------
+
+New-Item .\case00\cyclegan -ItemType "directory"
+New-Item .\case01\cyclegan -ItemType "directory"
+New-Item .\case02\cyclegan -ItemType "directory"
+New-Item .\case03\cyclegan -ItemType "directory"
+New-Item .\case04\cyclegan -ItemType "directory"
+New-Item .\case05\cyclegan -ItemType "directory"
+New-Item .\case06\cyclegan -ItemType "directory"
+New-Item .\case07\cyclegan -ItemType "directory"
+New-Item .\case08\cyclegan -ItemType "directory"
+New-Item .\case09\cyclegan -ItemType "directory"
+New-Item .\case10\cyclegan -ItemType "directory"
+
+----------------------------------------------------
+
+
+----------------------------------------------------
+
+----------------------------------------------------
+
+
+----------------------------------------------------
+
+Move-Item .\"case00*.png" -Destination .\00
+Move-Item .\"case01*.png" -Destination .\01
+Move-Item .\"case02*.png" -Destination .\02
+Move-Item .\"case03*.png" -Destination .\03
+Move-Item .\"case04*.png" -Destination .\04
+Move-Item .\"case05*.png" -Destination .\05
+Move-Item .\"case06*.png" -Destination .\06
+Move-Item .\"case07*.png" -Destination .\07
+Move-Item .\"case08*.png" -Destination .\08
+Move-Item .\"case09*.png" -Destination .\09
+Move-Item .\"case10*.png" -Destination .\10
+
+
+
+
+-------------------------------------------
+
+Move-Item .\"testB_08*.png" -Destination .\08
+Move-Item .\"testB_09*.png" -Destination .\09
+Move-Item .\"testB_10*.png" -Destination .\10
+
+-------------------------------------------
+
+
+

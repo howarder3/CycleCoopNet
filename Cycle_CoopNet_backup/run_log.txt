@@ -1,0 +1,81 @@
+
+
+
+(mlenv) D:\GitHub\Cycle_CoopNet>python main.py --dataset_dir datasets
+2019-06-26 05:29:01.160108: I tensorflow/core/platform/cpu_feature_guard.cc:141] Your CPU supports instructions that this TensorFlow binary was not compiled to use: AVX AVX2
+2019-06-26 05:29:01.331399: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1433] Found device 0 with properties:
+name: GeForce GTX 1080 major: 6 minor: 1 memoryClockRate(GHz): 1.797
+pciBusID: 0000:01:00.0
+totalMemory: 8.00GiB freeMemory: 6.61GiB
+2019-06-26 05:29:01.337984: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1512] Adding visible gpu devices: 0
+2019-06-26 05:29:01.955707: I tensorflow/core/common_runtime/gpu/gpu_device.cc:984] Device interconnect StreamExecutor with strength 1 edge matrix:
+2019-06-26 05:29:01.959307: I tensorflow/core/common_runtime/gpu/gpu_device.cc:990]      0
+2019-06-26 05:29:01.961286: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1003] 0:   N
+2019-06-26 05:29:01.963573: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1115] Created TensorFlow device (/job:localhost/replica:0/task:0/device:GPU:0 with 6362 MB memory) -> physical GPU (device: 0, name: GeForce GTX 1080, pci bus id: 0000:01:00.0, compute capability: 6.1)
+WARNING:tensorflow:From C:\Users\soslab\AppData\Local\conda\conda\envs\mlenv\lib\site-packages\tensorflow\python\framework\op_def_library.py:263: colocate_with (from tensorflow.python.framework.ops) is deprecated and will be removed in a future version.
+Instructions for updating:
+Colocations handled automatically by placer.
+
+WARNING: The TensorFlow contrib module will not be included in TensorFlow 2.0.
+For more information, please see:
+  * https://github.com/tensorflow/community/blob/master/rfcs/20180907-contrib-sunset.md
+  * https://github.com/tensorflow/addons
+If you depend on functionality not listed there, please file an issue.
+
+WARNING:tensorflow:From C:\Users\soslab\AppData\Local\conda\conda\envs\mlenv\lib\site-packages\tensorflow\python\ops\math_ops.py:3066: to_int32 (from tensorflow.python.ops.math_ops) is deprecated and will be removed in a future version.
+Instructions for updating:
+Use tf.cast instead.
+ [*] Loading checkpoint...
+ [!] Loading checkpoint failed...
+time: 0:00:00 , Start training model......
+2019-06-26 05:29:44.722615: W tensorflow/core/common_runtime/bfc_allocator.cc:211] Allocator (GPU_0_bfc) ran out of memory trying to allocate 2.13GiB. The caller indicates that this is not a failure, but may mean that there could be performance gains if more memory were available.
+2019-06-26 05:29:44.762079: W tensorflow/core/common_runtime/bfc_allocator.cc:211] Allocator (GPU_0_bfc) ran out of memory trying to allocate 2.13GiB. The caller indicates that this is not a failure, but may mean that there could be performance gains if more memory were available.
+2019-06-26 05:29:44.799173: W tensorflow/core/common_runtime/bfc_allocator.cc:211] Allocator (GPU_0_bfc) ran out of memory trying to allocate 2.13GiB. The caller indicates that this is not a failure, but may mean that there could be performance gains if more memory were available.
+Epoch: [   0] [   0/ 400],   time: 0:00:13,   eta: 63 days, 21:08:37,
+ A2B_d_loss:        -61.2753, A2B_g_loss:    5853.0654, A2B_cycle_loss:   0.8322,
+ B2A_d_loss:         21.7065, B2A_g_loss:    5790.5781, B2A_cycle_loss:   0.6870
+Epoch: [   0] [   1/ 400],   time: 0:00:18,   eta: 41 days, 16:54:45,
+ A2B_d_loss:       -397.1611, A2B_g_loss:    5304.7139, A2B_cycle_loss:   0.8840,
+ B2A_d_loss:       -698.5670, B2A_g_loss:    5432.4331, B2A_cycle_loss:   0.7269
+Epoch: [   0] [   2/ 400],   time: 0:00:22,   eta: 34 days, 8:06:59,
+ A2B_d_loss:       5334.2412, A2B_g_loss:    5130.3389, A2B_cycle_loss:   0.8765,
+ B2A_d_loss:      -9175.7480, B2A_g_loss:    5161.4614, B2A_cycle_loss:   0.6130
+Epoch: [   0] [   3/ 400],   time: 0:00:26,   eta: 30 days, 15:49:56,
+ A2B_d_loss:     -23647.6328, A2B_g_loss:    4664.1313, A2B_cycle_loss:   0.9098,
+ B2A_d_loss:     -47128.5977, B2A_g_loss:    4988.4893, B2A_cycle_loss:   0.6259
+Epoch: [   0] [   4/ 400],   time: 0:00:30,   eta: 28 days, 10:50:36,
+ A2B_d_loss:      28273.0840, A2B_g_loss:    4564.1748, A2B_cycle_loss:   0.8928,
+ B2A_d_loss:     -95815.7969, B2A_g_loss:    4462.0083, B2A_cycle_loss:   0.7839
+Epoch: [   0] [   5/ 400],   time: 0:00:34,   eta: 26 days, 23:38:34,
+ A2B_d_loss:      20358.5840, A2B_g_loss:    4142.2070, A2B_cycle_loss:   0.9124,
+ B2A_d_loss:    -164196.4375, B2A_g_loss:    4900.2129, B2A_cycle_loss:   0.7554
+Epoch: [   0] [   6/ 400],   time: 0:00:39,   eta: 25 days, 21:35:11,
+ A2B_d_loss:     -80792.3438, A2B_g_loss:    4011.1172, A2B_cycle_loss:   0.8963,
+ B2A_d_loss:    -139295.9688, B2A_g_loss:    4668.6099, B2A_cycle_loss:   0.5741
+Epoch: [   0] [   7/ 400],   time: 0:00:43,   eta: 25 days, 3:17:46,
+ A2B_d_loss:      31284.4785, A2B_g_loss:    4075.0293, A2B_cycle_loss:   0.8583,
+ B2A_d_loss:    -161512.4688, B2A_g_loss:    4333.0195, B2A_cycle_loss:   0.5238
+Epoch: [   0] [   8/ 400],   time: 0:00:47,   eta: 24 days, 13:09:37,
+ A2B_d_loss:     -32610.4746, A2B_g_loss:    3964.1865, A2B_cycle_loss:   0.8392,
+ B2A_d_loss:    -363099.3438, B2A_g_loss:    3983.9888, B2A_cycle_loss:   0.6246
+Epoch: [   0] [   9/ 400],   time: 0:00:52,   eta: 24 days, 1:48:20,
+ A2B_d_loss:    -147749.2500, A2B_g_loss:    3708.6296, A2B_cycle_loss:   0.8328,
+ B2A_d_loss:    -302020.2500, B2A_g_loss:    3769.0088, B2A_cycle_loss:   0.6518
+Epoch: [   0] [  10/ 400],   time: 0:00:56,   eta: 23 days, 16:09:18,
+ A2B_d_loss:    -148387.1406, A2B_g_loss:    3391.3706, A2B_cycle_loss:   0.8638,
+ B2A_d_loss:    -481485.6875, B2A_g_loss:    3705.5903, B2A_cycle_loss:   0.5295
+Epoch: [   0] [  11/ 400],   time: 0:01:00,   eta: 23 days, 8:02:20,
+ A2B_d_loss:     -66859.3672, A2B_g_loss:    3015.6216, A2B_cycle_loss:   0.8980,
+ B2A_d_loss:    -299155.4375, B2A_g_loss:    2540.6926, B2A_cycle_loss:   0.8707
+Epoch: [   0] [  12/ 400],   time: 0:01:04,   eta: 23 days, 1:01:55,
+ A2B_d_loss:     172175.4688, A2B_g_loss:    3313.9014, A2B_cycle_loss:   0.8045,
+ B2A_d_loss:    -351821.7500, B2A_g_loss:    4037.5068, B2A_cycle_loss:   0.5168
+Epoch: [   0] [  13/ 400],   time: 0:01:09,   eta: 22 days, 20:31:47,
+ A2B_d_loss:    -118873.7344, A2B_g_loss:    3270.6572, A2B_cycle_loss:   0.8274,
+ B2A_d_loss:    -664745.1875, B2A_g_loss:    3941.2974, B2A_cycle_loss:   0.6974
+Epoch: [   0] [  14/ 400],   time: 0:01:13,   eta: 22 days, 15:55:42,
+ A2B_d_loss:    -153546.6875, A2B_g_loss:    2948.8972, A2B_cycle_loss:   0.8400,
+ B2A_d_loss:    -862178.1875, B2A_g_loss:    3357.2324, B2A_cycle_loss:   0.6225
+Epoch: [   0] [  15/ 400],   time: 0:01:17,   eta: 22 days, 11:51:22,
+ A2B_d_loss:    -328957.4062, A2B_g_loss:    2416.9316, A2B_cycle_loss:   0.8914,
+ B2A_d_loss:   -1172332.6250, B2A_g_loss:    3560.6372, B2A_cycle_loss:

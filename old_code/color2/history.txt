@@ -1,0 +1,14 @@
+D:
+cd D:\GitHub\Coop_recover
+python main.py --dataset_dir 
+python main.py
+c
+python main.py
+cd ..
+cd test_code
+python main.py
+cd ..
+cd test_Coop_pix2pix-b9b3468d2001215d1427875b0a57c9c8ad1a4561
+python main.py
+python main.py --dataset_dir datasets
+doskey /HISTORY > history.txt

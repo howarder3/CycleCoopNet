@@ -1,0 +1,9 @@
+# 將檔名自動編號
+Dir *.png | %{Rename-Item $_ -NewName ("{0}.png" -f $c++)}
+
+
+
+testA_00_ep00_03_gen_A
+Dir | Rename-Item -NewName { $_.Name -replace "testA_00_","" }
+Dir | Rename-Item -NewName { $_.Name -replace "_03_gen_A","" }
+Dir | Rename-Item -NewName { $_.Name -replace " ","" }
