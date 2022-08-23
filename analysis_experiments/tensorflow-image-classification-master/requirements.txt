@@ -35,7 +35,7 @@ mkl-random==1.0.2
 mkl-service==2.0.2
 nb-conda==2.2.1
 nb-conda-kernels==2.2.2
-nbconvert==5.5.0
+nbconvert==6.5.1
 nbformat==4.4.0
 notebook==6.0.0
 numpy==1.16.4
